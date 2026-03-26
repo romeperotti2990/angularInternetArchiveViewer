@@ -1,0 +1,19 @@
+:host .navbar {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: #111827;
+  color: white;
+}
+
+:host .navbar a {
+  color: #f3f4f6;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+:host .navbar a.disabled {
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  cursor: default;
+}
