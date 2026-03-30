@@ -13,6 +13,16 @@
 		></app-pagination>
 	</div>
 
+	<div class="mb-4">
+		<div class="text-sm font-semibold mb-1">Filter by media type</div>
+		<div class="flex gap-3">
+			<label *ngFor="let m of mediaTypes" class="flex items-center text-sm">
+				<input type="checkbox" [checked]="selectedMedia[m]" (change)="toggleMedia(m)" class="mr-1" />
+				<span class="capitalize">{{ m }}</span>
+			</label>
+		</div>
+	</div>
+
 	<ul *ngIf="results.length">
 		<li *ngFor="let r of results" class="mb-2 border-b border-gray-300 pb-2">
 			<div class="font-bold">{{ r.title ?? r.identifier }}</div>

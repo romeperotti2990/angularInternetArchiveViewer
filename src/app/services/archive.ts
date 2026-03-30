@@ -67,9 +67,39 @@ export class Archive {
 
   // --- EXISTING UTILS + ARCHIVE SEARCH/LIST ---
 
-  async search(query: string, page = 1, rows = 50): Promise<any> {
+  async search(query: string, page = 1, rows = 50, options?: { mediatypes?: string[] }): Promise<any> {
     const params = new URLSearchParams();
-    params.set('q', query);
+
+    // Build a safer, fielded query so results match title/subject/description
+    // instead of global text matches that return loosely-related items.
+    const q = (query || '').trim();
+    let solrQ = '';
+    const looksLikeFielded = /\w+:/.test(q);
+    if (!q) {
+      solrQ = '*:*';
+    } else if (looksLikeFielded) {
+      // If the user provided fielded syntax already, trust it.
+      solrQ = q;
+    } else {
+      const esc = (s: string) => s.replace(/"/g, '\\"');
+      const term = esc(q);
+      const parts = [
+        `title:\"${term}\"`,
+        `subject:\"${term}\"`,
+        `description:\"${term}\"`,
+        `creator:\"${term}\"`,
+      ];
+      solrQ = `(${parts.join(' OR ')})`;
+    }
+
+    // Apply mediatype restrictions when provided to narrow results to relevant
+    // item types (e.g., software for roms, movies, texts for comics, audio).
+    if (options?.mediatypes && options.mediatypes.length > 0 && solrQ !== '*:*') {
+      const mts = options.mediatypes.map((m) => m.trim()).filter(Boolean);
+      if (mts.length) solrQ = `(${solrQ}) AND mediatype:(${mts.join(' OR ')})`;
+    }
+
+    params.set('q', solrQ);
     params.set('output', 'json');
     params.set('page', String(page));
     params.set('rows', String(rows));
