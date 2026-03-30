@@ -1,0 +1,45 @@
+<html>
+
+<head>
+    <title>Emulator</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+    <script type="text/javascript">
+        // YOUR PRELOAD FIX
+        const urlParams = new URLSearchParams(window.location.search);
+        const coreName = urlParams.get('core');
+        if (coreName) {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            // Your exact path logic
+            link.href = '4.2.3/data/cores/' + coreName.toLowerCase() + '-wasm.data';
+            link.as = 'fetch';
+            link.crossOrigin = 'anonymous';
+            document.head.appendChild(link);
+        }
+    </script>
+</head>
+
+<body>
+    <div id="game" style="width:100%;height:100%"></div>
+    <script type="text/javascript">
+        const params = new URLSearchParams(window.location.search);
+        EJS_player = "#game";
+
+        EJS_pathtodata = "4.2.3/data/";
+
+        EJS_core = params.get('core');
+        EJS_gameUrl = params.get('gameUrl');
+    </script>
+    <script src="4.2.3/data/loader.js"></script>
+</body>
+
+</html>

@@ -41,6 +41,14 @@
 						{{ file.name }}
 					</a>
 					<span class="text-gray-500">({{ file.format }} {{ file.size ? (file.size | number) + ' bytes' : '' }})</span>
+				<button
+					*ngIf="isEmulatorFile(file.name)"
+					class="ml-2 px-2 py-1 text-xs rounded bg-green-600 text-white"
+					type="button"
+					(click)="openInEmulator(r.identifier, file.name)"
+				>
+					Open in emulator
+				</button>
 				</li>
 			</ul>
 		</li>

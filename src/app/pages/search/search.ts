@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Archive } from '../../services/archive';
 import { Pagination } from '../../components/pagination/pagination';
 
@@ -23,7 +23,7 @@ export class Search implements OnInit {
   pageInput = '1';
   totalResults = 0;
 
-  constructor(private route: ActivatedRoute, public archive: Archive) {}
+  constructor(private route: ActivatedRoute, private router: Router, public archive: Archive) {}
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((map) => {
@@ -76,6 +76,38 @@ export class Search implements OnInit {
 
   getFileUrl(identifier: string, filename: string): string {
     return this.archive.getFileUrl(identifier, filename);
+  }
+
+  isEmulatorFile(filename: string): boolean {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    return ['gba', 'nes', 'smc', 'sfc', 'bin', 'zip'].includes(ext);
+  }
+
+  getEmulatorCore(filename: string): string {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    switch (ext) {
+      case 'gba':
+        return 'gba';
+      case 'nes':
+        return 'nes';
+      case 'smc':
+      case 'sfc':
+        return 'snes';
+      default:
+        return 'gba';
+    }
+  }
+
+  openInEmulator(identifier: string, filename: string) {
+    const core = this.getEmulatorCore(filename);
+    const gameUrl = this.getFileUrl(identifier, filename);
+    this.router.navigate(['/media'], {
+      queryParams: {
+        mode: 'emulator',
+        core,
+        gameUrl,
+      },
+    });
   }
 
   onPageChange(n: number) {

@@ -15,3 +15,23 @@ INSTRUCTIONS:
 Make your code as clean and small as possible. If a file gets too big (500+ lines) then you need to start thinking about splitting that file into multiple.
 Make sure you do not cause errors in the code and that your code matches with all the other code that is already there.
 Make sure your code is the same logically as other code in the workspace.
+
+
+
+    CURRENT STATE:
+The search works, and you can look at metadata from internet archive and show the files and download them, however, it is incredibly hard to find what you want because there are no filters
+
+BUGS: 
+the pagination does not change it every time
+you have to sress the show files button twice to make it work
+the search is still going by metadata and not just showing individual files based on seperate metadata assigned to it
+the search function only works if you are on the search page and then press enter on the bar, if you press enter on the bar in another page it just navigates to the search page without actually searching
+the emulator needs a proxy to fix some CORS stuff
+
+FEATURES NEEDED:
+emulatorjs
+document viewing
+video viewing
+audio listening
+metadata provider
+search filters
