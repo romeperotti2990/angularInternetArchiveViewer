@@ -1,0 +1,31 @@
+<div class="flex items-center justify-between gap-4">
+  <div class="flex items-center justify-center gap-2">
+    <button (click)="prev()" [disabled]="page === 1" class="px-2 py-1 text-sm border rounded-md bg-white text-gray-900 disabled:opacity-50">Previous</button>
+
+    <div class="flex items-center gap-1">
+      <span class="text-xs text-gray-700">Page</span>
+      <input
+        type="number"
+        min="1"
+        [max]="maxPage"
+        [(ngModel)]="pageInput"
+        (keydown.enter)="setPageFromInput()"
+        (focus)="$event.target.select()"
+        class="w-12 px-1 py-0 text-xs text-center border rounded-md bg-white text-gray-900"
+      />
+      <span class="text-xs text-gray-700">of {{ maxPage }}</span>
+    </div>
+
+    <button (click)="next()" [disabled]="page >= maxPage" class="px-2 py-1 text-sm border rounded-md bg-white text-gray-900 disabled:opacity-50">Next</button>
+  </div>
+
+  <div *ngIf="showPageSizeSelector" class="flex items-center gap-2">
+    <label class="text-xs text-gray-700">Results per page:</label>
+    <select [value]="pageSize" (change)="onPageSizeChange($event)" class="px-2 py-1 text-xs border rounded-md bg-white text-gray-900">
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+    </select>
+  </div>
+</div>

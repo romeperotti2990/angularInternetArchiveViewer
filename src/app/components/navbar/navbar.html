@@ -1,5 +1,15 @@
-<nav class="flex gap-3 p-3 bg-gray-900 text-white">
+<nav class="flex items-center gap-3 p-3 bg-gray-900 text-white">
   <a routerLink="/" class="text-gray-100 no-underline font-semibold">Home</a>
-  <a routerLink="/search" class="text-gray-100 no-underline font-semibold">Search</a>
   <a routerLink="/media" class="text-gray-100 no-underline font-semibold">Last Item</a>
+
+  <div class="ml-auto">
+    <input
+      #q
+      type="search"
+      aria-label="Search Internet Archive"
+      placeholder="Search Internet Archive"
+      class="px-2 py-1 rounded text-black bg-white w-64"
+      (keydown.enter)="onSearch(q.value)"
+    />
+  </div>
 </nav>

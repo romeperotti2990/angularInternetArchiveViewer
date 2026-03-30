@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -8,4 +8,13 @@ import { RouterModule } from '@angular/router';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {}
+export class Navbar {
+  constructor(private router: Router) {}
+
+  onSearch(query: string) {
+    const q = (query || '').trim();
+    console.log('[Navbar] onSearch called with:', q);
+    if (!q) return;
+    this.router.navigate(['/search'], { queryParams: { q } });
+  }
+}

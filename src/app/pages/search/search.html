@@ -1,0 +1,50 @@
+<div class="p-4">
+	<h2 class="text-xl font-semibold mb-3">Search Results</h2>
+
+	<div *ngIf="error" class="text-red-500">{{ error }}</div>
+	<div *ngIf="results.length" class="mb-4">
+		<app-pagination
+			[page]="page"
+			[pageSize]="pageSize"
+			[totalResults]="totalResults"
+			[showPageSizeSelector]="true"
+			(pageChange)="onPageChange($event)"
+			(pageSizeChange)="onPageSizeChange($event)"
+		></app-pagination>
+	</div>
+
+	<ul *ngIf="results.length">
+		<li *ngFor="let r of results" class="mb-2 border-b border-gray-300 pb-2">
+			<div class="font-bold">{{ r.title ?? r.identifier }}</div>
+			<div class="text-sm text-gray-600">ID: {{ r.identifier }} — {{ r.mediatype }}</div>
+			<div *ngIf="r.description" class="text-sm">{{ r.description }}</div>
+			<button
+				class="mt-1 px-2 py-1 text-xs rounded bg-blue-600 text-white"
+				type="button"
+				(click)="loadItemFiles(r.identifier)"
+			>
+				Show files
+			</button>
+
+			<div *ngIf="fileLoading[r.identifier]" class="text-xs text-gray-500 mt-1">Loading file list…</div>
+			<div *ngIf="fileError[r.identifier]" class="text-xs text-red-500 mt-1">{{ fileError[r.identifier] }}</div>
+
+			<ul *ngIf="itemFiles[r.identifier]?.length" class="ml-4 mt-2 text-sm">
+				<li *ngFor="let file of itemFiles[r.identifier]" class="py-0.5">
+					<a
+						[target]="'_blank'"
+						[rel]="'noopener noreferrer'"
+						[href]="getFileUrl(r.identifier, file.name)"
+						download
+						class="text-blue-600 hover:text-blue-800"
+					>
+						{{ file.name }}
+					</a>
+					<span class="text-gray-500">({{ file.format }} {{ file.size ? (file.size | number) + ' bytes' : '' }})</span>
+				</li>
+			</ul>
+		</li>
+	</ul>
+
+	<div *ngIf="!results.length">No results</div>
+</div>
