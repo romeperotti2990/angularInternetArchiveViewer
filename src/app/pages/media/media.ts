@@ -33,7 +33,40 @@ export class Media implements OnInit {
           return;
         }
 
-        const url = `/emulator.html?core=${encodeURIComponent(this.core)}&gameUrl=${encodeURIComponent(this.gameUrl)}`;
+        // If the gameUrl uses our local backend proxy, verify the backend is reachable.
+        let shouldPingBackend = false;
+        try {
+          const u = new URL(this.gameUrl);
+          if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') shouldPingBackend = true;
+        } catch (e) {
+          // ignore - if URL parsing fails we'll still try to use it
+        }
+
+        if (shouldPingBackend) {
+          const backendOrigin = (() => {
+            try {
+              return new URL(this.gameUrl as string).origin;
+            } catch (e) {
+              return null;
+            }
+          })();
+
+          if (backendOrigin) {
+            // quick ping to backend origin to see if it's running
+            fetch(backendOrigin, { method: 'GET' })
+              .then((r) => {
+                // proceed to open emulator regardless of status code
+                const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
+                this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+              })
+              .catch(() => {
+                this.error = 'Backend proxy not reachable. Start it with: npm run start-backend';
+              });
+            return;
+          }
+        }
+
+        const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
       } else {
         this.error = 'No emulator mode selected. Use /media?mode=emulator&core=<core>&gameUrl=<url>.';

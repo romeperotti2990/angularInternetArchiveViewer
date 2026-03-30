@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start-backend": "node backend/server.js"
   },
   "private": true,
   "packageManager": "npm@11.6.2",
@@ -18,13 +19,14 @@
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@zip.js/zip.js": "^2.8.23",
+    "express": "^5.2.1",
     "internetarchive-sdk-js": "^1.0.45",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@angular/build": "^21.2.2",
-    "@angular/cli": "^21.2.2",
+    "@angular/cli": "^21.2.5",
     "@angular/compiler-cli": "^21.2.0",
     "@tailwindcss/postcss": "^4.1.12",
     "jsdom": "^28.0.0",

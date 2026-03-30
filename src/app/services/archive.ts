@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import * as zip from '@zip.js/zip.js'; // npm install @zip.js/zip.js
 
 const IA_BASE = 'https://archive.org';
+const DEV_BACKEND_ORIGIN = 'http://localhost:3001';
+const DEV_PROXY_PREFIX = `${DEV_BACKEND_ORIGIN}/archive`;
 
 @Injectable({
   providedIn: 'root',
@@ -127,6 +129,14 @@ export class Archive {
   }
 
   getFileUrl(identifier: string, filename: string): string {
+    // When running locally prefer the backend proxy so the browser avoids CORS issues.
+    try {
+      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        return `${DEV_PROXY_PREFIX}/download/${encodeURIComponent(identifier)}/${encodeURIComponent(filename)}`;
+      }
+    } catch (e) {
+      // fallback to direct archive URL
+    }
     return `${IA_BASE}/download/${encodeURIComponent(identifier)}/${encodeURIComponent(filename)}`;
   }
 

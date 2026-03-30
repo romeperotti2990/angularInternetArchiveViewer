@@ -1,59 +1,28 @@
-# Capstone
+BUGS: 
+the pagination does not change it every time
+you have to sress the show files button twice to make it work
+the search is still going by metadata and not just showing individual files based on seperate metadata assigned to it
+the search function only works if you are on the search page and then press enter on the bar, if you press enter on the bar in another page it just navigates to the search page without actually searching
+the emulator needs a proxy to fix some CORS stuff
+the open in emulator button only appears on .zip files but this is fine for now as it is not a perminate feature
+the pagination seems to be half of what it should be and there is like ghost double content
+changing the pagination while having a filter removes the filter
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.2.
+FEATURES NEEDED:
+emulatorjs
+document viewing
+video viewing
+audio listening
+metadata provider
+search filters
+metadata service
+loading placholders for pagination
 
-## Development server
+IDEAS:
+have the navbar show: "last items: ..." and show the items you viewed last
+maybe with the top change we could have several files for using media, instead of one big one
 
-To start a local development server, run:
+COMMANDS:
 
-```bash
 ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+node server.js
