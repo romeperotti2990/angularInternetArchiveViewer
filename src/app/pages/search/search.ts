@@ -16,6 +16,9 @@ export class Search implements OnInit {
   mediaTypes = ['software', 'movies', 'texts', 'audio'];
   selectedMedia: Record<string, boolean> = {};
   itemFiles: Record<string, any[]> = {};
+  zipContents: Record<string, any[]> = {};
+  zipLoading: Record<string, boolean> = {};
+  zipError: Record<string, string | null> = {};
   fileLoading: Record<string, boolean> = {};
   fileError: Record<string, string | null> = {};
   error: string | null = null;
@@ -120,6 +123,55 @@ export class Search implements OnInit {
       try { this.cdr.detectChanges(); } catch (e) {}
     } finally {
       this.fileLoading[identifier] = false;
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  // Peek inside a remote ZIP file without downloading the whole archive
+  async peekZip(identifier: string, zipFilename: string) {
+    const key = `${identifier}::${zipFilename}`;
+    if (this.zipContents[key] || this.zipLoading[key]) return;
+
+    this.zipLoading[key] = true;
+    this.zipError[key] = null;
+
+    try {
+      const entries = await this.archive.listZipContents(identifier, zipFilename as string);
+      // normalize filename prop across entry shapes
+      const normalized = (entries || []).map((e: any) => ({
+        name: e.filename ?? e.fileName ?? e.name ?? e.entryName ?? '',
+        entry: e,
+      }));
+      this.zipContents[key] = normalized;
+      if (!normalized.length) this.zipError[key] = 'No entries found in ZIP';
+      try { this.cdr.detectChanges(); } catch (e) {}
+    } catch (err: any) {
+      this.zipError[key] = err?.message ?? String(err);
+      this.zipContents[key] = [];
+      try { this.cdr.detectChanges(); } catch (e) {}
+    } finally {
+      this.zipLoading[key] = false;
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  // Extract a single file entry from a remote ZIP and open in emulator via blob URL
+  async playZipEntry(identifier: string, zipFilename: string, entryObj: any) {
+    try {
+      const blob = await this.archive.extractFileFromZip(entryObj.entry);
+      const url = URL.createObjectURL(blob);
+      const core = this.getEmulatorCore(entryObj.name);
+      this.router.navigate(['/media'], {
+        queryParams: {
+          mode: 'emulator',
+          core,
+          gameUrl: url,
+        },
+      });
+      // note: object URL will remain until page unload; could revoke later if desired
+    } catch (err: any) {
+      const key = `${identifier}::${zipFilename}`;
+      this.zipError[key] = err?.message ?? String(err);
       try { this.cdr.detectChanges(); } catch (e) {}
     }
   }

@@ -25,6 +25,6 @@ Make sure your code is the same logically as other code in the workspace.
 
 
 
-    CURRENT STATE:
-The search works, and you can look at metadata from internet archive and show the files and download them, however, it is incredibly hard to find what you want because there are no filters
+CURRENT STATE:
+You can search by software, movies, texts, and audio, but only roms can be played in the website. video, audio and image files just open in a new tab which works for now.
 

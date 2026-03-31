@@ -52,13 +52,41 @@
 					</a>
 					<span class="text-gray-500">({{ file.format }} {{ file.size ? (file.size | number) + ' bytes' : '' }})</span>
 				<button
-					*ngIf="isEmulatorFile(file.name)"
+					*ngIf="isEmulatorFile(file.name) && !file.name.toLowerCase().endsWith('.zip')"
 					class="ml-2 px-2 py-1 text-xs rounded bg-green-600 text-white"
 					type="button"
 					(click)="openInEmulator(r.identifier, file.name)"
 				>
 					Open in emulator
 				</button>
+
+				<!-- ZIP handling: peek inside and play entries -->
+				<button
+					*ngIf="file.name.toLowerCase().endsWith('.zip')"
+					class="ml-2 px-2 py-1 text-xs rounded bg-yellow-600 text-white"
+					type="button"
+					(click)="peekZip(r.identifier, file.name)"
+				>
+					Peek inside ZIP
+				</button>
+
+				<div *ngIf="zipLoading[r.identifier + '::' + file.name]" class="text-xs text-gray-500 mt-1">Listing ZIP contents…</div>
+				<div *ngIf="zipError[r.identifier + '::' + file.name]" class="text-xs text-red-500 mt-1">{{ zipError[r.identifier + '::' + file.name] }}</div>
+
+				<ul *ngIf="zipContents[r.identifier + '::' + file.name]?.length" class="ml-4 mt-1 text-sm">
+					<li *ngFor="let entry of zipContents[r.identifier + '::' + file.name]" class="py-0.5">
+						<span class="text-gray-800">{{ entry.name }}</span>
+						<span class="text-gray-500">&nbsp;</span>
+						<button
+							*ngIf="isEmulatorFile(entry.name)"
+							class="ml-2 px-2 py-1 text-xs rounded bg-green-600 text-white"
+							type="button"
+							(click)="playZipEntry(r.identifier, file.name, entry)"
+						>
+							Play
+						</button>
+					</li>
+				</ul>
 				</li>
 			</ul>
 		</li>
