@@ -1,8 +1,8 @@
 BUGS: 
 the search is still going by metadata and not just showing individual files based on seperate metadata assigned to it
-the open in emulator button only appears on .zip files but this is fine for now as it is not a perminate feature
 the pagination seems to be half of what it should be and there is like ghost double content
 changing the pagination while having a filter removes the filter
+the search does not detect wether or not a zip actually has a rom in it or not
 
 FEATURES NEEDED:
 emulatorjs

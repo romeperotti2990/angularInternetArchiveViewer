@@ -121,21 +121,43 @@ export class Search implements OnInit {
 
   isEmulatorFile(filename: string): boolean {
     const ext = (filename || '').toLowerCase().split('.').pop() || '';
-    return ['gba', 'nes', 'smc', 'sfc', 'bin', 'zip'].includes(ext);
+    // common emulator-supported extensions (including archives)
+    return [
+      'gba', 'gb', 'gbc', 'nes', 'smc', 'sfc', 'bin', 'zip', 'nds', 'n64', 'z64', 'iso', 'cue', 'rom', 'img', 'pbp', 'cue'
+    ].includes(ext);
   }
 
   getEmulatorCore(filename: string): string {
     const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    // Map common extensions to emulator core names shipped in emulator cores list.
+    // Prefer cores known to work with the given extension.
     switch (ext) {
       case 'gba':
-        return 'gba';
+        return 'mgba';
+      case 'gb':
+      case 'gbc':
+        return 'gambatte';
       case 'nes':
-        return 'nes';
+        return 'nestopia';
       case 'smc':
       case 'sfc':
-        return 'snes';
+        return 'snes9x';
+      case 'nds':
+        return 'melonds';
+      case 'n64':
+      case 'z64':
+        return 'mupen64plus_next';
+      case 'iso':
+      case 'cue':
+      case 'bin':
+        return 'pcsx_rearmed';
+      case 'pbp':
+        return 'ppsspp';
+      case 'rom':
+      case 'img':
       default:
-        return 'gba';
+        // fallback to mgba for many 8/16/32-bit roms or 'fceumm' for NES-like
+        return 'mgba';
     }
   }
 
