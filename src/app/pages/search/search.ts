@@ -39,13 +39,22 @@ export class Search implements OnInit {
         }
       }
 
+      // read pagination params if present so filters and pages stay in sync
+      const pageParam = parseInt(map.get('page') ?? '1', 10);
+      this.page = Number.isFinite(pageParam) && pageParam >= 1 ? pageParam : 1;
+      this.pageInput = String(this.page);
+
+      const pageSizeParam = parseInt(map.get('pageSize') ?? map.get('rows') ?? String(this.pageSize), 10);
+      this.pageSize = Number.isFinite(pageSizeParam) && pageSizeParam >= 1 ? pageSizeParam : this.pageSize;
+
+      const mediatypes = Object.keys(this.selectedMedia).filter((k) => this.selectedMedia[k]);
+
       if (!q) {
         this.results = [];
+        this.totalResults = 0;
         return;
       }
-      this.page = 1;
-      this.pageInput = '1';
-      const mediatypes = Object.keys(this.selectedMedia).filter((k) => this.selectedMedia[k]);
+
       this.runSearch(q, mediatypes.length ? mediatypes : undefined);
     });
   }
@@ -84,11 +93,11 @@ export class Search implements OnInit {
       const mediatypes = Object.keys(this.selectedMedia).filter((k) => this.selectedMedia[k]);
       this.page = 1;
       this.pageInput = '1';
-      this.runSearch(q, mediatypes.length ? mediatypes : undefined);
-      // update URL to reflect selected media
-      const qp: any = { q };
+      // update URL to reflect selected media and reset page
+      const qp: any = { q, page: '1', pageSize: String(this.pageSize) };
       if (mediatypes.length) qp.media = mediatypes.join(',');
       this.router.navigate([], { queryParams: qp, replaceUrl: true });
+      this.runSearch(q, mediatypes.length ? mediatypes : undefined);
     }
   }
 
@@ -177,7 +186,15 @@ export class Search implements OnInit {
     this.page = n;
     this.pageInput = String(n);
     const q = this.route.snapshot.queryParamMap.get('q') ?? '';
-    if (q) this.runSearch(q);
+    const mediatypes = Object.keys(this.selectedMedia).filter((k) => this.selectedMedia[k]);
+    // update URL to include active filters and page
+    const qp: any = {};
+    if (q) qp.q = q;
+    if (mediatypes.length) qp.media = mediatypes.join(',');
+    qp.page = String(this.page);
+    qp.pageSize = String(this.pageSize);
+    this.router.navigate([], { queryParams: qp, replaceUrl: true });
+    if (q) this.runSearch(q, mediatypes.length ? mediatypes : undefined);
   }
 
   onPageSizeChange(n: number) {
@@ -185,6 +202,13 @@ export class Search implements OnInit {
     this.page = 1;
     this.pageInput = '1';
     const q = this.route.snapshot.queryParamMap.get('q') ?? '';
-    if (q) this.runSearch(q);
+    const mediatypes = Object.keys(this.selectedMedia).filter((k) => this.selectedMedia[k]);
+    const qp: any = {};
+    if (q) qp.q = q;
+    if (mediatypes.length) qp.media = mediatypes.join(',');
+    qp.page = '1';
+    qp.pageSize = String(this.pageSize);
+    this.router.navigate([], { queryParams: qp, replaceUrl: true });
+    if (q) this.runSearch(q, mediatypes.length ? mediatypes : undefined);
   }
 }

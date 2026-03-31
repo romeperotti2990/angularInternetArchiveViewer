@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -17,7 +17,7 @@ export class Media implements OnInit {
   emulatorUrl: SafeResourceUrl | null = null;
   error: string | null = null;
 
-  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer) {}
+  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
@@ -58,9 +58,11 @@ export class Media implements OnInit {
                 // proceed to open emulator regardless of status code
                 const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
                 this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+                try { this.cdr.detectChanges(); } catch (e) {}
               })
               .catch(() => {
                 this.error = 'Backend proxy not reachable. Start it with: npm run start-backend';
+                try { this.cdr.detectChanges(); } catch (e) {}
               });
             return;
           }
@@ -68,6 +70,7 @@ export class Media implements OnInit {
 
         const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        try { this.cdr.detectChanges(); } catch (e) {}
       } else {
         this.error = 'No emulator mode selected. Use /media?mode=emulator&core=<core>&gameUrl=<url>.';
       }
