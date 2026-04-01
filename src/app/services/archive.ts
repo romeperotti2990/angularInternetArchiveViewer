@@ -16,21 +16,67 @@ export class Archive {
    * 1. PEEKS inside a ZIP on IA servers without downloading the whole thing.
    * Uses HTTP Range requests to only grab the ZIP's central directory.
    */
-  async listZipContents(identifier: string, zipFilename: string): Promise<zip.Entry[]> {
+  async listZipContents(
+    identifier: string,
+    zipFilename: string,
+    progressCb?: (percent: number, message?: string) => void,
+  ): Promise<zip.Entry[]> {
+    // First, try to use IA metadata to avoid peeking into the archive when
+    // the item already contains extracted files (common on archive.org).
+    try {
+      if (progressCb) progressCb(10, 'Fetching IA metadata');
+      const meta = await this.getMetadata(identifier);
+      const files = meta?.files ?? [];
+      const base = (zipFilename || '').replace(/\.zip$/i, '');
+
+      // If the IA item already lists files that look like emulator/media files
+      // and are related to the ZIP filename, return those as lightweight entries
+      // so the UI can open them directly without ranged ZIP requests.
+      const romLikeExt = new Set([
+        'gba', 'gb', 'gbc', 'nes', 'sfc', 'smc', 'bin', 'nds', 'n64', 'z64', 'iso', 'cue', 'pbp', 'rom', 'img'
+      ]);
+
+      const candidateFiles = files
+        .map((f: any) => ({ name: f.name || f.filename || f.file || '', size: f.size, raw: f }))
+        .filter((f: any) => f.name && f.name.toLowerCase() !== zipFilename.toLowerCase())
+        .filter((f: any) => {
+          const n = f.name.toLowerCase();
+          const ext = n.split('.').pop() || '';
+          // ignore other archives
+          if (['zip', '7z', 'rar'].includes(ext)) return false;
+          // prefer obvious rom/media extensions, or names that contain the zip base
+          if (romLikeExt.has(ext)) return true;
+          if (base && n.includes(base.toLowerCase())) return true;
+          return false;
+        });
+
+      if (candidateFiles.length) {
+        if (progressCb) progressCb(100, 'Using IA metadata');
+        // Return a lightweight array that the UI will normalize and handle.
+        return candidateFiles.map((c: any) => ({ filename: c.name, name: c.name, metadataOnly: true, raw: c.raw } as any));
+      }
+    } catch (metaErr) {
+      if (progressCb) progressCb(20, 'Metadata unavailable, falling back');
+      // ignore metadata failures and fall back to peeking
+    }
+
+    // Fallback: perform real ZIP central-directory peek via ranged requests.
     const url = this.getFileUrl(identifier, zipFilename);
 
-    // The HttpReader is the magic part—it only requests the bytes it needs
+    if (progressCb) progressCb(30, 'Starting ZIP peek');
     const reader = new zip.HttpReader(url);
     const zipReader = new zip.ZipReader(reader);
 
     try {
+      if (progressCb) progressCb(60, 'Reading central directory');
       const entries = await zipReader.getEntries();
-      // We don't close the reader yet if we want to extract later, 
-      // but for just listing, we can.
+      if (progressCb) progressCb(95, 'Parsing entries');
       await zipReader.close();
+      if (progressCb) progressCb(100, 'Done');
       return entries;
     } catch (err) {
       console.error('[Archive] ZIP peek failed. Likely CORS or not a valid ZIP.', err);
+      if (progressCb) progressCb(0, 'Failed');
       throw err;
     }
   }

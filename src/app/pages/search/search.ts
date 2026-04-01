@@ -19,6 +19,7 @@ export class Search implements OnInit {
   zipContents: Record<string, any[]> = {};
   zipLoading: Record<string, boolean> = {};
   zipError: Record<string, string | null> = {};
+  zipProgress: Record<string, number> = {};
   fileLoading: Record<string, boolean> = {};
   fileError: Record<string, string | null> = {};
   error: string | null = null;
@@ -134,9 +135,13 @@ export class Search implements OnInit {
 
     this.zipLoading[key] = true;
     this.zipError[key] = null;
+    this.zipProgress[key] = 0;
 
     try {
-      const entries = await this.archive.listZipContents(identifier, zipFilename as string);
+      const entries = await this.archive.listZipContents(identifier, zipFilename as string, (p: number) => {
+        this.zipProgress[key] = Math.max(0, Math.min(100, Math.floor(p))); // integer 0-100
+        try { this.cdr.detectChanges(); } catch (e) {}
+      });
       // normalize filename prop across entry shapes
       const normalized = (entries || []).map((e: any) => ({
         name: e.filename ?? e.fileName ?? e.name ?? e.entryName ?? '',
@@ -151,6 +156,7 @@ export class Search implements OnInit {
       try { this.cdr.detectChanges(); } catch (e) {}
     } finally {
       this.zipLoading[key] = false;
+      this.zipProgress[key] = 100;
       try { this.cdr.detectChanges(); } catch (e) {}
     }
   }
@@ -158,6 +164,17 @@ export class Search implements OnInit {
   // Extract a single file entry from a remote ZIP and open in emulator via blob URL
   async playZipEntry(identifier: string, zipFilename: string, entryObj: any) {
     try {
+      // If this entry came from IA metadata (not an in-zip entry), open the
+      // file directly via its archive URL instead of trying to extract.
+      if (!entryObj.entry || entryObj.entry.metadataOnly) {
+        const url = this.getFileUrl(identifier, entryObj.name);
+        const core = this.getEmulatorCore(entryObj.name);
+        this.router.navigate(['/media'], {
+          queryParams: { mode: 'emulator', core, gameUrl: url },
+        });
+        return;
+      }
+
       const blob = await this.archive.extractFileFromZip(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const core = this.getEmulatorCore(entryObj.name);
@@ -179,6 +196,18 @@ export class Search implements OnInit {
   // Open a non-emulator file entry (video/audio/image/other) from a ZIP in the media page
   async openZipEntry(identifier: string, zipFilename: string, entryObj: any) {
     try {
+      if (!entryObj.entry || entryObj.entry.metadataOnly) {
+        const url = this.getFileUrl(identifier, entryObj.name);
+        const mode = this.getModeForFilename(entryObj.name);
+        if (mode === 'emulator') {
+          const core = this.getEmulatorCore(entryObj.name);
+          this.router.navigate(['/media'], { queryParams: { mode: 'emulator', core, gameUrl: url } });
+        } else {
+          this.router.navigate(['/media'], { queryParams: { mode, mediaUrl: url } });
+        }
+        return;
+      }
+
       const blob = await this.archive.extractFileFromZip(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const mode = this.getModeForFilename(entryObj.name);

@@ -75,7 +75,12 @@
 					Peek inside ZIP
 				</button>
 
-				<div *ngIf="zipLoading[r.identifier + '::' + file.name]" class="text-xs text-gray-500 mt-1">Listing ZIP contents…</div>
+				<div *ngIf="zipLoading[r.identifier + '::' + file.name]" class="text-xs text-gray-500 mt-1">
+					<div>Listing ZIP contents…</div>
+					<div *ngIf="zipProgress[r.identifier + '::' + file.name] >= 0" class="w-full bg-gray-200 rounded h-2 mt-1 overflow-hidden">
+						<div class="bg-blue-600 h-2" [style.width.%]="zipProgress[r.identifier + '::' + file.name]"></div>
+					</div>
+				</div>
 				<div *ngIf="zipError[r.identifier + '::' + file.name]" class="text-xs text-red-500 mt-1">{{ zipError[r.identifier + '::' + file.name] }}</div>
 
 				<ul *ngIf="zipContents[r.identifier + '::' + file.name]?.length" class="ml-4 mt-1 text-sm">
