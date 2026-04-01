@@ -42,13 +42,18 @@
 			<ul *ngIf="itemFiles[r.identifier]?.length" class="ml-4 mt-2 text-sm">
 				<li *ngFor="let file of itemFiles[r.identifier]" class="py-0.5">
 					<a
-						[target]="'_blank'"
-						[rel]="'noopener noreferrer'"
-						[href]="getFileUrl(r.identifier, file.name)"
-						download
+						href="#"
+						(click)="$event.preventDefault(); openFile(r.identifier, file.name)"
 						class="text-blue-600 hover:text-blue-800"
 					>
 						{{ file.name }}
+					</a>
+					<a
+						[href]="getFileUrl(r.identifier, file.name)"
+						download
+						class="ml-2 text-sm text-gray-600"
+					>
+						Download
 					</a>
 					<span class="text-gray-500">({{ file.format }} {{ file.size ? (file.size | number) + ' bytes' : '' }})</span>
 				<button

@@ -185,11 +185,9 @@ export class Search implements OnInit {
       if (mode === 'emulator') {
         const core = this.getEmulatorCore(entryObj.name);
         this.router.navigate(['/media'], { queryParams: { mode: 'emulator', core, gameUrl: url } });
-      } else if (mode === 'video' || mode === 'audio' || mode === 'image') {
-        this.router.navigate(['/media'], { queryParams: { mode, mediaUrl: url } });
       } else {
-        // fallback: open raw object URL in new tab
-        window.open(url, '_blank', 'noopener');
+        // route all other viewable types to the in-app media page
+        this.router.navigate(['/media'], { queryParams: { mode, mediaUrl: url } });
       }
     } catch (err: any) {
       const key = `${identifier}::${zipFilename}`;
@@ -204,11 +202,24 @@ export class Search implements OnInit {
     if (['mp4', 'webm', 'mkv', 'ogv', 'ogg'].includes(ext)) return 'video';
     if (['mp3', 'wav', 'ogg', 'm4a', 'flac'].includes(ext)) return 'audio';
     if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return 'image';
+    // documents and plain text
+    if (['pdf', 'epub', 'html', 'htm'].includes(ext)) return 'document';
+    if (['txt', 'md', 'csv', 'json'].includes(ext)) return 'text';
     return 'other';
   }
 
   getFileUrl(identifier: string, filename: string): string {
     return this.archive.getFileUrl(identifier, filename);
+  }
+
+  openFile(identifier: string, filename: string) {
+    const mode = this.getModeForFilename(filename);
+    const url = this.getFileUrl(identifier, filename);
+    if (mode === 'emulator') {
+      this.openInEmulator(identifier, filename);
+    } else {
+      this.router.navigate(['/media'], { queryParams: { mode, mediaUrl: url } });
+    }
   }
 
   isEmulatorFile(filename: string): boolean {

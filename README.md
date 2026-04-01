@@ -5,6 +5,8 @@ when you are playing a game and holding the up and down arrow keys it will scrol
 peeking inside of .zip files takes a while for some reason. 
 sometimes the roms that are zips within the zips do not work.
 You cannot search for books, only text. hopfully this will be fixed after they are listed individually.
+it is hard to tell if a zip or 7z is actually a rom or not, so you often end up downloading something that does not work with emulatorjs
+
 
 FEATURES NEEDED:
 emulatorjs (mostly done)

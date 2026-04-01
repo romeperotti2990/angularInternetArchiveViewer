@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -18,6 +18,9 @@ export class Media implements OnInit {
   mediaUrl: SafeResourceUrl | null = null;
   mediaRawUrl: string | null = null;
   error: string | null = null;
+  isLoading = false;
+  documentContent: string | null = null;
+  private _keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) {}
 
@@ -72,23 +75,88 @@ export class Media implements OnInit {
 
         const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        // prevent arrow keys from scrolling the page while emulator is active
+        this.addPreventArrowScroll();
         try { this.cdr.detectChanges(); } catch (e) {}
         return;
       }
 
-      // Handle streaming media (video, audio, image)
-      if (this.mode === 'video' || this.mode === 'audio' || this.mode === 'image') {
+      // Handle streaming media (video, audio, image, document, text)
+      if (this.mode === 'video' || this.mode === 'audio' || this.mode === 'image' || this.mode === 'document' || this.mode === 'text' || this.mode === 'other') {
         this.mediaRawUrl = params.get('mediaUrl') ?? params.get('gameUrl') ?? null;
         if (!this.mediaRawUrl) {
           this.error = 'Missing mediaUrl parameter.';
           return;
         }
+
+        // Text mode: fetch content and display in-app
+        if (this.mode === 'text') {
+          this.isLoading = true;
+          try {
+            fetch(this.mediaRawUrl)
+              .then((r) => r.text())
+              .then((t) => {
+                this.documentContent = t;
+                this.isLoading = false;
+                try { this.cdr.detectChanges(); } catch (e) {}
+              })
+              .catch((err) => {
+                this.error = `Failed to load text: ${err?.message ?? String(err)}`;
+                this.isLoading = false;
+                try { this.cdr.detectChanges(); } catch (e) {}
+              });
+          } catch (err: any) {
+            this.error = err?.message ?? String(err);
+            this.isLoading = false;
+          }
+          return;
+        }
+
+        // document/other/video/audio/image: show in iframe/media element
         this.mediaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.mediaRawUrl);
+        this.isLoading = true;
         try { this.cdr.detectChanges(); } catch (e) {}
         return;
       }
 
-      this.error = 'No emulator or media mode selected. Use /media?mode=emulator|video|audio|image&...';
+      this.error = 'No emulator or media mode selected. Use /media?mode=emulator|video|audio|image|document|text&...';
     });
+  }
+
+  ngOnDestroy(): void {
+    // revoke blob URLs if we were given them
+    try {
+      if (this.mediaRawUrl && this.mediaRawUrl.startsWith && this.mediaRawUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(this.mediaRawUrl as string);
+      }
+      if (this.gameUrl && this.gameUrl.startsWith && this.gameUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(this.gameUrl as string);
+      }
+    } catch (e) {}
+    this.removePreventArrowScroll();
+  }
+
+  private addPreventArrowScroll() {
+    this.removePreventArrowScroll();
+    this._keydownHandler = (e: KeyboardEvent) => {
+      const keys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'];
+      if (keys.includes(e.key)) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('keydown', this._keydownHandler, { passive: false });
+  }
+
+  private removePreventArrowScroll() {
+    if (this._keydownHandler) {
+      window.removeEventListener('keydown', this._keydownHandler as any);
+      this._keydownHandler = null;
+    }
+  }
+
+  // called from template when media finishes loading
+  onMediaLoaded() {
+    this.isLoading = false;
+    try { this.cdr.detectChanges(); } catch (e) {}
   }
 }

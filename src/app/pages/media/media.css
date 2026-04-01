@@ -1,0 +1,14 @@
+/* Simple media spinner/overlay */
+.media-spinner {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255,255,255,0.7);
+	color: #111827;
+	font-weight: 600;
+}

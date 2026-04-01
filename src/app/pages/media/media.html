@@ -6,6 +6,7 @@
     <p class="text-sm mb-2">
       Core: <strong>{{ core }}</strong> | Game file:
       <a [href]="gameUrl" target="_blank" rel="noopener noreferrer">{{ gameUrl }}</a>
+      <a [href]="gameUrl" download class="ml-3 text-sm text-blue-600">Download</a>
     </p>
     <div class="border border-gray-300" style="height: 640px;">
       <iframe
@@ -21,30 +22,73 @@
   <!-- Video player -->
   <div *ngIf="mode === 'video' && mediaUrl">
     <h3 class="text-lg font-semibold mb-2">Video</h3>
-    <video controls autoplay style="width:100%; max-height:80vh;" class="border border-gray-300">
-      <source [src]="mediaUrl" />
-      Your browser does not support the video tag.
-    </video>
+    <div class="relative">
+      <video controls autoplay style="width:100%; max-height:80vh;" class="border border-gray-300" (loadedmetadata)="onMediaLoaded()">
+        <source [src]="mediaUrl" />
+        Your browser does not support the video tag.
+      </video>
+      <div *ngIf="isLoading" class="media-spinner">Loading…</div>
+    </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
   </div>
 
   <!-- Audio player -->
   <div *ngIf="mode === 'audio' && mediaUrl">
     <h3 class="text-lg font-semibold mb-2">Audio</h3>
-    <audio controls autoplay style="width:100%;" class="border border-gray-300">
-      <source [src]="mediaUrl" />
-      Your browser does not support the audio element.
-    </audio>
+    <div class="relative">
+      <audio controls autoplay style="width:100%;" class="border border-gray-300" (loadeddata)="onMediaLoaded()">
+        <source [src]="mediaUrl" />
+        Your browser does not support the audio element.
+      </audio>
+      <div *ngIf="isLoading" class="media-spinner">Loading…</div>
+    </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
   </div>
 
   <!-- Image viewer -->
   <div *ngIf="mode === 'image' && mediaRawUrl">
     <h3 class="text-lg font-semibold mb-2">Image</h3>
-    <div class="border border-gray-300 p-2" style="max-height:80vh; overflow:auto;">
-      <img [src]="mediaRawUrl" alt="Image" style="width:100%; height:auto; object-fit:contain" />
+    <div class="border border-gray-300 p-2" style="max-height:80vh; overflow:auto; position:relative;">
+      <img [src]="mediaRawUrl" alt="Image" style="width:100%; height:auto; object-fit:contain" (load)="onMediaLoaded()" />
+      <div *ngIf="isLoading" class="media-spinner">Loading…</div>
     </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+  </div>
+
+  <!-- Document viewer (PDF, HTML, EPUB fallback to iframe) -->
+  <div *ngIf="mode === 'document' && mediaUrl">
+    <h3 class="text-lg font-semibold mb-2">Document</h3>
+    <div class="border border-gray-300" style="height:80vh; position:relative;">
+      <iframe [src]="mediaUrl" width="100%" height="100%" frameborder="0" (load)="onMediaLoaded()"></iframe>
+      <div *ngIf="isLoading" class="media-spinner">Loading…</div>
+    </div>
+    <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+  </div>
+
+  <!-- Plain text viewer -->
+  <div *ngIf="mode === 'text'">
+    <h3 class="text-lg font-semibold mb-2">Text</h3>
+    <div class="border border-gray-300 p-2" style="max-height:80vh; overflow:auto; white-space:pre-wrap; font-family:monospace; position:relative;">
+      <div *ngIf="isLoading" class="media-spinner">Loading…</div>
+      <pre *ngIf="!isLoading">{{ documentContent }}</pre>
+    </div>
+    <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+  </div>
+
+  <!-- Fallback viewer for other types: try iframe -->
+  <div *ngIf="mode === 'other' && mediaUrl">
+    <h3 class="text-lg font-semibold mb-2">Viewer</h3>
+    <div class="border border-gray-300" style="height:80vh; position:relative;">
+      <iframe [src]="mediaUrl" width="100%" height="100%" frameborder="0" (load)="onMediaLoaded()"></iframe>
+      <div *ngIf="isLoading" class="media-spinner">Loading…</div>
+    </div>
+    <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
   </div>
 
   
