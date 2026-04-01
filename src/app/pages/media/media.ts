@@ -15,6 +15,8 @@ export class Media implements OnInit {
   core: string | null = null;
   gameUrl: string | null = null;
   emulatorUrl: SafeResourceUrl | null = null;
+  mediaUrl: SafeResourceUrl | null = null;
+  mediaRawUrl: string | null = null;
   error: string | null = null;
 
   constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) {}
@@ -71,9 +73,22 @@ export class Media implements OnInit {
         const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
         try { this.cdr.detectChanges(); } catch (e) {}
-      } else {
-        this.error = 'No emulator mode selected. Use /media?mode=emulator&core=<core>&gameUrl=<url>.';
+        return;
       }
+
+      // Handle streaming media (video, audio, image)
+      if (this.mode === 'video' || this.mode === 'audio' || this.mode === 'image') {
+        this.mediaRawUrl = params.get('mediaUrl') ?? params.get('gameUrl') ?? null;
+        if (!this.mediaRawUrl) {
+          this.error = 'Missing mediaUrl parameter.';
+          return;
+        }
+        this.mediaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.mediaRawUrl);
+        try { this.cdr.detectChanges(); } catch (e) {}
+        return;
+      }
+
+      this.error = 'No emulator or media mode selected. Use /media?mode=emulator|video|audio|image&...';
     });
   }
 }

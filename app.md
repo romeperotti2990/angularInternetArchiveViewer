@@ -8,7 +8,7 @@ USERS DO NOT NEED AN ACCOUNT OR AN EMAIL. it should just work. accounts are a fu
 INTENDED UX:
 The user should go onto the site
 the user should search for something in the bar at the top, filtering by filetype/mediatype
-it should show lots of items filtered from files on internet archive
+it should show lots of items filtered from files on internet archive (i'm thinking of abandoning the filtering idea, as it is proving difficult and it is kind of fun to find files yourself)
 user clicks on an item and it shows more data about the item as well as a download and play/view button
 user clicks on play and whatever means of viewing the content is brought up, along with still a download button
 
@@ -23,8 +23,8 @@ Make your code as clean and small as possible. If a file gets too big (500+ line
 Make sure you do not cause errors in the code and that your code matches with all the other code that is already there.
 Make sure your code is the same logically as other code in the workspace.
 
-
-
 CURRENT STATE:
-You can search by software, movies, texts, and audio, but only roms can be played in the website. video, audio and image files just open in a new tab which works for now.
+You can search by software, movies, texts, and audio, but only roms can be played in the website. 
+you can see inside of .zip files but it takes a while for some reason. also sometimes the roms that are zips within the zips do not work.
+video, audio and image files just open in a new tab which works for now.
 

@@ -1,7 +1,10 @@
-BUGS: 
+BUGS/ PROBLEMS: 
 the search is still going by IA metadata and not just showing individual files based on seperate metadata assigned to it
 the pagination sometimes seems to be half of what it should be and there is like ghost double content (idk if this happens anymore)
 when you are playing a game and holding the up and down arrow keys it will scroll the page. (anndoying)
+peeking inside of .zip files takes a while for some reason. 
+sometimes the roms that are zips within the zips do not work.
+You cannot search for books, only text. hopfully this will be fixed after they are listed individually.
 
 FEATURES NEEDED:
 emulatorjs (mostly done)

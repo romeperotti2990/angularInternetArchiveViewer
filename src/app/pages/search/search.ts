@@ -176,6 +176,37 @@ export class Search implements OnInit {
     }
   }
 
+  // Open a non-emulator file entry (video/audio/image/other) from a ZIP in the media page
+  async openZipEntry(identifier: string, zipFilename: string, entryObj: any) {
+    try {
+      const blob = await this.archive.extractFileFromZip(entryObj.entry);
+      const url = URL.createObjectURL(blob);
+      const mode = this.getModeForFilename(entryObj.name);
+      if (mode === 'emulator') {
+        const core = this.getEmulatorCore(entryObj.name);
+        this.router.navigate(['/media'], { queryParams: { mode: 'emulator', core, gameUrl: url } });
+      } else if (mode === 'video' || mode === 'audio' || mode === 'image') {
+        this.router.navigate(['/media'], { queryParams: { mode, mediaUrl: url } });
+      } else {
+        // fallback: open raw object URL in new tab
+        window.open(url, '_blank', 'noopener');
+      }
+    } catch (err: any) {
+      const key = `${identifier}::${zipFilename}`;
+      this.zipError[key] = err?.message ?? String(err);
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  getModeForFilename(filename: string): string {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    if (this.isEmulatorFile(filename)) return 'emulator';
+    if (['mp4', 'webm', 'mkv', 'ogv', 'ogg'].includes(ext)) return 'video';
+    if (['mp3', 'wav', 'ogg', 'm4a', 'flac'].includes(ext)) return 'audio';
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return 'image';
+    return 'other';
+  }
+
   getFileUrl(identifier: string, filename: string): string {
     return this.archive.getFileUrl(identifier, filename);
   }

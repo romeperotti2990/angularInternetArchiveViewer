@@ -85,6 +85,14 @@
 						>
 							Play
 						</button>
+						<button
+							*ngIf="!isEmulatorFile(entry.name)"
+							class="ml-2 px-2 py-1 text-xs rounded bg-blue-600 text-white"
+							type="button"
+							(click)="openZipEntry(r.identifier, file.name, entry)"
+						>
+							Open
+						</button>
 					</li>
 				</ul>
 				</li>

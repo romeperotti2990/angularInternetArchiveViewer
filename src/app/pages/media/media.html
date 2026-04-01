@@ -18,5 +18,34 @@
     </div>
   </div>
 
+  <!-- Video player -->
+  <div *ngIf="mode === 'video' && mediaUrl">
+    <h3 class="text-lg font-semibold mb-2">Video</h3>
+    <video controls autoplay style="width:100%; max-height:80vh;" class="border border-gray-300">
+      <source [src]="mediaUrl" />
+      Your browser does not support the video tag.
+    </video>
+    <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+  </div>
+
+  <!-- Audio player -->
+  <div *ngIf="mode === 'audio' && mediaUrl">
+    <h3 class="text-lg font-semibold mb-2">Audio</h3>
+    <audio controls autoplay style="width:100%;" class="border border-gray-300">
+      <source [src]="mediaUrl" />
+      Your browser does not support the audio element.
+    </audio>
+    <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+  </div>
+
+  <!-- Image viewer -->
+  <div *ngIf="mode === 'image' && mediaRawUrl">
+    <h3 class="text-lg font-semibold mb-2">Image</h3>
+    <div class="border border-gray-300 p-2" style="max-height:80vh; overflow:auto;">
+      <img [src]="mediaRawUrl" alt="Image" style="width:100%; height:auto; object-fit:contain" />
+    </div>
+    <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
+  </div>
+
   
 </div>
