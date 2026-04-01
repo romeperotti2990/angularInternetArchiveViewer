@@ -23,6 +23,8 @@ have the navbar show: "last items: ..." and show the items you viewed last
 maybe with the top change we could have several files for using media, instead of one big one
 somtimes large items will take up the whole page so I could add minification
 sometimes there are a lot of files from a collection so I could make like an item page to look at the whole thing
+favoriteing items so you can go back to them
+a random button (filterable, of course)
 
 COMMANDS:
 
