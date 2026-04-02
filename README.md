@@ -20,7 +20,6 @@ metadata service
 loading screens for pagination (might not need it, might just want to have it show what it has loaded instead)
 
 IDEAS:
-have the navbar show: "last items: ..." and show the items you viewed last
 maybe with the top change we could have several files for using media, instead of one big one
 somtimes large items will take up the whole page so I could add minification
 sometimes there are a lot of files from a collection so I could make like an item page to look at the whole thing

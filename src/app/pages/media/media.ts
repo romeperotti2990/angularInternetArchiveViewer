@@ -63,6 +63,8 @@ export class Media implements OnInit {
                 // proceed to open emulator regardless of status code
                 const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
                 this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+                // record last-viewed item (backend path)
+                try { this.saveLastItem(); } catch (e) {}
                 try { this.cdr.detectChanges(); } catch (e) {}
               })
               .catch(() => {
@@ -77,6 +79,8 @@ export class Media implements OnInit {
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
         // prevent arrow keys from scrolling the page while emulator is active
         this.addPreventArrowScroll();
+        // record last-viewed item
+        try { this.saveLastItem(); } catch (e) {}
         try { this.cdr.detectChanges(); } catch (e) {}
         return;
       }
@@ -115,6 +119,8 @@ export class Media implements OnInit {
         // document/other/video/audio/image: show in iframe/media element
         this.mediaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.mediaRawUrl);
         this.isLoading = true;
+        // record last-viewed item
+        try { this.saveLastItem(); } catch (e) {}
         try { this.cdr.detectChanges(); } catch (e) {}
         return;
       }
@@ -134,6 +140,49 @@ export class Media implements OnInit {
       }
     } catch (e) {}
     this.removePreventArrowScroll();
+  }
+
+  private deriveLabel(): string {
+    // Prefer a readable filename from the URL, fall back to mode.
+    const u = (this.mode === 'emulator' ? this.gameUrl : this.mediaRawUrl) || '';
+    try {
+      if (!u) return 'Item';
+      if (u.startsWith('blob:')) return 'Local item';
+      const parsed = new URL(u, window.location.href);
+      const seg = (parsed.pathname || '').split('/').filter(Boolean).pop();
+      return decodeURIComponent(seg || parsed.hostname || 'Item');
+    } catch (e) {
+      // fallback: try to take last path-like segment
+      const parts = u.split('/').filter(Boolean);
+      return decodeURIComponent(parts.pop() || u.substring(0, 40) || 'Item');
+    }
+  }
+
+  private saveLastItem() {
+    const url = this.mode === 'emulator' ? this.gameUrl : this.mediaRawUrl;
+    if (!url) return;
+    const item = {
+      label: this.deriveLabel(),
+      mode: this.mode,
+      core: this.core,
+      url,
+      ts: Date.now(),
+    } as any;
+
+    try {
+      const key = 'iav:lastItems';
+      const raw = localStorage.getItem(key);
+      const arr = raw ? JSON.parse(raw) : [];
+      // dedupe by url
+      const filtered = arr.filter((a: any) => a.url !== item.url);
+      filtered.unshift(item);
+      const sliced = filtered.slice(0, 10);
+      localStorage.setItem(key, JSON.stringify(sliced));
+      // notify other components in-page
+      try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
+    } catch (e) {
+      // ignore storage errors
+    }
   }
 
   private addPreventArrowScroll() {

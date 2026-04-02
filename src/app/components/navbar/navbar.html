@@ -1,6 +1,17 @@
 <nav class="flex items-center gap-3 p-3 bg-gray-900 text-white">
   <a routerLink="/" class="text-gray-100 no-underline font-semibold">Home</a>
-  <a routerLink="/media" class="text-gray-100 no-underline font-semibold">Last Item</a>
+  <div class="text-gray-100">
+    <span class="font-semibold">Last items:</span>
+    <ng-container *ngIf="lastItems?.length; else noLast">
+      <span *ngFor="let it of lastItems; let i = index">
+        <a href="#" (click)="$event.preventDefault(); openLastItem(it)" class="ml-2 text-gray-100 no-underline">{{ it.label }}</a>
+        <span *ngIf="i < lastItems.length - 1" class="text-gray-400">,</span>
+      </span>
+    </ng-container>
+    <ng-template #noLast>
+      <span class="ml-2 text-gray-300">(none)</span>
+    </ng-template>
+  </div>
 
   <div class="ml-auto">
     <input
