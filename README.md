@@ -6,8 +6,7 @@ peeking inside of .zip files takes a while for some reason.
 sometimes the roms that are zips within the zips do not work.
 You cannot search for books, only text. hopfully this will be fixed after they are listed individually.
 it is hard to tell if a zip or 7z is actually a rom or not, so you often end up downloading something that does not work with emulatorjs
-videos strait up do not work in app
-
+the media page says "Emulator" no matter what
 
 FEATURES NEEDED:
 emulatorjs (mostly done)
@@ -19,12 +18,15 @@ search filters (they are minimal rn)
 metadata service
 loading screens for pagination (might not need it, might just want to have it show what it has loaded instead)
 
+
 IDEAS:
 maybe with the top change we could have several files for using media, instead of one big one
 somtimes large items will take up the whole page so I could add minification
 sometimes there are a lot of files from a collection so I could make like an item page to look at the whole thing
 favoriteing items so you can go back to them
 a random button (filterable, of course)
+I would like for you to be able to look at a collection and view all the content in that collection, like in internet archive
+making queue of items
 
 COMMANDS:
 

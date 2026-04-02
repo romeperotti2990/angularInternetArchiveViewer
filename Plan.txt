@@ -6,5 +6,6 @@ the hardest hurdle of this is scanning ALL of internet archive. even if I did kn
 possible solutions are storing all the links as json, having a program guess what they are, then remove duplicates and show them. then a user can just search through the json and find what they need finaly.
 or hitting a metadata archive first, then finding the thing as a user clicks on item
 if I had an exsisting userbase, what I would do is have a bunch of metadata providers (igdb, tmdb, etc.) and have the users themselves update the json links so other users can just click play. but i dont have a userbase.
+another possible solution is to just show the files themselves and no description, and leave people to wander the data
 
 im having trouble deciding how I even want this to look like.
