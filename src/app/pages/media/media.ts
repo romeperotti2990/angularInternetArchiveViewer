@@ -208,4 +208,10 @@ export class Media implements OnInit {
     this.isLoading = false;
     try { this.cdr.detectChanges(); } catch (e) {}
   }
+
+  onMediaError(e: any) {
+    this.isLoading = false;
+    this.error = 'Failed to load media. Check network/CORS or open raw link.';
+    try { this.cdr.detectChanges(); } catch (err) {}
+  }
 }
