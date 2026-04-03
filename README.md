@@ -8,6 +8,8 @@ You cannot search for books, only text. hopfully this will be fixed after they a
 it is hard to tell if a .zip or .7z or .iso is actually a rom or not, so you often end up downloading something that does not work with emulatorjs
 the media page says "Emulator" no matter what
 items do not appear in order when searching, changing the page, amount per page will re shuffle the responses.
+pressing "show files" more than once makes it show up much faster
+things in zips are called "local item" in the history on the nav
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
