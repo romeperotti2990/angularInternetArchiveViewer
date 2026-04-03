@@ -237,6 +237,20 @@ export class Search implements OnInit {
     return 'other';
   }
 
+  formatBytes(bytes: number | null | undefined): string {
+    if (bytes == null || isNaN(Number(bytes))) return '';
+    const b = Number(bytes);
+    if (b < 1024) return b + ' B';
+    const units = ['KB', 'MB', 'GB', 'TB'];
+    let value = b / 1024;
+    let i = 0;
+    while (value >= 1024 && i < units.length - 1) {
+      value = value / 1024;
+      i++;
+    }
+    return `${value.toFixed(value < 10 ? 2 : value < 100 ? 1 : 0)} ${units[i]}`;
+  }
+
   getFileUrl(identifier: string, filename: string): string {
     return this.archive.getFileUrl(identifier, filename);
   }

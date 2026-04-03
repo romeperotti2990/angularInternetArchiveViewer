@@ -55,7 +55,7 @@
 					>
 						Download
 					</a>
-					<span class="text-gray-500">({{ file.format }} {{ file.size ? (file.size | number) + ' bytes' : '' }})</span>
+					<span class="text-gray-500">({{ file.format }} {{ file.size ? formatBytes(file.size) : '' }})</span>
 				<button
 					*ngIf="isEmulatorFile(file.name) && !file.name.toLowerCase().endsWith('.zip')"
 					class="ml-2 px-2 py-1 text-xs rounded bg-green-600 text-white"
