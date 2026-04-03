@@ -110,5 +110,16 @@
 		</li>
 	</ul>
 
+	<div *ngIf="results.length" class="mt-4">
+		<app-pagination
+			[page]="page"
+			[pageSize]="pageSize"
+			[totalResults]="totalResults"
+			[showPageSizeSelector]="true"
+			(pageChange)="onPageChange($event)"
+			(pageSizeChange)="onPageSizeChange($event)"
+		></app-pagination>
+	</div>
+
 	<div *ngIf="!results.length">No results</div>
 </div>

@@ -5,17 +5,15 @@ when you are playing a game and holding the up and down arrow keys it will scrol
 peeking inside of .zip files takes a while for some reason. 
 sometimes the roms that are zips within the zips do not work.
 You cannot search for books, only text. hopfully this will be fixed after they are listed individually.
-it is hard to tell if a zip or 7z is actually a rom or not, so you often end up downloading something that does not work with emulatorjs
+it is hard to tell if a .zip or .7z or .iso is actually a rom or not, so you often end up downloading something that does not work with emulatorjs
 the media page says "Emulator" no matter what
+items do not appear in order when searching, changing the page, amount per page will re shuffle the responses.
 
 FEATURES NEEDED:
-emulatorjs (mostly done)
-document viewing
-video viewing
+emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
 audio listening
-metadata provider
+metadata provider/service
 search filters (they are minimal rn)
-metadata service
 loading screens for pagination (might not need it, might just want to have it show what it has loaded instead)
 
 
