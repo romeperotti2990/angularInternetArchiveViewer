@@ -1,12 +1,12 @@
 <div class="p-4">
-  <h2 class="text-xl font-semibold mb-3">Emulator</h2>
+  <h2 class="text-xl font-semibold mb-3">{{ displayLabel || 'Item' }} <span *ngIf="mode" class="text-sm text-gray-500">({{ mode }})</span></h2>
   <div *ngIf="error" class="text-red-500 mb-2">{{ error }}</div>
 
   <div *ngIf="mode === 'emulator' && emulatorUrl">
     <p class="text-sm mb-2">
       Core: <strong>{{ core }}</strong> | Game file:
       <a [href]="gameUrl" target="_blank" rel="noopener noreferrer">{{ gameUrl }}</a>
-      <a [href]="gameUrl" download class="ml-3 text-sm text-blue-600">Download</a>
+      <a href="#" (click)="$event.preventDefault(); downloadMedia()" class="ml-3 text-sm text-blue-600">Download</a>
     </p>
     <div class="border border-gray-300" style="height: 640px;">
       <iframe
@@ -29,7 +29,7 @@
       <div *ngIf="isLoading" class="media-spinner">Loading…</div>
     </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
-    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+    <p class="text-sm mt-1"><a href="#" (click)="$event.preventDefault(); downloadMedia()">Download</a></p>
   </div>
 
   <!-- Audio player -->
@@ -42,7 +42,7 @@
       <div *ngIf="isLoading" class="media-spinner">Loading…</div>
     </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
-    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+    <p class="text-sm mt-1"><a href="#" (click)="$event.preventDefault(); downloadMedia()">Download</a></p>
   </div>
 
   <!-- Image viewer -->
@@ -53,7 +53,7 @@
       <div *ngIf="isLoading" class="media-spinner">Loading…</div>
     </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
-    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+    <p class="text-sm mt-1"><a href="#" (click)="$event.preventDefault(); downloadMedia()">Download</a></p>
   </div>
 
   <!-- Document viewer (PDF, HTML, EPUB fallback to iframe) -->
@@ -64,7 +64,7 @@
       <div *ngIf="isLoading" class="media-spinner">Loading…</div>
     </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
-    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+    <p class="text-sm mt-1"><a href="#" (click)="$event.preventDefault(); downloadMedia()">Download</a></p>
   </div>
 
   <!-- Plain text viewer -->
@@ -75,7 +75,7 @@
       <pre *ngIf="!isLoading">{{ documentContent }}</pre>
     </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
-    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+    <p class="text-sm mt-1"><a href="#" (click)="$event.preventDefault(); downloadMedia()">Download</a></p>
   </div>
 
   <!-- Fallback viewer for other types: try iframe -->

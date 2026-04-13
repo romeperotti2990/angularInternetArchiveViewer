@@ -16,8 +16,8 @@ If the user likes the media, they should be able to star it and save it to their
 
 STRUCTURE:
 The current structure has components, pages, and services within their folders in /src/app.
-right now we are working on api calls and responses.
-also, the pagination is not working.
+right now we are working on functionality and ux
+the main issue rn is the search giving you unexpected results
 
 
 INSTRUCTIONS:

@@ -4,58 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-home',
   standalone: true,
   imports: [],
-  template: `
-    <div class="mx-auto max-w-5xl px-4 py-12">
-      <section class="text-center">
-        <h1 class="text-4xl font-extrabold mb-4">Internet Archive Viewer</h1>
-        <p class="text-lg text-gray-700 mb-6">Find, preview, and play files from the Internet Archive — no downloads required.</p>
-        <div class="flex justify-center gap-3">
-          <a href="/search" class="inline-block rounded-lg bg-blue-600 text-white px-5 py-2.5 font-medium hover:bg-blue-700">Search the Archive</a>
-          <a href="#features" class="inline-block rounded-lg border border-gray-300 px-5 py-2.5 text-gray-700 hover:bg-gray-50">Explore features</a>
-        </div>
-      </section>
-
-      <section id="features" class="mt-12 grid gap-6 md:grid-cols-3">
-        <div class="p-6 border rounded-lg shadow-sm bg-white">
-          <h3 class="font-semibold mb-2">Preview In-Browser</h3>
-          <p class="text-sm text-gray-600">Play ROMs with EmulatorJS, stream audio and video, and view images and documents without leaving the page.</p>
-        </div>
-        <div class="p-6 border rounded-lg shadow-sm bg-white">
-          <h3 class="font-semibold mb-2">Peek Inside Archives</h3>
-          <p class="text-sm text-gray-600">Inspect ZIP contents remotely and open individual files directly—no full downloads required.</p>
-        </div>
-        <div class="p-6 border rounded-lg shadow-sm bg-white">
-          <h3 class="font-semibold mb-2">Lightweight & Privacy Minded</h3>
-          <p class="text-sm text-gray-600">No account needed — favorites and history are stored locally. Focus on content, not signups.</p>
-        </div>
-      </section>
-
-      <section class="mt-12">
-        <h2 class="text-2xl font-bold mb-3">How it works</h2>
-        <ol class="list-decimal list-inside space-y-2 text-gray-700">
-          <li>Search the Internet Archive using the top search bar.</li>
-          <li>Open an item, click "Show files", then click a file name to preview it in the app.</li>
-          <li>Use the Play button for emulator-supported ROMs, or view audio/video/images and documents inline.</li>
-        </ol>
-      </section>
-
-      <section class="mt-12 grid gap-6 md:grid-cols-2">
-        <div class="p-6 border rounded-lg bg-gray-50">
-          <h3 class="font-semibold mb-2">Quick Tips</h3>
-          <ul class="text-sm text-gray-700 list-disc ml-5 space-y-1">
-            <li>ZIP peeking may be slow for very large archives—be patient.</li>
-            <li>If a file fails due to CORS, try the download link or use the backend proxy.</li>
-            <li>Use filters to narrow results by mediatype (software, movies, texts, audio).</li>
-          </ul>
-        </div>
-        <div class="p-6 border rounded-lg bg-gray-50">
-          <h3 class="font-semibold mb-2">Commands</h3>
-          <pre class="text-sm bg-white p-3 rounded">ng serve
-node server.js</pre>
-        </div>
-      </section>
-    </div>
-  `,
+  templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class HomePage {}

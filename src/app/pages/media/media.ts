@@ -11,6 +11,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrl: './media.css',
 })
 export class Media implements OnInit {
+  displayLabel: string | null = null;
   mode: string | null = null;
   core: string | null = null;
   gameUrl: string | null = null;
@@ -29,6 +30,7 @@ export class Media implements OnInit {
       this.mode = params.get('mode');
       this.core = params.get('core');
       this.gameUrl = params.get('gameUrl');
+      this.displayLabel = null;
       this.error = null;
       this.emulatorUrl = null;
 
@@ -77,6 +79,7 @@ export class Media implements OnInit {
 
         const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        this.displayLabel = this.deriveLabel();
         // prevent arrow keys from scrolling the page while emulator is active
         this.addPreventArrowScroll();
         // record last-viewed item
@@ -118,6 +121,7 @@ export class Media implements OnInit {
 
         // document/other/video/audio/image: show in iframe/media element
         this.mediaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.mediaRawUrl);
+        this.displayLabel = this.deriveLabel();
         this.isLoading = true;
         // record last-viewed item
         try { this.saveLastItem(); } catch (e) {}
@@ -213,5 +217,55 @@ export class Media implements OnInit {
     this.isLoading = false;
     this.error = 'Failed to load media. Check network/CORS or open raw link.';
     try { this.cdr.detectChanges(); } catch (err) {}
+  }
+
+  async downloadMedia(): Promise<void> {
+    const url = (this.mode === 'emulator' ? this.gameUrl : this.mediaRawUrl) || null;
+    if (!url) {
+      this.error = 'No downloadable URL available.';
+      try { this.cdr.detectChanges(); } catch (e) {}
+      return;
+    }
+
+    try {
+      // If it's already a blob URL, just trigger download
+      if (url.startsWith && url.startsWith('blob:')) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = this.deriveLabel() || 'download';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+      }
+
+      // Attempt to fetch the resource (may fail due to CORS)
+      const resp = await fetch(url as string);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      // derive filename from URL path or fallback to label
+      let filename = this.deriveLabel() || 'download';
+      try {
+        const parsed = new URL(url as string, window.location.href);
+        const seg = (parsed.pathname || '').split('/').filter(Boolean).pop();
+        if (seg) filename = decodeURIComponent(seg);
+      } catch (e) {}
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => { try { URL.revokeObjectURL(blobUrl); } catch (e) {} }, 5000);
+    } catch (err: any) {
+      // Fallback: open raw resource in new tab
+      try { window.open(url as string, '_blank'); } catch (e) {}
+      this.error = `Download failed; opened raw. ${err?.message ?? ''}`;
+    } finally {
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
   }
 }
