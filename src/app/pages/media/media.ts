@@ -32,9 +32,9 @@ export class Media implements OnInit {
       this.mode = params.get('mode');
       this.core = params.get('core');
       this.gameUrl = params.get('gameUrl');
+      this.displayLabel = params.get('displayLabel');
       this.collectionTitle = params.get('collectionTitle');
       this.collectionDescription = params.get('collectionDescription');
-      this.displayLabel = null;
       this.error = null;
       this.emulatorUrl = null;
 
@@ -83,7 +83,7 @@ export class Media implements OnInit {
 
         const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-        this.displayLabel = this.deriveLabel();
+        if (!this.displayLabel) this.displayLabel = this.deriveLabel();
         // record last-viewed item
         try { this.saveLastItem(); } catch (e) {}
         try { this.cdr.detectChanges(); } catch (e) {}
@@ -123,7 +123,7 @@ export class Media implements OnInit {
 
         // document/other/video/audio/image: show in iframe/media element
         this.mediaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.mediaRawUrl);
-        this.displayLabel = this.deriveLabel();
+        if (!this.displayLabel) this.displayLabel = this.deriveLabel();
         this.isLoading = true;
         // record last-viewed item
         try { this.saveLastItem(); } catch (e) {}
@@ -148,6 +148,7 @@ export class Media implements OnInit {
   }
 
   private deriveLabel(): string {
+    if (this.displayLabel) return this.displayLabel;
     // Prefer a readable filename from the URL, fall back to mode.
     const u = (this.mode === 'emulator' ? this.gameUrl : this.mediaRawUrl) || '';
     try {
@@ -167,10 +168,12 @@ export class Media implements OnInit {
     const url = this.mode === 'emulator' ? this.gameUrl : this.mediaRawUrl;
     if (!url) return;
     const item = {
-      label: this.deriveLabel(),
+      label: this.displayLabel || this.deriveLabel(),
       mode: this.mode,
       core: this.core,
       url,
+      collectionTitle: this.collectionTitle,
+      collectionDescription: this.collectionDescription,
       ts: Date.now(),
     } as any;
 

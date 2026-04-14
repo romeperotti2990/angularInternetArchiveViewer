@@ -4,7 +4,9 @@
     <span class="font-semibold">Last items:</span>
     <ng-container *ngIf="limitedLastItems.length; else noLast">
       <span *ngFor="let it of limitedLastItems; let i = index">
-        <a href="#" (click)="$event.preventDefault(); openLastItem(it)" class="ml-2 text-gray-100 no-underline">{{ it.label }}</a>
+        <a href="#" (click)="$event.preventDefault(); openLastItem(it)" class="ml-2 text-gray-100 no-underline">
+          {{ it.collectionTitle || it.label }}
+        </a>
         <span *ngIf="i < limitedLastItems.length - 1" class="text-gray-400">,</span>
       </span>
       <a *ngIf="hasMoreItems" routerLink="/" class="ml-3 text-gray-300 text-sm">(+{{ totalItemsCount - 4 }} more)</a>

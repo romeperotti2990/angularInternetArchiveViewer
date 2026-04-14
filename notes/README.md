@@ -7,8 +7,8 @@ You cannot search for books, only text. hopfully this will be fixed after they a
 it is hard to tell if a .zip or .7z or .iso is actually a rom or not, so you often end up downloading something that does not work with emulatorjs
 items do not appear in order when searching, changing the page, amount per page will re shuffle the responses.
 pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
-things in zips are called "local item" in the history on the nav/home
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
+
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
@@ -18,6 +18,7 @@ search by filetype
 loading screens for pagination (might not need it, might just want to have it show what it has loaded instead)
 you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
 you should be able to see the dexcription and title of the thing you are looking at on the mediapage, not just the file from that collections name
+deleting items from history
 
 
 IDEAS:

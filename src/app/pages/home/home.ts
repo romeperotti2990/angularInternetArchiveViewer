@@ -31,6 +31,8 @@ export class HomePage {
     if (!item || !item.url) return;
     const qp: any = { mode: item.mode };
     if (item.core) qp.core = item.core;
+    if (item.collectionTitle) qp.collectionTitle = item.collectionTitle;
+    if (item.collectionDescription) qp.collectionDescription = item.collectionDescription;
     qp[(item.mode === 'emulator') ? 'gameUrl' : 'mediaUrl'] = item.url;
     this.router.navigate(['/media'], { queryParams: qp });
   }

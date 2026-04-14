@@ -55,6 +55,8 @@ node server.js</pre>
 				<div class="flex items-start justify-between">
 					<div>
 						<div class="font-semibold">{{ item.label }}</div>
+						<div *ngIf="item.collectionTitle" class="text-sm text-gray-700 mt-1">{{ item.collectionTitle }}</div>
+						<div *ngIf="item.collectionDescription" class="text-sm text-gray-500 mt-1">{{ item.collectionDescription }}</div>
 						<div class="text-sm text-gray-500">{{ item.mode }}</div>
 					</div>
 					<span *ngIf="item.mode === 'emulator'" class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Emulator</span>

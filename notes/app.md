@@ -8,11 +8,14 @@ Also, do not mess with anything in the 4.2.3 folder, its just a dependency. trea
 
 INTENDED UX:
 The user should go onto the site
-the user should search for something in the bar at the top, filtering by filetype/mediatype
+the user should search for something in the bar at the top, filtering by filetype/mediatype. they should be able to filter by inculding or excluding filetypes
 it should show lots of items filtered from files on internet archive (i'm thinking of abandoning the filtering idea, as it is proving difficult and it is kind of fun to find files yourself)
-user clicks on an item and it shows more data about the item as well as a download and play/view button
+user clicks on an item and it shows more data about the item as well as a download and play/open button
+the user should also be able to edit the items properties or delete items and it should be saved locally
 user clicks on play and whatever means of viewing the content is brought up, along with still a download button, the app should take note that the user went here in the users history(localstorage)
 If the user likes the media, they should be able to star it and save it to their favorites(localstorage if they do not have an account.)
+
+everything will eventually have to transition from localstorage to firebase (maybe both?)
 
 STRUCTURE:
 The current structure has components, pages, and services within their folders in /src/app.
@@ -26,7 +29,6 @@ Make sure you do not cause errors in the code and that your code matches with al
 Make sure your code is the same logically as other code in the workspace.
 
 CURRENT STATE:
-You can search by software, movies, texts, and audio, but only roms can be played in the website. 
 you can see inside of .zip files but it takes a while for some reason. also sometimes the roms that are zips within the zips do not work.
-video, audio and image files just open in a new tab which works for now.
+the search still just shows IA metadata and it is hard to find what you are looking for through all the podcast junk
 

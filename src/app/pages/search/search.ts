@@ -164,12 +164,13 @@ export class Search implements OnInit {
   // Extract a single file entry from a remote ZIP and open in emulator via blob URL
   async playZipEntry(identifier: string, zipFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
     try {
+      const displayLabel = entryObj?.name || zipFilename;
       // If this entry came from IA metadata (not an in-zip entry), open the
       // file directly via its archive URL instead of trying to extract.
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
         const url = this.getFileUrl(identifier, entryObj.name);
         const core = this.getEmulatorCore(entryObj.name);
-        const qp: any = { mode: 'emulator', core, gameUrl: url };
+        const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel };
         if (collectionTitle) qp.collectionTitle = collectionTitle;
         if (collectionDescription) qp.collectionDescription = collectionDescription;
         this.router.navigate(['/media'], { queryParams: qp });
@@ -179,7 +180,7 @@ export class Search implements OnInit {
       const blob = await this.archive.extractFileFromZip(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const core = this.getEmulatorCore(entryObj.name);
-      const qp: any = { mode: 'emulator', core, gameUrl: url };
+      const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel };
       if (collectionTitle) qp.collectionTitle = collectionTitle;
       if (collectionDescription) qp.collectionDescription = collectionDescription;
       this.router.navigate(['/media'], { queryParams: qp });
@@ -194,10 +195,12 @@ export class Search implements OnInit {
   // Open a non-emulator file entry (video/audio/image/other) from a ZIP in the media page
   async openZipEntry(identifier: string, zipFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
     try {
+      const displayLabel = entryObj?.name || zipFilename;
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
         const url = this.getFileUrl(identifier, entryObj.name);
         const mode = this.getModeForFilename(entryObj.name);
         const baseQp: any = {};
+        baseQp.displayLabel = displayLabel;
         if (collectionTitle) baseQp.collectionTitle = collectionTitle;
         if (collectionDescription) baseQp.collectionDescription = collectionDescription;
         if (mode === 'emulator') {
@@ -213,6 +216,7 @@ export class Search implements OnInit {
       const url = URL.createObjectURL(blob);
       const mode = this.getModeForFilename(entryObj.name);
       const baseQp: any = {};
+      baseQp.displayLabel = displayLabel;
       if (collectionTitle) baseQp.collectionTitle = collectionTitle;
       if (collectionDescription) baseQp.collectionDescription = collectionDescription;
       if (mode === 'emulator') {
@@ -265,7 +269,7 @@ export class Search implements OnInit {
     if (mode === 'emulator') {
       this.openInEmulator(identifier, filename, collectionTitle, collectionDescription);
     } else {
-      const qp: any = { mode, mediaUrl: url };
+      const qp: any = { mode, mediaUrl: url, displayLabel: filename };
       if (collectionTitle) qp.collectionTitle = collectionTitle;
       if (collectionDescription) qp.collectionDescription = collectionDescription;
       this.router.navigate(['/media'], { queryParams: qp });
@@ -321,6 +325,7 @@ export class Search implements OnInit {
       mode: 'emulator',
       core,
       gameUrl,
+      displayLabel: filename,
     };
     if (collectionTitle) qp.collectionTitle = collectionTitle;
     if (collectionDescription) qp.collectionDescription = collectionDescription;
