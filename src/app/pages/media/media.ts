@@ -21,6 +21,8 @@ export class Media implements OnInit {
   error: string | null = null;
   isLoading = false;
   documentContent: string | null = null;
+  collectionTitle: string | null = null;
+  collectionDescription: string | null = null;
   private _keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) {}
@@ -30,6 +32,8 @@ export class Media implements OnInit {
       this.mode = params.get('mode');
       this.core = params.get('core');
       this.gameUrl = params.get('gameUrl');
+      this.collectionTitle = params.get('collectionTitle');
+      this.collectionDescription = params.get('collectionDescription');
       this.displayLabel = null;
       this.error = null;
       this.emulatorUrl = null;

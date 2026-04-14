@@ -47,5 +47,20 @@
 node server.js</pre>
 		</div>
 	</section>
+
+	<section *ngIf="lastItems.length" class="mt-12">
+		<h2 class="text-2xl font-bold mb-4">Your History</h2>
+		<div class="grid gap-3">
+			<div *ngFor="let item of lastItems" class="p-4 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition" (click)="openLastItem(item)">
+				<div class="flex items-start justify-between">
+					<div>
+						<div class="font-semibold">{{ item.label }}</div>
+						<div class="text-sm text-gray-500">{{ item.mode }}</div>
+					</div>
+					<span *ngIf="item.mode === 'emulator'" class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Emulator</span>
+				</div>
+			</div>
+		</div>
+	</section>
 </div>
 

@@ -76,4 +76,16 @@ export class Navbar {
     qp[(item.mode === 'emulator') ? 'gameUrl' : 'mediaUrl'] = item.url;
     this.router.navigate(['/media'], { queryParams: qp });
   }
+
+  get limitedLastItems(): any[] {
+    return this.lastItems.slice(0, 4);
+  }
+
+  get hasMoreItems(): boolean {
+    return this.lastItems.length > 4;
+  }
+
+  get totalItemsCount(): number {
+    return this.lastItems.length;
+  }
 }

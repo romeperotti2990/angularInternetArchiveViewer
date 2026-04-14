@@ -43,7 +43,7 @@
 				<li *ngFor="let file of itemFiles[r.identifier]" class="py-0.5">
 					<a
 						href="#"
-						(click)="$event.preventDefault(); openFile(r.identifier, file.name)"
+						(click)="$event.preventDefault(); openFile(r.identifier, file.name, r.title, r.description)"
 						class="text-blue-600 hover:text-blue-800"
 					>
 						{{ file.name }}
@@ -60,7 +60,7 @@
 					*ngIf="isEmulatorFile(file.name) && !file.name.toLowerCase().endsWith('.zip')"
 					class="ml-2 px-2 py-1 text-xs rounded bg-green-600 text-white"
 					type="button"
-					(click)="openInEmulator(r.identifier, file.name)"
+					(click)="openInEmulator(r.identifier, file.name, r.title, r.description)"
 				>
 					Open in emulator
 				</button>
@@ -91,15 +91,15 @@
 							*ngIf="isEmulatorFile(entry.name)"
 							class="ml-2 px-2 py-1 text-xs rounded bg-green-600 text-white"
 							type="button"
-							(click)="playZipEntry(r.identifier, file.name, entry)"
-						>
-							Play
-						</button>
-						<button
-							*ngIf="!isEmulatorFile(entry.name)"
-							class="ml-2 px-2 py-1 text-xs rounded bg-blue-600 text-white"
-							type="button"
-							(click)="openZipEntry(r.identifier, file.name, entry)"
+						(click)="playZipEntry(r.identifier, file.name, entry, r.title, r.description)"
+					>
+						Play
+					</button>
+					<button
+						*ngIf="!isEmulatorFile(entry.name)"
+						class="ml-2 px-2 py-1 text-xs rounded bg-blue-600 text-white"
+						type="button"
+						(click)="openZipEntry(r.identifier, file.name, entry, r.title, r.description)"
 						>
 							Open
 						</button>

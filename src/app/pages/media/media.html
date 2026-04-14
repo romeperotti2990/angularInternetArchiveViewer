@@ -1,4 +1,8 @@
 <div class="p-4">
+  <div *ngIf="collectionTitle || collectionDescription" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+    <div *ngIf="collectionTitle" class="font-semibold text-blue-900">{{ collectionTitle }}</div>
+    <div *ngIf="collectionDescription" class="text-sm text-blue-800 mt-1">{{ collectionDescription }}</div>
+  </div>
   <h2 class="text-xl font-semibold mb-3">{{ displayLabel || 'Item' }} <span *ngIf="mode" class="text-sm text-gray-500">({{ mode }})</span></h2>
   <div *ngIf="error" class="text-red-500 mb-2">{{ error }}</div>
 

@@ -162,29 +162,27 @@ export class Search implements OnInit {
   }
 
   // Extract a single file entry from a remote ZIP and open in emulator via blob URL
-  async playZipEntry(identifier: string, zipFilename: string, entryObj: any) {
+  async playZipEntry(identifier: string, zipFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
     try {
       // If this entry came from IA metadata (not an in-zip entry), open the
       // file directly via its archive URL instead of trying to extract.
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
         const url = this.getFileUrl(identifier, entryObj.name);
         const core = this.getEmulatorCore(entryObj.name);
-        this.router.navigate(['/media'], {
-          queryParams: { mode: 'emulator', core, gameUrl: url },
-        });
+        const qp: any = { mode: 'emulator', core, gameUrl: url };
+        if (collectionTitle) qp.collectionTitle = collectionTitle;
+        if (collectionDescription) qp.collectionDescription = collectionDescription;
+        this.router.navigate(['/media'], { queryParams: qp });
         return;
       }
 
       const blob = await this.archive.extractFileFromZip(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const core = this.getEmulatorCore(entryObj.name);
-      this.router.navigate(['/media'], {
-        queryParams: {
-          mode: 'emulator',
-          core,
-          gameUrl: url,
-        },
-      });
+      const qp: any = { mode: 'emulator', core, gameUrl: url };
+      if (collectionTitle) qp.collectionTitle = collectionTitle;
+      if (collectionDescription) qp.collectionDescription = collectionDescription;
+      this.router.navigate(['/media'], { queryParams: qp });
       // note: object URL will remain until page unload; could revoke later if desired
     } catch (err: any) {
       const key = `${identifier}::${zipFilename}`;
@@ -194,16 +192,19 @@ export class Search implements OnInit {
   }
 
   // Open a non-emulator file entry (video/audio/image/other) from a ZIP in the media page
-  async openZipEntry(identifier: string, zipFilename: string, entryObj: any) {
+  async openZipEntry(identifier: string, zipFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
     try {
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
         const url = this.getFileUrl(identifier, entryObj.name);
         const mode = this.getModeForFilename(entryObj.name);
+        const baseQp: any = {};
+        if (collectionTitle) baseQp.collectionTitle = collectionTitle;
+        if (collectionDescription) baseQp.collectionDescription = collectionDescription;
         if (mode === 'emulator') {
           const core = this.getEmulatorCore(entryObj.name);
-          this.router.navigate(['/media'], { queryParams: { mode: 'emulator', core, gameUrl: url } });
+          this.router.navigate(['/media'], { queryParams: { ...baseQp, mode: 'emulator', core, gameUrl: url } });
         } else {
-          this.router.navigate(['/media'], { queryParams: { mode, mediaUrl: url } });
+          this.router.navigate(['/media'], { queryParams: { ...baseQp, mode, mediaUrl: url } });
         }
         return;
       }
@@ -211,12 +212,15 @@ export class Search implements OnInit {
       const blob = await this.archive.extractFileFromZip(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const mode = this.getModeForFilename(entryObj.name);
+      const baseQp: any = {};
+      if (collectionTitle) baseQp.collectionTitle = collectionTitle;
+      if (collectionDescription) baseQp.collectionDescription = collectionDescription;
       if (mode === 'emulator') {
         const core = this.getEmulatorCore(entryObj.name);
-        this.router.navigate(['/media'], { queryParams: { mode: 'emulator', core, gameUrl: url } });
+        this.router.navigate(['/media'], { queryParams: { ...baseQp, mode: 'emulator', core, gameUrl: url } });
       } else {
         // route all other viewable types to the in-app media page
-        this.router.navigate(['/media'], { queryParams: { mode, mediaUrl: url } });
+        this.router.navigate(['/media'], { queryParams: { ...baseQp, mode, mediaUrl: url } });
       }
     } catch (err: any) {
       const key = `${identifier}::${zipFilename}`;
@@ -255,13 +259,16 @@ export class Search implements OnInit {
     return this.archive.getFileUrl(identifier, filename);
   }
 
-  openFile(identifier: string, filename: string) {
+  openFile(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string) {
     const mode = this.getModeForFilename(filename);
     const url = this.getFileUrl(identifier, filename);
     if (mode === 'emulator') {
-      this.openInEmulator(identifier, filename);
+      this.openInEmulator(identifier, filename, collectionTitle, collectionDescription);
     } else {
-      this.router.navigate(['/media'], { queryParams: { mode, mediaUrl: url } });
+      const qp: any = { mode, mediaUrl: url };
+      if (collectionTitle) qp.collectionTitle = collectionTitle;
+      if (collectionDescription) qp.collectionDescription = collectionDescription;
+      this.router.navigate(['/media'], { queryParams: qp });
     }
   }
 
@@ -307,16 +314,17 @@ export class Search implements OnInit {
     }
   }
 
-  openInEmulator(identifier: string, filename: string) {
+  openInEmulator(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string) {
     const core = this.getEmulatorCore(filename);
     const gameUrl = this.getFileUrl(identifier, filename);
-    this.router.navigate(['/media'], {
-      queryParams: {
-        mode: 'emulator',
-        core,
-        gameUrl,
-      },
-    });
+    const qp: any = {
+      mode: 'emulator',
+      core,
+      gameUrl,
+    };
+    if (collectionTitle) qp.collectionTitle = collectionTitle;
+    if (collectionDescription) qp.collectionDescription = collectionDescription;
+    this.router.navigate(['/media'], { queryParams: qp });
   }
 
   onPageChange(n: number) {

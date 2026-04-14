@@ -2,11 +2,12 @@
   <a routerLink="/" class="text-gray-100 no-underline font-semibold">Home</a>
   <div class="text-gray-100">
     <span class="font-semibold">Last items:</span>
-    <ng-container *ngIf="lastItems.length; else noLast">
-      <span *ngFor="let it of lastItems; let i = index">
+    <ng-container *ngIf="limitedLastItems.length; else noLast">
+      <span *ngFor="let it of limitedLastItems; let i = index">
         <a href="#" (click)="$event.preventDefault(); openLastItem(it)" class="ml-2 text-gray-100 no-underline">{{ it.label }}</a>
-        <span *ngIf="i < lastItems.length - 1" class="text-gray-400">,</span>
+        <span *ngIf="i < limitedLastItems.length - 1" class="text-gray-400">,</span>
       </span>
+      <a *ngIf="hasMoreItems" routerLink="/" class="ml-3 text-gray-300 text-sm">(+{{ totalItemsCount - 4 }} more)</a>
     </ng-container>
     <ng-template #noLast>
       <span class="ml-2 text-gray-300">(none)</span>
