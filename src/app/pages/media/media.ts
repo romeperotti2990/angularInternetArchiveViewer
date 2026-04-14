@@ -84,8 +84,6 @@ export class Media implements OnInit {
         const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
         this.displayLabel = this.deriveLabel();
-        // prevent arrow keys from scrolling the page while emulator is active
-        this.addPreventArrowScroll();
         // record last-viewed item
         try { this.saveLastItem(); } catch (e) {}
         try { this.cdr.detectChanges(); } catch (e) {}
@@ -147,7 +145,6 @@ export class Media implements OnInit {
         URL.revokeObjectURL(this.gameUrl as string);
       }
     } catch (e) {}
-    this.removePreventArrowScroll();
   }
 
   private deriveLabel(): string {
@@ -193,23 +190,6 @@ export class Media implements OnInit {
     }
   }
 
-  private addPreventArrowScroll() {
-    this.removePreventArrowScroll();
-    this._keydownHandler = (e: KeyboardEvent) => {
-      const keys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'];
-      if (keys.includes(e.key)) {
-        e.preventDefault();
-      }
-    };
-    window.addEventListener('keydown', this._keydownHandler, { passive: false });
-  }
-
-  private removePreventArrowScroll() {
-    if (this._keydownHandler) {
-      window.removeEventListener('keydown', this._keydownHandler as any);
-      this._keydownHandler = null;
-    }
-  }
 
   // called from template when media finishes loading
   onMediaLoaded() {

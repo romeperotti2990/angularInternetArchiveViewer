@@ -38,6 +38,12 @@
 
         EJS_core = params.get('core');
         EJS_gameUrl = params.get('gameUrl');
+        window.addEventListener("keydown", function (e) {
+                // Arrow keys (37-40) and Space (32)
+                if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
+                    e.preventDefault();
+                }
+            }, false);
     </script>
     <script src="4.2.3/data/loader.js"></script>
 </body>
