@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as zip from '@zip.js/zip.js'; // npm install @zip.js/zip.js
+import { Archive as LibArchive } from 'libarchive.js';
 
 const IA_BASE = 'https://archive.org';
 const DEV_BACKEND_ORIGIN = 'http://localhost:3001';
@@ -11,26 +11,34 @@ const DEV_PROXY_PREFIX = `${DEV_BACKEND_ORIGIN}/archive`;
 export class Archive {
   // Use OMDb (free up to 1k/day) or TMDB for the "Good" metadata
   private EXTERNAL_METADATA_API = 'https://www.omdbapi.com';
+  private libarchiveReady: Promise<void> | null = null;
+
+  private ensureLibarchiveReady(): Promise<void> {
+    if (!this.libarchiveReady) {
+      this.libarchiveReady = (async () => {
+        await LibArchive.init({ workerUrl: '/libarchive/worker-bundle.js' });
+      })();
+    }
+    return this.libarchiveReady;
+  }
 
   /**
-   * 1. PEEKS inside a ZIP on IA servers without downloading the whole thing.
-   * Uses HTTP Range requests to only grab the ZIP's central directory.
+   * 1. PEEKS inside a remote archive by fetching it as a blob and listing
+   * the entries with libarchive.js.
    */
-  async listZipContents(
+  async listArchiveContents(
     identifier: string,
-    zipFilename: string,
+    archiveFilename: string,
     progressCb?: (percent: number, message?: string) => void,
-  ): Promise<zip.Entry[]> {
-    // First, try to use IA metadata to avoid peeking into the archive when
-    // the item already contains extracted files (common on archive.org).
+  ): Promise<any[]> {
     try {
       if (progressCb) progressCb(10, 'Fetching IA metadata');
       const meta = await this.getMetadata(identifier);
       const files = meta?.files ?? [];
-      const base = (zipFilename || '').replace(/\.zip$/i, '');
+      const base = (archiveFilename || '').replace(/\.[^.]+$/i, '');
 
       // If the IA item already lists files that look like emulator/media files
-      // and are related to the ZIP filename, return those as lightweight entries
+      // and are related to the archive filename, return those as lightweight entries
       // so the UI can open them directly without ranged ZIP requests.
       const romLikeExt = new Set([
         'gba', 'gb', 'gbc', 'nes', 'sfc', 'smc', 'bin', 'nds', 'n64', 'z64', 'iso', 'cue', 'pbp', 'rom', 'img'
@@ -38,7 +46,7 @@ export class Archive {
 
       const candidateFiles = files
         .map((f: any) => ({ name: f.name || f.filename || f.file || '', size: f.size, raw: f }))
-        .filter((f: any) => f.name && f.name.toLowerCase() !== zipFilename.toLowerCase())
+        .filter((f: any) => f.name && f.name.toLowerCase() !== archiveFilename.toLowerCase())
         .filter((f: any) => {
           const n = f.name.toLowerCase();
           const ext = n.split('.').pop() || '';
@@ -53,44 +61,68 @@ export class Archive {
       if (candidateFiles.length) {
         if (progressCb) progressCb(100, 'Using IA metadata');
         // Return a lightweight array that the UI will normalize and handle.
-        return candidateFiles.map((c: any) => ({ filename: c.name, name: c.name, metadataOnly: true, raw: c.raw } as any));
+        return candidateFiles.map((c: any) => ({ filename: c.name, name: c.name, file: null, metadataOnly: true, raw: c.raw } as any));
       }
     } catch (metaErr) {
       if (progressCb) progressCb(20, 'Metadata unavailable, falling back');
       // ignore metadata failures and fall back to peeking
     }
 
-    // Fallback: perform real ZIP central-directory peek via ranged requests.
-    const url = this.getFileUrl(identifier, zipFilename);
+    const url = this.getFileUrl(identifier, archiveFilename);
+    return this.listArchiveBlobContentsFromUrl(url, archiveFilename, progressCb);
+  }
 
-    if (progressCb) progressCb(30, 'Starting ZIP peek');
-    const reader = new zip.HttpReader(url);
-    const zipReader = new zip.ZipReader(reader);
+  async listArchiveBlobContents(blob: Blob, progressCb?: (percent: number, message?: string) => void, fileName = 'archive'): Promise<any[]> {
+    await this.ensureLibarchiveReady();
+    if (progressCb) progressCb(60, 'Opening archive');
+    const archiveFile = blob instanceof File ? blob : new File([blob], fileName);
+    const archive = await LibArchive.open(archiveFile);
+    return this.extractArchiveEntries(archive, progressCb);
+  }
 
+  private async listArchiveBlobContentsFromUrl(url: string, fileName: string, progressCb?: (percent: number, message?: string) => void): Promise<any[]> {
+    await this.ensureLibarchiveReady();
+
+    if (progressCb) progressCb(30, 'Downloading archive');
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Archive fetch failed: ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    return this.listArchiveBlobContents(blob, progressCb, fileName);
+  }
+
+  private async extractArchiveEntries(archive: any, progressCb?: (percent: number, message?: string) => void): Promise<any[]> {
     try {
-      if (progressCb) progressCb(60, 'Reading central directory');
-      const entries = await zipReader.getEntries();
-      if (progressCb) progressCb(95, 'Parsing entries');
-      await zipReader.close();
+      if (progressCb) progressCb(80, 'Listing entries');
+      const entries = await archive.getFilesArray();
+      const normalized = (entries || [])
+        .map((entry: any) => {
+          const file = entry?.file ?? null;
+          const path = entry?.path ?? '';
+          const fileName = file?.name ?? file?.filename ?? '';
+          const name = `${path || ''}${fileName || ''}` || fileName || path || '';
+          return { name, path, file, entry: file, metadataOnly: false };
+        })
+        .filter((entry: any) => !!entry.name);
       if (progressCb) progressCb(100, 'Done');
-      return entries;
+      return normalized;
     } catch (err) {
-      console.error('[Archive] ZIP peek failed. Likely CORS or not a valid ZIP.', err);
+      console.error('[Archive] archive peek failed.', err);
       if (progressCb) progressCb(0, 'Failed');
       throw err;
     }
   }
 
   /**
-   * 2. EXTRACTS a single file from a remote ZIP.
-   * Again, only downloads the specific bytes for that one file.
+   * 2. EXTRACTS a single file from a remote archive entry.
    */
-  async extractFileFromZip(entry: zip.FileEntry | zip.Entry): Promise<Blob> {
-    if ('directory' in entry && entry.directory) {
-      throw new Error('Cannot extract a directory entry');
+  async extractFileFromArchive(entry: any): Promise<Blob> {
+    if (!entry || typeof entry.extract !== 'function') {
+      throw new Error('Cannot extract archive entry');
     }
-    // “entry” is narrowed to FileEntry in this branch
-    return await (entry as zip.FileEntry).getData(new zip.BlobWriter());
+    return await entry.extract();
   }
 
   /**

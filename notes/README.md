@@ -1,14 +1,12 @@
 BUGS/ PROBLEMS: 
 the search is still going by IA metadata and not just showing individual files based on seperate metadata assigned to it
-the pagination sometimes seems to be half of what it should be and there is like ghost double content (idk if this happens anymore)
-peeking inside of .zip files takes a while for some reason. 
 sometimes the roms that are zips within the zips do not work.
 You cannot search for books, only text. hopfully this will be fixed after they are listed individually.
-it is hard to tell if a .zip or .7z or .iso is actually a rom or not, so you often end up downloading something that does not work with emulatorjs
-items do not appear in order when searching, changing the page, amount per page will re shuffle the responses.
+there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need
+items do not appear in order when searching, changing the page, amount per page will sometimes re shuffle the responses. It might also be the way internet archive sends data. its been inconsistant
 pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
-
+you cannot peek inside of .7z or .rar files
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
@@ -17,7 +15,6 @@ search filters (they are minimal rn)
 search by filetype
 loading screens for pagination (might not need it, might just want to have it show what it has loaded instead)
 you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
-you should be able to see the dexcription and title of the thing you are looking at on the mediapage, not just the file from that collections name
 deleting items from history
 
 

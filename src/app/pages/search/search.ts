@@ -16,10 +16,10 @@ export class Search implements OnInit {
   mediaTypes = ['software', 'movies', 'texts', 'audio'];
   selectedMedia: Record<string, boolean> = {};
   itemFiles: Record<string, any[]> = {};
-  zipContents: Record<string, any[]> = {};
-  zipLoading: Record<string, boolean> = {};
-  zipError: Record<string, string | null> = {};
-  zipProgress: Record<string, number> = {};
+  archiveContents: Record<string, any[]> = {};
+  archiveLoading: Record<string, boolean> = {};
+  archiveError: Record<string, string | null> = {};
+  archiveProgress: Record<string, number> = {};
   fileLoading: Record<string, boolean> = {};
   fileError: Record<string, string | null> = {};
   error: string | null = null;
@@ -128,43 +128,43 @@ export class Search implements OnInit {
     }
   }
 
-  // Peek inside a remote ZIP file without downloading the whole archive
-  async peekZip(identifier: string, zipFilename: string) {
-    const key = `${identifier}::${zipFilename}`;
-    if (this.zipContents[key] || this.zipLoading[key]) return;
+  private isArchiveFilename(filename: string): boolean {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    return ['zip', '7z', 'rar', 'tar', 'gz', 'bz2', 'xz'].includes(ext);
+  }
 
-    this.zipLoading[key] = true;
-    this.zipError[key] = null;
-    this.zipProgress[key] = 0;
+  // Peek inside a remote archive file without downloading the whole item.
+  async peekArchive(identifier: string, archiveFilename: string) {
+    const key = `${identifier}::${archiveFilename}`;
+    if (this.archiveContents[key] || this.archiveLoading[key]) return;
+
+    this.archiveLoading[key] = true;
+    this.archiveError[key] = null;
+    this.archiveProgress[key] = 0;
 
     try {
-      const entries = await this.archive.listZipContents(identifier, zipFilename as string, (p: number) => {
-        this.zipProgress[key] = Math.max(0, Math.min(100, Math.floor(p))); // integer 0-100
+      const entries = await this.archive.listArchiveContents(identifier, archiveFilename as string, (p: number) => {
+        this.archiveProgress[key] = Math.max(0, Math.min(100, Math.floor(p))); // integer 0-100
         try { this.cdr.detectChanges(); } catch (e) {}
       });
-      // normalize filename prop across entry shapes
-      const normalized = (entries || []).map((e: any) => ({
-        name: e.filename ?? e.fileName ?? e.name ?? e.entryName ?? '',
-        entry: e,
-      }));
-      this.zipContents[key] = normalized;
-      if (!normalized.length) this.zipError[key] = 'No entries found in ZIP';
+      this.archiveContents[key] = entries || [];
+      if (!this.archiveContents[key].length) this.archiveError[key] = 'No entries found in archive';
       try { this.cdr.detectChanges(); } catch (e) {}
     } catch (err: any) {
-      this.zipError[key] = err?.message ?? String(err);
-      this.zipContents[key] = [];
+      this.archiveError[key] = err?.message ?? String(err);
+      this.archiveContents[key] = [];
       try { this.cdr.detectChanges(); } catch (e) {}
     } finally {
-      this.zipLoading[key] = false;
-      this.zipProgress[key] = 100;
+      this.archiveLoading[key] = false;
+      this.archiveProgress[key] = 100;
       try { this.cdr.detectChanges(); } catch (e) {}
     }
   }
 
-  // Extract a single file entry from a remote ZIP and open in emulator via blob URL
-  async playZipEntry(identifier: string, zipFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
+  // Extract a single file entry from a remote archive and open in emulator via blob URL
+  async playArchiveEntry(identifier: string, archiveFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
     try {
-      const displayLabel = entryObj?.name || zipFilename;
+      const displayLabel = entryObj?.name || archiveFilename;
       // If this entry came from IA metadata (not an in-zip entry), open the
       // file directly via its archive URL instead of trying to extract.
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
@@ -177,7 +177,7 @@ export class Search implements OnInit {
         return;
       }
 
-      const blob = await this.archive.extractFileFromZip(entryObj.entry);
+      const blob = await this.archive.extractFileFromArchive(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const core = this.getEmulatorCore(entryObj.name);
       const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel };
@@ -186,16 +186,16 @@ export class Search implements OnInit {
       this.router.navigate(['/media'], { queryParams: qp });
       // note: object URL will remain until page unload; could revoke later if desired
     } catch (err: any) {
-      const key = `${identifier}::${zipFilename}`;
-      this.zipError[key] = err?.message ?? String(err);
+      const key = `${identifier}::${archiveFilename}`;
+      this.archiveError[key] = err?.message ?? String(err);
       try { this.cdr.detectChanges(); } catch (e) {}
     }
   }
 
-  // Open a non-emulator file entry (video/audio/image/other) from a ZIP in the media page
-  async openZipEntry(identifier: string, zipFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
+  // Open a non-emulator file entry (video/audio/image/other) from an archive in the media page
+  async openArchiveEntry(identifier: string, archiveFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
     try {
-      const displayLabel = entryObj?.name || zipFilename;
+      const displayLabel = entryObj?.name || archiveFilename;
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
         const url = this.getFileUrl(identifier, entryObj.name);
         const mode = this.getModeForFilename(entryObj.name);
@@ -212,7 +212,7 @@ export class Search implements OnInit {
         return;
       }
 
-      const blob = await this.archive.extractFileFromZip(entryObj.entry);
+      const blob = await this.archive.extractFileFromArchive(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const mode = this.getModeForFilename(entryObj.name);
       const baseQp: any = {};
@@ -227,8 +227,37 @@ export class Search implements OnInit {
         this.router.navigate(['/media'], { queryParams: { ...baseQp, mode, mediaUrl: url } });
       }
     } catch (err: any) {
-      const key = `${identifier}::${zipFilename}`;
-      this.zipError[key] = err?.message ?? String(err);
+      const key = `${identifier}::${archiveFilename}`;
+      this.archiveError[key] = err?.message ?? String(err);
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  async peekArchiveEntry(identifier: string, parentArchiveFilename: string, entryObj: any): Promise<void> {
+    try {
+      if (!entryObj?.file || typeof entryObj.file.extract !== 'function') return;
+      const nestedKey = `${identifier}::${parentArchiveFilename}::${entryObj.name}`;
+      if (this.archiveContents[nestedKey] || this.archiveLoading[nestedKey]) return;
+
+      this.archiveLoading[nestedKey] = true;
+      this.archiveError[nestedKey] = null;
+      this.archiveProgress[nestedKey] = 0;
+      const blob = await this.archive.extractFileFromArchive(entryObj.file);
+      this.archiveContents[nestedKey] = await this.archive.listArchiveBlobContents(blob, (p: number) => {
+        this.archiveProgress[nestedKey] = Math.max(0, Math.min(100, Math.floor(p)));
+        try { this.cdr.detectChanges(); } catch (e) {}
+      });
+      if (!this.archiveContents[nestedKey].length) this.archiveError[nestedKey] = 'No entries found in archive';
+      try { this.cdr.detectChanges(); } catch (e) {}
+    } catch (err: any) {
+      const nestedKey = `${identifier}::${parentArchiveFilename}::${entryObj?.name ?? 'archive'}`;
+      this.archiveError[nestedKey] = err?.message ?? String(err);
+      this.archiveContents[nestedKey] = [];
+      try { this.cdr.detectChanges(); } catch (e) {}
+    } finally {
+      const nestedKey = `${identifier}::${parentArchiveFilename}::${entryObj?.name ?? 'archive'}`;
+      this.archiveLoading[nestedKey] = false;
+      this.archiveProgress[nestedKey] = 100;
       try { this.cdr.detectChanges(); } catch (e) {}
     }
   }
@@ -274,6 +303,10 @@ export class Search implements OnInit {
       if (collectionDescription) qp.collectionDescription = collectionDescription;
       this.router.navigate(['/media'], { queryParams: qp });
     }
+  }
+
+  isArchiveFile(filename: string): boolean {
+    return this.isArchiveFilename(filename);
   }
 
   isEmulatorFile(filename: string): boolean {
