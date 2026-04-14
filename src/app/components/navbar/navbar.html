@@ -15,24 +15,4 @@
       <span class="ml-2 text-gray-300">(none)</span>
     </ng-template>
   </div>
-
-  <div class="ml-auto">
-    <input
-      #q
-      type="search"
-      aria-label="Search Internet Archive"
-      placeholder="Search Internet Archive"
-      class="px-2 py-1 rounded text-black bg-white w-64"
-      (keydown.enter)="onSearch(q.value)"
-    />
-    <div class="inline-block ml-3 align-middle">
-      <div class="text-xs text-gray-200">Media</div>
-      <div class="flex gap-2">
-        <label *ngFor="let m of mediaTypes" class="flex items-center text-xs">
-          <input type="checkbox" [checked]="selectedMedia[m]" (change)="toggleMediaAndSync(m)" class="mr-1" />
-          <span class="capitalize">{{ m }}</span>
-        </label>
-      </div>
-    </div>
-  </div>
 </nav>
