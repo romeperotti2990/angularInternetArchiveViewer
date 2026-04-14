@@ -6,7 +6,8 @@ there are some files and filetypes that you can open in emulatorjs that have a h
 items do not appear in order when searching, changing the page, amount per page will sometimes re shuffle the responses. It might also be the way internet archive sends data. its been inconsistant
 pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
-you cannot peek inside of .7z or .rar files
+the history in the nav only shows 4 items and not as many as can fit in the bar
+
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
@@ -26,6 +27,12 @@ favoriteing items so you can go back to them
 a random button (filterable, of course)
 I would like for you to be able to look at a collection and view all the content in that collection, like in internet archive
 making queue of items (not roms, of course)
+
+ASSIGNMENT REQIREMENTS:
+google auth
+firebase user info storage
+only three small bugs maximum
+app must be published
 
 COMMANDS:
 
