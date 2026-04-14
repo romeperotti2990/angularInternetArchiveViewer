@@ -17,8 +17,10 @@ emulatorjs (its essentially done, just having saving in game stay between sessio
 audio listening
 metadata provider/service
 search filters (they are minimal rn)
+search by filetype
 loading screens for pagination (might not need it, might just want to have it show what it has loaded instead)
-you  should be able to open the internet archive link normally as well to see the source
+you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
+you should be able to see the dexcription and title of the thing you are looking at on the mediapage, not just the file from that collections name
 
 
 IDEAS:
