@@ -1,5 +1,5 @@
-<app-navbar></app-navbar>
-<app-searchbar></app-searchbar>
+<app-navbar *ngIf="showHeader()"></app-navbar>
+<app-searchbar *ngIf="showHeader()"></app-searchbar>
 
 <main class="main">
   <router-outlet></router-outlet>

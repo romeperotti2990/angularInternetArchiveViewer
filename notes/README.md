@@ -13,10 +13,12 @@ FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
 metadata provider/service
 search filters (they are minimal rn)
-search by filetype
-loading screens for pagination (might not need it, might just want to have it show what it has loaded instead)
+search by filetype (we will have to look inside of zips, so it will have to search until it gets the amount of results as the pagination, then stop. this will still fetch a lot from internet archive and take a while, as it will have to use libarchive to peek into every one and extract it)
+loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
 you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
 deleting items from history
+deleting all history/cache
+seeing the 'show files' button on the media page with the description, so you can look at other files in the collection other than the one that you are looking at
 
 
 IDEAS:
@@ -27,6 +29,7 @@ favoriteing items so you can go back to them
 a random button (filterable, of course)
 I would like for you to be able to look at a collection and view all the content in that collection, like in internet archive
 making queue of items (not roms, of course)
+we can probably remove almost all of the css files we dont need them because of tailwind
 
 ASSIGNMENT REQIREMENTS:
 google auth

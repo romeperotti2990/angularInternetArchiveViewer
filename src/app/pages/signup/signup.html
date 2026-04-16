@@ -1,0 +1,16 @@
+<div class="signup">
+	<h2>Create account</h2>
+	<div *ngIf="error" class="text-red-600">{{ error }}</div>
+	<div *ngIf="success" class="text-green-600">Account created — logged in.</div>
+	<label>Display name</label>
+	<input [(ngModel)]="displayName" placeholder="Name" />
+	<label>Email</label>
+	<input [(ngModel)]="email" placeholder="you@example.com" />
+	<label>Password</label>
+	<input type="password" [(ngModel)]="password" />
+	<label>Confirm password</label>
+	<input type="password" [(ngModel)]="confirm" />
+	<button (click)="signupLocal()">Create account</button>
+	<hr />
+	<button (click)="signInWithGoogle()">Sign up with Google</button>
+</div>
