@@ -70,4 +70,15 @@ export class LocalAuthService {
     this.currentUser$.next(null);
     localStorage.removeItem(SESSION_KEY);
   }
+
+  /**
+   * Create a temporary guest session (not saved to users list).
+   */
+  async loginAsGuest(displayName?: string) {
+    const id = `guest_${Date.now()}`;
+    const user: LocalUser = { email: `${id}@guest.local`, displayName: displayName || 'Guest', password: '' };
+    this.currentUser$.next(user);
+    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    return user;
+  }
 }

@@ -1,23 +1,43 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import {
+  getAuth,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  User,
+} from 'firebase/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // Lightweight stub implementation to avoid requiring `firebase` during
-  // early development. Install `firebase` and replace this service when
-  // you're ready to enable Google/Firebase auth.
+  /** Observable of the current Firebase user (or null) */
+  user$: Observable<User | null> = new Observable((subscriber) => {
+    const auth = getAuth();
+    const unsub = onAuthStateChanged(auth, (u) => subscriber.next(u));
+    return { unsubscribe: unsub } as any;
+  });
 
-  user$ = new BehaviorSubject<null>(null);
+  async signInWithGoogle(): Promise<void> {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  }
 
-  constructor() {}
+  async signUpWithEmail(email: string, password: string) {
+    const auth = getAuth();
+    return createUserWithEmailAndPassword(auth, email, password);
+  }
 
-  async signInWithGoogle(): Promise<never> {
-    const msg = 'Firebase not installed. Install firebase to enable Google sign-in.';
-    console.warn(msg);
-    return Promise.reject(new Error(msg));
+  async signInWithEmail(email: string, password: string) {
+    const auth = getAuth();
+    return signInWithEmailAndPassword(auth, email, password);
   }
 
   async signOut(): Promise<void> {
-    console.warn('AuthService.signOut called — no-op in stubbed service.');
+    const auth = getAuth();
+    await firebaseSignOut(auth);
   }
 }
