@@ -7,6 +7,13 @@
         <a href="#" (click)="$event.preventDefault(); openLastItem(it)" class="ml-2 text-gray-100 no-underline">
           {{ it.collectionTitle || it.label }}
         </a>
+        <button
+          class="ml-1 text-gray-100 text-sm align-middle"
+          (click)="$event.preventDefault(); $event.stopPropagation(); favorites.toggle('history::' + it.url)"
+          title="{{ favorites.isFavorited('history::' + it.url) ? 'Unfavorite' : 'Favorite' }}"
+        >
+          {{ favorites.isFavorited('history::' + it.url) ? '★' : '☆' }}
+        </button>
         <span *ngIf="i < limitedLastItems.length - 1" class="text-gray-400">,</span>
       </span>
       <a *ngIf="hasMoreItems" routerLink="/" class="ml-3 text-gray-300 text-sm">(+{{ totalItemsCount - 4 }} more)</a>

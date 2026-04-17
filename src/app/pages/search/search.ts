@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Archive } from '../../services/archive';
+import { FavoritesService } from '../../services/favorites.service';
 import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
@@ -29,7 +30,13 @@ export class Search implements OnInit {
   pageInput = '1';
   totalResults = 0;
 
-  constructor(private route: ActivatedRoute, private router: Router, public archive: Archive, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    public archive: Archive,
+    private cdr: ChangeDetectorRef,
+    public favorites: FavoritesService,
+  ) {}
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((map) => {

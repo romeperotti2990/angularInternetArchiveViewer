@@ -6,7 +6,7 @@ there are some files and filetypes that you can open in emulatorjs that have a h
 items do not appear in order when searching, changing the page, amount per page will sometimes re shuffle the responses. It might also be the way internet archive sends data. its been inconsistant
 pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
-the history in the nav only shows 4 items and not as many as can fit in the bar
+the history in the nav only shows 4 items and not as many as can fit in the bar (wether that be less or more)
 
 
 FEATURES NEEDED:

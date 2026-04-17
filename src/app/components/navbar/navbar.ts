@@ -1,6 +1,7 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
 export class Navbar {
   lastItems: any[] = [];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {
+  constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService) {
     this.loadLastItems();
     // listen for updates triggered by Media.saveLastItem
     try { window.addEventListener('iav:lastItemsUpdated', () => this.loadLastItems()); } catch (e) {}
