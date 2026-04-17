@@ -23,8 +23,10 @@ export class Login {
   async signInWithGoogle() {
     try {
       await this.auth.signInWithGoogle();
+      await this.router.navigate(['/']);
     } catch (err) {
       console.error('Login error', err);
+      this.error = (err as any)?.message || String(err);
     }
   }
 

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FavoritesService } from '../../services/favorites.service';
 import { Archive } from '../../services/archive';
+import { UserDataService } from '../../services/user-data.service';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,7 @@ export class HomePage {
   lastItems: any[] = [];
   favoritesKeys: string[] = [];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService, private archive: Archive) {
+  constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService, private archive: Archive, private userData: UserDataService) {
     this.loadLastItems();
     this.loadFavorites();
     try { window.addEventListener('iav:lastItemsUpdated', () => this.loadLastItems()); } catch (e) {}
@@ -61,11 +62,28 @@ export class HomePage {
       const filePath = parts.slice(1).join('::');
       try {
         const url = this.archive.getFileUrl(identifier, filePath);
-        try { window.open(url, '_blank'); } catch (e) {}
+        const mode = this.archive.getModeForFilename(filePath);
+        if (mode === 'emulator') {
+          const core = this.archive.getEmulatorCore(filePath);
+          const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel: filePath };
+          this.router.navigate(['/media'], { queryParams: qp });
+        } else {
+          const qp: any = { mode, mediaUrl: url, displayLabel: filePath };
+          this.router.navigate(['/media'], { queryParams: qp });
+        }
       } catch (e) {
         try { window.open(filePath, '_blank'); } catch (err) {}
       }
     }
+  }
+
+  clearHistory() {
+    try {
+      localStorage.removeItem('iav:lastItems');
+      try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
+      try { this.userData.saveLastItems([]); } catch (e) {}
+      this.loadLastItems();
+    } catch (e) {}
   }
 
   openLastItem(item: any) {

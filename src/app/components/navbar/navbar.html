@@ -23,7 +23,14 @@
     </ng-template>
   </div>
   <div class="ml-auto flex items-center gap-3">
-    <a routerLink="/login" class="text-gray-300 no-underline">Sign in</a>
-    <a routerLink="/signup" class="text-gray-300 no-underline">Sign up</a>
+    <a routerLink="/history" class="text-gray-300 no-underline">History</a>
+    <ng-container *ngIf="auth.user$ | async as user; else loggedOut">
+      <span class="text-gray-300 text-sm mr-2">{{ user.displayName || user.email }}</span>
+      <button (click)="signOut()" class="text-gray-300 no-underline">Sign out</button>
+    </ng-container>
+    <ng-template #loggedOut>
+      <a routerLink="/login" class="text-gray-300 no-underline">Sign in</a>
+      <a routerLink="/signup" class="text-gray-300 no-underline">Sign up</a>
+    </ng-template>
   </div>
 </nav>

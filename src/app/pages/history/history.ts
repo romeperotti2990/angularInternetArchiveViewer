@@ -1,22 +1,19 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FavoritesService } from '../../services/favorites.service';
-import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { UserDataService } from '../../services/user-data.service';
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-history',
   standalone: true,
-  imports: [RouterModule, CommonModule],
-  templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  imports: [CommonModule],
+  templateUrl: './history.html',
 })
-export class Navbar {
+export class HistoryPage {
   lastItems: any[] = [];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService, public auth: AuthService) {
+  constructor(private router: Router, private cdr: ChangeDetectorRef, private userData: UserDataService) {
     this.loadLastItems();
-    // listen for updates triggered by Media.saveLastItem
     try { window.addEventListener('iav:lastItemsUpdated', () => this.loadLastItems()); } catch (e) {}
   }
 
@@ -36,27 +33,16 @@ export class Navbar {
     if (item.core) qp.core = item.core;
     if (item.collectionTitle) qp.collectionTitle = item.collectionTitle;
     if (item.collectionDescription) qp.collectionDescription = item.collectionDescription;
-    // use the same param name used elsewhere
     qp[(item.mode === 'emulator') ? 'gameUrl' : 'mediaUrl'] = item.url;
     this.router.navigate(['/media'], { queryParams: qp });
   }
 
-  get limitedLastItems(): any[] {
-    return this.lastItems.slice(0, 4);
-  }
-
-  get hasMoreItems(): boolean {
-    return this.lastItems.length > 4;
-  }
-
-  get totalItemsCount(): number {
-    return this.lastItems.length;
-  }
-
-  async signOut() {
+  clearHistory() {
     try {
-      await this.auth.signOut();
-      try { this.router.navigate(['/login']); } catch (e) {}
+      localStorage.removeItem('iav:lastItems');
+      try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
+      try { this.userData.saveLastItems([]); } catch (e) {}
+      this.loadLastItems();
     } catch (e) {}
   }
 }

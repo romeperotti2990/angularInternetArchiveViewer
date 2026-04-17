@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { UserDataService } from './user-data.service';
+import { AuthService } from './auth.service';
 
 const STORAGE_KEY = 'iav:favorites';
 
@@ -9,6 +11,11 @@ export class FavoritesService {
   private subj = new BehaviorSubject<Set<string>>(new Set(this.favorites));
 
   favorites$ = this.subj.asObservable();
+
+  constructor(private userData: UserDataService, private auth: AuthService) {
+    // When auth state changes, reload favorites (UserDataService will merge remote/local)
+    try { this.auth.user$.subscribe(() => this.reloadFromStorage()); } catch (e) {}
+  }
 
   private loadFromStorage(): string[] {
     try {
@@ -27,6 +34,13 @@ export class FavoritesService {
     } catch (e) {
       // ignore
     }
+    this.subj.next(new Set(this.favorites));
+    // attempt to persist to remote if signed in
+    try { this.userData.saveFavorites(Array.from(this.favorites)); } catch (e) {}
+  }
+
+  private reloadFromStorage() {
+    this.favorites = new Set(this.loadFromStorage());
     this.subj.next(new Set(this.favorites));
   }
 

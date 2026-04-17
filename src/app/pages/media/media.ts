@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { UserDataService } from '../../services/user-data.service';
 
 @Component({
   selector: 'app-media',
@@ -25,7 +26,7 @@ export class Media implements OnInit {
   collectionDescription: string | null = null;
   private _keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
-  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) {}
+  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef, private userData: UserDataService) {}
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
@@ -177,7 +178,7 @@ export class Media implements OnInit {
       ts: Date.now(),
     } as any;
 
-    try {
+      try {
       const key = 'iav:lastItems';
       const raw = localStorage.getItem(key);
       const arr = raw ? JSON.parse(raw) : [];
@@ -188,6 +189,8 @@ export class Media implements OnInit {
       localStorage.setItem(key, JSON.stringify(sliced));
       // notify other components in-page
       try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
+      // also persist to remote for signed-in users
+      try { this.userData.saveLastItems(sliced); } catch (e) {}
     } catch (e) {
       // ignore storage errors
     }

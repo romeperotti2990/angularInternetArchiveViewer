@@ -7,6 +7,7 @@ items do not appear in order when searching, changing the page, amount per page 
 pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
 the history in the nav only shows 4 items and not as many as can fit in the bar (wether that be less or more)
+after clearing your history the files in your favorites break and no longer open in the app
 
 
 FEATURES NEEDED:
@@ -19,6 +20,7 @@ you should be able to open the internet archive link normally (as in on internet
 deleting items from history
 deleting all history/cache
 seeing the 'show files' button on the media page with the description, so you can look at other files in the collection other than the one that you are looking at
+I might make like a history page so you can look at your full history
 
 
 IDEAS:

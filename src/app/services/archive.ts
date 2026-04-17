@@ -218,6 +218,52 @@ export class Archive {
     return `${IA_BASE}/download/${encodeURIComponent(identifier)}/${encodeURIComponent(filename)}`;
   }
 
+  getModeForFilename(filename: string): string {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    if (this.isEmulatorExt(ext)) return 'emulator';
+    if (['mp4', 'webm', 'mkv', 'ogv', 'ogg'].includes(ext)) return 'video';
+    if (['mp3', 'wav', 'ogg', 'm4a', 'flac'].includes(ext)) return 'audio';
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return 'image';
+    if (['pdf', 'epub', 'html', 'htm'].includes(ext)) return 'document';
+    if (['txt', 'md', 'csv', 'json'].includes(ext)) return 'text';
+    return 'other';
+  }
+
+  getEmulatorCore(filename: string): string {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    switch (ext) {
+      case 'gba':
+        return 'mgba';
+      case 'gb':
+      case 'gbc':
+        return 'gambatte';
+      case 'nes':
+        return 'nestopia';
+      case 'smc':
+      case 'sfc':
+        return 'snes9x';
+      case 'nds':
+        return 'melonds';
+      case 'n64':
+      case 'z64':
+        return 'mupen64plus_next';
+      case 'iso':
+      case 'cue':
+      case 'bin':
+        return 'pcsx_rearmed';
+      case 'pbp':
+        return 'ppsspp';
+      default:
+        return 'mgba';
+    }
+  }
+
+  private isEmulatorExt(ext: string): boolean {
+    return [
+      'gba', 'gb', 'gbc', 'nes', 'smc', 'sfc', 'bin', 'zip', 'nds', 'n64', 'z64', 'iso', 'cue', 'rom', 'img', 'pbp'
+    ].includes(ext);
+  }
+
   async getMetadata(identifier: string): Promise<any> {
     const url = `${IA_BASE}/metadata/${encodeURIComponent(identifier)}`;
     const res = await fetch(url);

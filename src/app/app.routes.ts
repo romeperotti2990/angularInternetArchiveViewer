@@ -4,6 +4,7 @@ import { Media } from './pages/media/media';
 import { Search } from './pages/search/search';
 import { Login } from './pages/login/login';
 import { Signup } from './pages/signup/signup';
+import { HistoryPage } from './pages/history/history';
 
 export const routes: Routes = [
     { path: '', component: HomePage },
@@ -12,4 +13,5 @@ export const routes: Routes = [
     { path: 'content/:id', component: Media },
     { path: 'login', component: Login },
     { path: 'signup', component: Signup },
+    { path: 'history', component: HistoryPage },
 ];

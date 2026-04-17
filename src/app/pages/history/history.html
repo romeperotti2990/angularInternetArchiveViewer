@@ -1,0 +1,23 @@
+<div class="mx-auto max-w-4xl px-4 py-8">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-2xl font-bold">Full History</h2>
+    <div>
+      <button class="px-3 py-1 bg-red-600 text-white rounded" (click)="clearHistory()">Clear history</button>
+    </div>
+  </div>
+
+  <div *ngIf="!lastItems.length" class="text-gray-600">No history items.</div>
+
+  <div *ngIf="lastItems.length" class="grid gap-3">
+    <div *ngFor="let item of lastItems" class="p-4 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition" (click)="openLastItem(item)">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="font-semibold">{{ item.label }}</div>
+          <div *ngIf="item.collectionTitle" class="text-sm text-gray-700 mt-1">{{ item.collectionTitle }}</div>
+          <div *ngIf="item.collectionDescription" class="text-sm text-gray-500 mt-1">{{ item.collectionDescription }}</div>
+          <div class="text-sm text-gray-500">{{ item.mode }} • {{ item.ts | date:'short' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
