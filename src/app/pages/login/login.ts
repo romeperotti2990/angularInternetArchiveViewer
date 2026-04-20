@@ -33,7 +33,12 @@ export class Login {
   async loginLocal() {
     this.error = null;
     try {
-      await this.local.login(this.email, this.password);
+      if (!this.email || !this.password) {
+        this.error = 'Email and password required';
+        return;
+      }
+      await this.auth.signInWithEmail(this.email, this.password);
+      await this.router.navigate(['/']);
     } catch (err: any) {
       this.error = err?.message || String(err);
     }

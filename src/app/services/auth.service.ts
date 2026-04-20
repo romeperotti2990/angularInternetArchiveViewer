@@ -33,7 +33,28 @@ export class AuthService {
 
   async signInWithEmail(email: string, password: string) {
     const auth = getAuth();
-    return signInWithEmailAndPassword(auth, email, password);
+    try {
+      return await signInWithEmailAndPassword(auth, email, password);
+    } catch (err: any) {
+      const code = err?.code || err?.error || '';
+      let msg = err?.message || String(err);
+      if (code) {
+        switch (code) {
+          case 'auth/user-not-found':
+            msg = 'No account found for that email.'; break;
+          case 'auth/wrong-password':
+            msg = 'Incorrect password.'; break;
+          case 'auth/invalid-email':
+            msg = 'Invalid email address.'; break;
+          case 'auth/too-many-requests':
+            msg = 'Too many attempts; try again later.'; break;
+          default:
+            // keep Firebase message
+            break;
+        }
+      }
+      throw new Error(msg);
+    }
   }
 
   async signOut(): Promise<void> {

@@ -39,8 +39,9 @@ export class Signup {
       return;
     }
     try {
-      await this.local.signup(this.email, this.password, this.displayName || undefined);
+      await this.auth.signUpWithEmail(this.email, this.password);
       this.success = true;
+      await this.router.navigate(['/']);
     } catch (err: any) {
       this.error = err?.message || String(err);
     }
