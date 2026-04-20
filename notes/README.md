@@ -8,6 +8,7 @@ pressing "show files" more than once makes it show up much faster (pressing it t
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
 the history in the nav only shows 4 items and not as many as can fit in the bar (wether that be less or more)
 after clearing your history the files in your favorites break and no longer open in the app
+after making firebase work the history appears to be one behind even when you are a 'guest' (local)
 
 
 FEATURES NEEDED:
@@ -34,8 +35,6 @@ making queue of items (not roms, of course)
 we can probably remove almost all of the css files we dont need them because of tailwind
 
 ASSIGNMENT REQIREMENTS:
-google auth
-firebase user info storage
 only three small bugs maximum
 app must be published
 

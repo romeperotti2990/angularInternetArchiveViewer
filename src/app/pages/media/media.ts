@@ -178,18 +178,12 @@ export class Media implements OnInit {
       ts: Date.now(),
     } as any;
 
-      try {
-      const key = 'iav:lastItems';
-      const raw = localStorage.getItem(key);
-      const arr = raw ? JSON.parse(raw) : [];
-      // dedupe by url
+    try {
+      const arr = this.userData.loadLastItems();
       const filtered = arr.filter((a: any) => a.url !== item.url);
       filtered.unshift(item);
       const sliced = filtered.slice(0, 10);
-      localStorage.setItem(key, JSON.stringify(sliced));
-      // notify other components in-page
       try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
-      // also persist to remote for signed-in users
       try { this.userData.saveLastItems(sliced); } catch (e) {}
     } catch (e) {
       // ignore storage errors

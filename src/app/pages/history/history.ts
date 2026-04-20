@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserDataService } from '../../services/user-data.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-history',
@@ -12,15 +13,15 @@ import { UserDataService } from '../../services/user-data.service';
 export class HistoryPage {
   lastItems: any[] = [];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, private userData: UserDataService) {
+  constructor(private router: Router, private cdr: ChangeDetectorRef, private userData: UserDataService, private auth: AuthService) {
     this.loadLastItems();
+    try { this.auth.user$.subscribe(() => this.loadLastItems()); } catch (e) {}
     try { window.addEventListener('iav:lastItemsUpdated', () => this.loadLastItems()); } catch (e) {}
   }
 
   private loadLastItems() {
     try {
-      const raw = localStorage.getItem('iav:lastItems');
-      this.lastItems = raw ? JSON.parse(raw) : [];
+      this.lastItems = this.userData.loadLastItems();
       try { this.cdr.detectChanges(); } catch (e) {}
     } catch (e) {
       this.lastItems = [];
@@ -39,7 +40,6 @@ export class HistoryPage {
 
   clearHistory() {
     try {
-      localStorage.removeItem('iav:lastItems');
       try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
       try { this.userData.saveLastItems([]); } catch (e) {}
       this.loadLastItems();

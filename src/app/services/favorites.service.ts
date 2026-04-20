@@ -3,44 +3,27 @@ import { BehaviorSubject } from 'rxjs';
 import { UserDataService } from './user-data.service';
 import { AuthService } from './auth.service';
 
-const STORAGE_KEY = 'iav:favorites';
-
 @Injectable({ providedIn: 'root' })
 export class FavoritesService {
-  private favorites = new Set<string>(this.loadFromStorage());
-  private subj = new BehaviorSubject<Set<string>>(new Set(this.favorites));
+  private favorites = new Set<string>();
+  private subj = new BehaviorSubject<Set<string>>(new Set());
 
   favorites$ = this.subj.asObservable();
 
   constructor(private userData: UserDataService, private auth: AuthService) {
-    // When auth state changes, reload favorites (UserDataService will merge remote/local)
-    try { this.auth.user$.subscribe(() => this.reloadFromStorage()); } catch (e) {}
-  }
-
-  private loadFromStorage(): string[] {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      return [];
-    }
+      this.auth.user$.subscribe(() => this.reloadFromStorage());
+    } catch (e) {}
+    this.reloadFromStorage();
   }
 
   private persist() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(this.favorites)));
-    } catch (e) {
-      // ignore
-    }
     this.subj.next(new Set(this.favorites));
-    // attempt to persist to remote if signed in
     try { this.userData.saveFavorites(Array.from(this.favorites)); } catch (e) {}
   }
 
   private reloadFromStorage() {
-    this.favorites = new Set(this.loadFromStorage());
+    this.favorites = new Set(this.userData.loadFavorites());
     this.subj.next(new Set(this.favorites));
   }
 

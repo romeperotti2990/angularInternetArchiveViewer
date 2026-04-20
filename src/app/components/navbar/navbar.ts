@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FavoritesService } from '../../services/favorites.service';
 import { AuthService } from '../../services/auth.service';
+import { UserDataService } from '../../services/user-data.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,16 +15,16 @@ import { AuthService } from '../../services/auth.service';
 export class Navbar {
   lastItems: any[] = [];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService, public auth: AuthService) {
+  constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService, public auth: AuthService, private userData: UserDataService) {
     this.loadLastItems();
+    try { this.auth.user$.subscribe(() => this.loadLastItems()); } catch (e) {}
     // listen for updates triggered by Media.saveLastItem
     try { window.addEventListener('iav:lastItemsUpdated', () => this.loadLastItems()); } catch (e) {}
   }
 
   private loadLastItems() {
     try {
-      const raw = localStorage.getItem('iav:lastItems');
-      this.lastItems = raw ? JSON.parse(raw) : [];
+      this.lastItems = this.userData.loadLastItems();
       try { this.cdr.detectChanges(); } catch (e) {}
     } catch (e) {
       this.lastItems = [];

@@ -31,5 +31,5 @@ Make sure your code is the same logically as other code in the workspace.
 CURRENT STATE:
 you can see inside of .zip files but it takes a while for some reason. also sometimes the roms that are zips within the zips do not work.
 the search still just shows IA metadata and it is hard to find what you are looking for through all the podcast junk
-there is a rudementary sign in thing but this is just for the assignment requirement of firebase user info storage and google auth
+the app stores user data on firebase using firestore. it also supports google auth
 

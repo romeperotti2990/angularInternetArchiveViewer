@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FavoritesService } from '../../services/favorites.service';
 import { Archive } from '../../services/archive';
 import { UserDataService } from '../../services/user-data.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -16,9 +17,10 @@ export class HomePage {
   lastItems: any[] = [];
   favoritesKeys: string[] = [];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService, private archive: Archive, private userData: UserDataService) {
+  constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService, private archive: Archive, private userData: UserDataService, private auth: AuthService) {
     this.loadLastItems();
     this.loadFavorites();
+    try { this.auth.user$.subscribe(() => this.loadLastItems()); } catch (e) {}
     try { window.addEventListener('iav:lastItemsUpdated', () => this.loadLastItems()); } catch (e) {}
     try { window.addEventListener('iav:lastItemsUpdated', () => this.loadFavorites()); } catch (e) {}
     // subscribe to favorites changes to update view
@@ -27,8 +29,7 @@ export class HomePage {
 
   private loadLastItems() {
     try {
-      const raw = localStorage.getItem('iav:lastItems');
-      this.lastItems = raw ? JSON.parse(raw) : [];
+      this.lastItems = this.userData.loadLastItems();
       try { this.cdr.detectChanges(); } catch (e) {}
     } catch (e) {
       this.lastItems = [];
@@ -79,7 +80,6 @@ export class HomePage {
 
   clearHistory() {
     try {
-      localStorage.removeItem('iav:lastItems');
       try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
       try { this.userData.saveLastItems([]); } catch (e) {}
       this.loadLastItems();
