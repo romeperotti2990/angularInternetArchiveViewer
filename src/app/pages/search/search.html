@@ -1,6 +1,11 @@
 <div class="p-4">
 	<h2 class="text-xl font-semibold mb-3">Search Results</h2>
 
+	<div *ngIf="loadingSearch" class="mb-3 text-sm text-gray-600">
+		Loading results locally: {{ loadedResults }} loaded
+		<span *ngIf="totalResults">of {{ totalResults }}</span>
+	</div>
+
 	<div *ngIf="error" class="text-red-500">{{ error }}</div>
 	<div *ngIf="results.length" class="mb-4">
 		<app-pagination
@@ -140,5 +145,5 @@
 		></app-pagination>
 	</div>
 
-	<div *ngIf="!results.length">No results</div>
+	<div *ngIf="!results.length && !loadingSearch">No results</div>
 </div>

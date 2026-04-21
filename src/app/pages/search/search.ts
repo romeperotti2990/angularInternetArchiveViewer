@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Archive } from '../../services/archive';
@@ -12,10 +12,16 @@ import { Pagination } from '../../components/pagination/pagination';
   templateUrl: './search.html',
   styleUrl: './search.css',
 })
-export class Search implements OnInit {
+export class Search implements OnInit, OnDestroy {
   results: any[] = [];
   mediaTypes = ['software', 'movies', 'texts', 'audio'];
   selectedMedia: Record<string, boolean> = {};
+  private cachedQueryKey: string | null = null;
+  private cachedResults: any[] = [];
+  private cachedTotalResults = 0;
+  private searchRunId = 0;
+  loadingSearch = false;
+  loadedResults = 0;
   itemFiles: Record<string, any[]> = {};
   archiveContents: Record<string, any[]> = {};
   archiveLoading: Record<string, boolean> = {};
@@ -38,11 +44,21 @@ export class Search implements OnInit {
     public favorites: FavoritesService,
   ) {}
 
+  ngOnDestroy(): void {
+    this.searchRunId += 1;
+    this.results = [];
+    this.cachedQueryKey = null;
+    this.cachedResults = [];
+    this.cachedTotalResults = 0;
+    this.loadedResults = 0;
+    this.loadingSearch = false;
+  }
+
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((map) => {
       const q = map.get('q') ?? '';
       const mediaParam = map.get('media') ?? '';
-      // initialize selected media from query param
+
       this.selectedMedia = {};
       if (mediaParam) {
         for (const m of mediaParam.split(',').map((s) => s.trim()).filter(Boolean)) {
@@ -50,7 +66,6 @@ export class Search implements OnInit {
         }
       }
 
-      // read pagination params if present so filters and pages stay in sync
       const pageParam = parseInt(map.get('page') ?? '1', 10);
       this.page = Number.isFinite(pageParam) && pageParam >= 1 ? pageParam : 1;
       this.pageInput = String(this.page);
@@ -58,57 +73,120 @@ export class Search implements OnInit {
       const pageSizeParam = parseInt(map.get('pageSize') ?? map.get('rows') ?? String(this.pageSize), 10);
       this.pageSize = Number.isFinite(pageSizeParam) && pageSizeParam >= 1 ? pageSizeParam : this.pageSize;
 
-      const mediatypes = Object.keys(this.selectedMedia).filter((k) => this.selectedMedia[k]);
+      const mediatypes = Object.keys(this.selectedMedia).filter((key) => this.selectedMedia[key]);
+      const queryKey = this.getQueryKey(q, mediatypes);
 
       if (!q) {
+        this.searchRunId += 1;
+        this.error = null;
         this.results = [];
         this.totalResults = 0;
+        this.cachedQueryKey = null;
+        this.cachedResults = [];
+        this.cachedTotalResults = 0;
+        this.loadedResults = 0;
+        this.loadingSearch = false;
+        try { this.cdr.detectChanges(); } catch (e) {}
         return;
       }
 
-      this.runSearch(q, mediatypes.length ? mediatypes : undefined);
+      if (this.cachedQueryKey === queryKey) {
+        this.syncVisibleResults();
+        return;
+      }
+
+      void this.loadAllSearchResults(q, mediatypes.length ? mediatypes : undefined);
     });
   }
 
-  async runSearch(q: string, mediatypes?: string[]) {
+  private getQueryKey(q: string, mediatypes?: string[]): string {
+    const normalizedMedia = (mediatypes ?? []).map((m) => m.trim()).filter(Boolean).sort();
+    return `${(q || '').trim()}::${normalizedMedia.join(',')}`;
+  }
+
+  async loadAllSearchResults(q: string, mediatypes?: string[]) {
+    const runId = ++this.searchRunId;
+    const queryKey = this.getQueryKey(q, mediatypes);
+    const looksLikeFielded = /\w+:/.test(q || '');
+    const defaultMediatypes = ['software', 'movies', 'texts', 'audio'];
+    const effectiveMediatypes = mediatypes ?? defaultMediatypes;
+    const rowsPerRequest = 100;
 
     this.error = null;
-    console.log('[Search page] running search for:', q, 'page=', this.page, 'pageSize=', this.pageSize);
+    this.loadingSearch = true;
+    this.loadedResults = 0;
+    this.cachedQueryKey = queryKey;
+    this.cachedResults = [];
+    this.cachedTotalResults = 0;
+    this.totalResults = 0;
+    this.results = [];
+    try { this.cdr.detectChanges(); } catch (e) {}
+
     try {
-      // If the user typed a fielded IA query (e.g. "mediatype:movies") trust it;
-      // otherwise restrict to likely useful mediatypes so results aren't noise.
-      const looksLikeFielded = /\w+:/.test(q || '');
-      const defaultMediatypes = ['software', 'movies', 'texts', 'audio'];
-      const effectiveMediatypes = mediatypes ?? defaultMediatypes;
-      const res = looksLikeFielded
-        ? await this.archive.search(q, this.page, this.pageSize, mediatypes ? { mediatypes } : undefined)
-        : await this.archive.search(q, this.page, this.pageSize, { mediatypes: effectiveMediatypes });
-      console.log('[Search page] archive.search returned:', res);
-      this.totalResults = res?.response?.numFound ?? 0;
-      this.results = res?.response?.docs ?? [];
-      // detect changes explicitly for zone-less or OnPush environments
-      try { this.cdr.detectChanges(); } catch (e) {}
-      console.log('[Search page] results assigned:', this.results);
+      let page = 1;
+      let totalResults = 0;
+
+      while (runId === this.searchRunId) {
+        const res = looksLikeFielded
+          ? await this.archive.search(q, page, rowsPerRequest, mediatypes ? { mediatypes } : undefined)
+          : await this.archive.search(q, page, rowsPerRequest, { mediatypes: effectiveMediatypes });
+
+        if (runId !== this.searchRunId) return;
+
+        const docs = res?.response?.docs ?? [];
+        totalResults = res?.response?.numFound ?? totalResults;
+        this.cachedTotalResults = totalResults;
+        this.totalResults = totalResults;
+        this.cachedResults.push(...docs);
+        this.loadedResults = this.cachedResults.length;
+        this.syncVisibleResults();
+
+        if (!docs.length || this.cachedResults.length >= totalResults) {
+          break;
+        }
+
+        page += 1;
+      }
     } catch (err: any) {
-      this.error = err?.message ?? String(err);
-      this.results = [];
-      try { this.cdr.detectChanges(); } catch (e) {}
+      if (runId === this.searchRunId) {
+        this.error = err?.message ?? String(err);
+        this.results = [];
+        this.cachedQueryKey = null;
+        this.cachedResults = [];
+        this.cachedTotalResults = 0;
+        this.loadedResults = 0;
+        try { this.cdr.detectChanges(); } catch (e) {}
+      }
+    } finally {
+      if (runId === this.searchRunId) {
+        this.loadingSearch = false;
+        this.syncVisibleResults();
+      }
     }
+  }
+
+  private syncVisibleResults(): void {
+    if (!this.cachedQueryKey) return;
+    this.totalResults = this.cachedTotalResults;
+    this.results = this.getCachedPageResults();
+    try { this.cdr.detectChanges(); } catch (e) {}
+  }
+
+  private getCachedPageResults(): any[] {
+    const start = Math.max(0, (this.page - 1) * this.pageSize);
+    return this.cachedResults.slice(start, start + this.pageSize);
   }
 
   toggleMedia(m: string) {
     this.selectedMedia[m] = !this.selectedMedia[m];
-    // re-run search with updated filters if we already have a query
     const q = this.route.snapshot.queryParamMap.get('q') ?? '';
     if (q) {
-      const mediatypes = Object.keys(this.selectedMedia).filter((k) => this.selectedMedia[k]);
+      const mediatypes = Object.keys(this.selectedMedia).filter((key) => this.selectedMedia[key]);
       this.page = 1;
       this.pageInput = '1';
-      // update URL to reflect selected media and reset page
       const qp: any = { q, page: '1', pageSize: String(this.pageSize) };
       if (mediatypes.length) qp.media = mediatypes.join(',');
       this.router.navigate([], { queryParams: qp, replaceUrl: true });
-      this.runSearch(q, mediatypes.length ? mediatypes : undefined);
     }
   }
 
@@ -384,7 +462,7 @@ export class Search implements OnInit {
     qp.page = String(this.page);
     qp.pageSize = String(this.pageSize);
     this.router.navigate([], { queryParams: qp, replaceUrl: true });
-    if (q) this.runSearch(q, mediatypes.length ? mediatypes : undefined);
+    this.syncVisibleResults();
   }
 
   onPageSizeChange(n: number) {
@@ -399,6 +477,6 @@ export class Search implements OnInit {
     qp.page = '1';
     qp.pageSize = String(this.pageSize);
     this.router.navigate([], { queryParams: qp, replaceUrl: true });
-    if (q) this.runSearch(q, mediatypes.length ? mediatypes : undefined);
+    this.syncVisibleResults();
   }
 }

@@ -38,8 +38,11 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
-4.2.3
 
 # System files
 .DS_Store
 Thumbs.db
+
+# Project Specific Dependencies
+libarchive
+4.2.3

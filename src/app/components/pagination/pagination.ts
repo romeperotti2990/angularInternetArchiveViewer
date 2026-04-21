@@ -61,8 +61,6 @@ export class Pagination {
     const v = parseInt((e.target as HTMLSelectElement).value, 10);
     if (!isNaN(v)) {
       this.pageSizeChange.emit(v);
-      this.setPage(1);
-      this.pageInput = '1';
     }
   }
 }

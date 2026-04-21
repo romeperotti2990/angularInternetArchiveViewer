@@ -3,12 +3,12 @@ the search is still going by IA metadata and not just showing individual files b
 sometimes the roms that are zips within the zips do not work.
 You cannot search for books, only text. hopfully this will be fixed after they are listed individually.
 there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need
-items do not appear in order when searching, changing the page, amount per page will sometimes re shuffle the responses. It might also be the way internet archive sends data. its been inconsistant
 pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
 the history in the nav only shows 4 items and not as many as can fit in the bar (wether that be less or more)
 after clearing your history the files in your favorites break and no longer open in the app
 after making firebase work the history appears to be one behind even when you are a 'guest' (local)
+looking into zips, rars, etc appears to not be working currently
 
 
 FEATURES NEEDED:
@@ -36,7 +36,8 @@ we can probably remove almost all of the css files we dont need them because of 
 
 ASSIGNMENT REQIREMENTS:
 only three small bugs maximum
-app must be published
+app must be published (i have a non functional start on render)
+get 5 people to try it and give feedback (it never told me to fix the problems they find tho lol)
 
 COMMANDS:
 
