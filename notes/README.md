@@ -1,13 +1,11 @@
 BUGS/ PROBLEMS: 
 the search is still going by IA metadata and not just showing individual files based on seperate metadata assigned to it
 sometimes the roms that are zips within the zips do not work.
-You cannot search for books, only text. hopfully this will be fixed after they are listed individually.
+You cannot search for books, only text. hopfully this will be fixed after they are listed individually also, just general junk being shown to you unless you know exactly what you want.
 there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need
 pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
-the history in the nav only shows 4 items and not as many as can fit in the bar (wether that be less or more)
 after clearing your history the files in your favorites break and no longer open in the app
-after making firebase work the history appears to be one behind even when you are a 'guest' (local)
 looking into zips, rars, etc appears to not be working currently
 
 

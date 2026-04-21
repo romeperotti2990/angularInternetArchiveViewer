@@ -183,8 +183,8 @@ export class Media implements OnInit {
       const filtered = arr.filter((a: any) => a.url !== item.url);
       filtered.unshift(item);
       const sliced = filtered.slice(0, 10);
-      try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
       try { this.userData.saveLastItems(sliced); } catch (e) {}
+      try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
     } catch (e) {
       // ignore storage errors
     }

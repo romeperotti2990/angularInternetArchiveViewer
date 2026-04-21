@@ -1,26 +1,33 @@
 <nav class="flex items-center gap-3 p-3 bg-gray-900 text-white">
   <a routerLink="/" class="text-gray-100 text-2xl pl-2 p-1 no-underline font-semibold">IAV</a>
-  <div class="text-gray-100">
-    <span class="font-semibold">Last items:</span>
-    <ng-container *ngIf="limitedLastItems.length; else noLast">
-      <span *ngFor="let it of limitedLastItems; let i = index">
-        <a href="#" (click)="$event.preventDefault(); openLastItem(it)" class="ml-2 text-gray-100 no-underline">
-          {{ it.collectionTitle || it.label }}
-        </a>
-        <button
-          class="ml-1 text-gray-100 text-sm align-middle"
-          (click)="$event.preventDefault(); $event.stopPropagation(); favorites.toggle('history::' + it.url)"
-          title="{{ favorites.isFavorited('history::' + it.url) ? 'Unfavorite' : 'Favorite' }}"
-        >
-          {{ favorites.isFavorited('history::' + it.url) ? '★' : '☆' }}
-        </button>
-        <span *ngIf="i < limitedLastItems.length - 1" class="text-gray-400">,</span>
-      </span>
-      <a *ngIf="hasMoreItems" routerLink="/" class="ml-3 text-gray-300 text-sm">(+{{ totalItemsCount - 4 }} more)</a>
-    </ng-container>
-    <ng-template #noLast>
-      <span class="ml-2 text-gray-300">(none)</span>
-    </ng-template>
+  <div class="flex min-w-0 flex-1 items-center gap-3 text-gray-100">
+    <span class="shrink-0 font-semibold">Last items:</span>
+    <div #historyViewport class="flex min-w-0 flex-1 items-center gap-3 overflow-hidden whitespace-nowrap">
+      <ng-container *ngIf="visibleLastItems.length; else noLast">
+        <span *ngFor="let it of visibleLastItems" class="inline-flex shrink-0 items-center gap-1">
+          <a href="#" (click)="$event.preventDefault(); openLastItem(it)" class="text-gray-100 no-underline">
+            {{ it.collectionTitle || it.label }}
+          </a>
+          <button
+            class="text-gray-100 text-sm align-middle"
+            (click)="$event.preventDefault(); $event.stopPropagation(); favorites.toggle('history::' + it.url)"
+            title="{{ favorites.isFavorited('history::' + it.url) ? 'Unfavorite' : 'Favorite' }}"
+          >
+            {{ favorites.isFavorited('history::' + it.url) ? '★' : '☆' }}
+          </button>
+        </span>
+        <a *ngIf="hasMoreItems" routerLink="/history" class="text-gray-300 text-sm shrink-0">(+{{ hiddenLastItemsCount }} more)</a>
+      </ng-container>
+      <ng-template #noLast>
+        <span class="text-gray-300">(none)</span>
+      </ng-template>
+    </div>
+  </div>
+  <div aria-hidden="true" class="pointer-events-none absolute top-0 opacity-0 whitespace-nowrap" style="left: -9999px;">
+    <span *ngFor="let it of lastItems" #historyMeasureItem class="inline-flex shrink-0 items-center gap-1">
+      <span class="text-gray-100 no-underline">{{ it.collectionTitle || it.label }}</span>
+      <button class="text-gray-100 text-sm align-middle">★</button>
+    </span>
   </div>
   <div class="ml-auto flex items-center gap-3">
     <a routerLink="/history" class="text-gray-300 no-underline">History</a>
