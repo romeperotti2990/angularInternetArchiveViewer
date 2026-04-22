@@ -52,7 +52,17 @@ export class HomePage {
       const url = key.substring('history::'.length);
       const found = this.lastItems.find((i) => i.url === url);
       if (found) return this.openLastItem(found);
-      try { window.open(url, '_blank'); } catch (e) {}
+
+      // Fallback: If not in history, derive mode and core from URL to allow opening
+      const mode = this.archive.getModeForFilename(url);
+      const qp: any = { mode };
+      if (mode === 'emulator') {
+        qp.gameUrl = url;
+        qp.core = this.archive.getEmulatorCore(url);
+      } else {
+        qp.mediaUrl = url;
+      }
+      this.router.navigate(['/media'], { queryParams: qp });
       return;
     }
 

@@ -4,7 +4,7 @@ It should be designed to search internet archive, take only the files and displa
 For example, if I find a .gba file, we should be able to play it with emulator js, If I find a .mp3 file, I should be able to listen to it in the browser, etc etc.
 It should also be able to see what is inside of .zip folders and use those as well.
 USERS DO NOT NEED AN ACCOUNT OR AN EMAIL. it should just work. accounts are a future feature to think about, BUT ARE NOT IPLEMENTED CURRENTLY.
-Also, do not mess with anything in the 4.2.3 folder, its just a dependency. treat it the same as you would the node_moduels folder.
+Also, do not mess with anything in the 4.2.3 folder, its just a dependency. treat it the same as you would the node_modules folder.
 
 INTENDED UX:
 The user should go onto the site
@@ -19,9 +19,7 @@ everything will eventually have to transition from localstorage to firebase (may
 
 STRUCTURE:
 The current structure has components, pages, and services within their folders in /src/app.
-right now we are working on functionality and ux (the site looks bad and there are many bugs that make the site annoying to use)
-the main issue rn is the search giving you unexpected results
-
+each component/pages purpose is pretty self explanitory, but item does not do anything currently
 
 INSTRUCTIONS:
 Make your code as clean and small as possible. If a file gets too big (500+ lines) then you need to start thinking about splitting that file into multiple.
@@ -32,4 +30,3 @@ CURRENT STATE:
 you can see inside of .zip files and other archives because of libarchive.js but it takes a while and is janky for some reason. also sometimes the roms that are zips within the zips do not work.
 the search still just shows IA metadata and it is hard to find what you are looking for through all the podcast junk
 the app stores user data on firebase using firestore. it also supports google auth.
-

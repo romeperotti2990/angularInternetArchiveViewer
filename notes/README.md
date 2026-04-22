@@ -5,9 +5,9 @@ You cannot search for books, only text. hopfully this will be fixed after they a
 there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need
 pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
-after clearing your history the files in your favorites break and no longer open in the app
-looking into zips, rars, etc appears to not be working currently
-
+looking into arichive types that are not zips appears to not be working currently
+things in zips are still shown as 'local item' if favoraited or updated by archive owner
+after clearing history there are a lot of visual bugs but everything works so its whatever
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
@@ -16,10 +16,8 @@ search filters (they are minimal rn)
 search by filetype (we will have to look inside of zips, so it will have to search until it gets the amount of results as the pagination, then stop. this will still fetch a lot from internet archive and take a while, as it will have to use libarchive to peek into every one and extract it)
 loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
 you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
-deleting items from history
-deleting all history/cache
+deleting individual items from history
 seeing the 'show files' button on the media page with the description, so you can look at other files in the collection other than the one that you are looking at
-I might make like a history page so you can look at your full history
 
 
 IDEAS:
