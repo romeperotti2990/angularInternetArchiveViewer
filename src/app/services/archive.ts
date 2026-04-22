@@ -220,6 +220,7 @@ export class Archive {
 
   getModeForFilename(filename: string): string {
     const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    if (this.isComicExt(ext)) return 'comic';
     if (this.isEmulatorExt(ext)) return 'emulator';
     if (['mp4', 'webm', 'mkv', 'ogv', 'ogg'].includes(ext)) return 'video';
     if (['mp3', 'wav', 'ogg', 'm4a', 'flac'].includes(ext)) return 'audio';
@@ -227,6 +228,10 @@ export class Archive {
     if (['pdf', 'epub', 'html', 'htm'].includes(ext)) return 'document';
     if (['txt', 'md', 'csv', 'json'].includes(ext)) return 'text';
     return 'other';
+  }
+
+  isComicExt(ext: string): boolean {
+    return ['cbz', 'cbr', 'cb7'].includes(ext);
   }
 
   getEmulatorCore(filename: string): string {

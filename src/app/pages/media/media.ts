@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserDataService } from '../../services/user-data.service';
+import { ComicViewerComponent } from '../../components/comic-viewer/comic-viewer';
 
 @Component({
   selector: 'app-media',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ComicViewerComponent],
   templateUrl: './media.html',
   styleUrl: './media.css',
 })
@@ -16,6 +17,7 @@ export class Media implements OnInit {
   mode: string | null = null;
   core: string | null = null;
   gameUrl: string | null = null;
+  identifier: string | null = null;
   emulatorUrl: SafeResourceUrl | null = null;
   mediaUrl: SafeResourceUrl | null = null;
   mediaRawUrl: string | null = null;
@@ -33,11 +35,19 @@ export class Media implements OnInit {
       this.mode = params.get('mode');
       this.core = params.get('core');
       this.gameUrl = params.get('gameUrl');
+      this.identifier = params.get('identifier');
       this.displayLabel = params.get('displayLabel');
       this.collectionTitle = params.get('collectionTitle');
       this.collectionDescription = params.get('collectionDescription');
       this.error = null;
       this.emulatorUrl = null;
+      
+      console.log('[MediaPage] Params received:', {
+        mode: this.mode,
+        gameUrl: this.gameUrl,
+        mediaUrl: params.get('mediaUrl'),
+        displayLabel: this.displayLabel
+      });
 
       if (this.mode === 'emulator') {
         if (!this.core || !this.gameUrl) {
@@ -45,7 +55,7 @@ export class Media implements OnInit {
           return;
         }
 
-        // If the gameUrl uses our local backend proxy, verify the backend is reachable.
+        // ... existing ping logic ...
         let shouldPingBackend = false;
         try {
           const u = new URL(this.gameUrl);
@@ -86,6 +96,19 @@ export class Media implements OnInit {
         this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
         if (!this.displayLabel) this.displayLabel = this.deriveLabel();
         // record last-viewed item
+        try { this.saveLastItem(); } catch (e) {}
+        try { this.cdr.detectChanges(); } catch (e) {}
+        return;
+      }
+
+      if (this.mode === 'comic') {
+        this.mediaRawUrl = params.get('mediaUrl') ?? params.get('gameUrl') ?? null;
+        console.log('Media Page: Comic mode active, URL:', this.mediaRawUrl);
+        if (!this.mediaRawUrl) {
+          this.error = 'Missing mediaUrl parameter for comic.';
+          return;
+        }
+        if (!this.displayLabel) this.displayLabel = this.deriveLabel();
         try { this.saveLastItem(); } catch (e) {}
         try { this.cdr.detectChanges(); } catch (e) {}
         return;
@@ -132,7 +155,20 @@ export class Media implements OnInit {
         return;
       }
 
-      this.error = 'No emulator or media mode selected. Use /media?mode=emulator|video|audio|image|document|text&...';
+      if (this.mode === 'other') {
+        const rawUrl = params.get('mediaUrl') ?? params.get('gameUrl') ?? '';
+        if (rawUrl.toLowerCase().endsWith('.cbz') || rawUrl.toLowerCase().endsWith('.cbr')) {
+           console.warn('[MediaPage] Detected CBZ/CBR in "other" mode. Redirecting to "comic" mode...');
+           this.mode = 'comic';
+           this.mediaRawUrl = rawUrl;
+           if (!this.displayLabel) this.displayLabel = this.deriveLabel();
+           try { this.saveLastItem(); } catch (e) {}
+           try { this.cdr.detectChanges(); } catch (e) {}
+           return;
+        }
+      }
+
+      this.error = 'No emulator or media mode selected. Use /media?mode=emulator|video|audio|image|document|text|comic&...';
     });
   }
 

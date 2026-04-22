@@ -23,6 +23,18 @@
     </div>
   </div>
 
+  <!-- Comic reader -->
+  <div *ngIf="mode === 'comic' && mediaRawUrl">
+    <h3 class="text-lg font-semibold mb-2">Comic Reader</h3>
+    <app-comic-viewer 
+      [archiveUrl]="mediaRawUrl" 
+      [identifier]="identifier || ''" 
+      [filename]="displayLabel || ''">
+    </app-comic-viewer>
+    <p class="text-sm mt-4"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw archive</a></p>
+    <p class="text-sm mt-1"><a href="#" (click)="$event.preventDefault(); downloadMedia()">Download</a></p>
+  </div>
+
   <!-- Video player -->
   <div *ngIf="mode === 'video' && mediaRawUrl">
     <h3 class="text-lg font-semibold mb-2">Video</h3>

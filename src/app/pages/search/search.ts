@@ -284,7 +284,7 @@ export class Search implements OnInit, OnDestroy {
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
         const url = this.getFileUrl(identifier, entryObj.name);
         const mode = this.getModeForFilename(entryObj.name);
-        const baseQp: any = {};
+        const baseQp: any = { identifier };
         baseQp.displayLabel = displayLabel;
         if (collectionTitle) baseQp.collectionTitle = collectionTitle;
         if (collectionDescription) baseQp.collectionDescription = collectionDescription;
@@ -300,7 +300,7 @@ export class Search implements OnInit, OnDestroy {
       const blob = await this.archive.extractFileFromArchive(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const mode = this.getModeForFilename(entryObj.name);
-      const baseQp: any = {};
+      const baseQp: any = { identifier };
       baseQp.displayLabel = displayLabel;
       if (collectionTitle) baseQp.collectionTitle = collectionTitle;
       if (collectionDescription) baseQp.collectionDescription = collectionDescription;
@@ -349,6 +349,7 @@ export class Search implements OnInit, OnDestroy {
 
   getModeForFilename(filename: string): string {
     const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    if (['cbz', 'cbr', 'cb7'].includes(ext)) return 'comic';
     if (this.isEmulatorFile(filename)) return 'emulator';
     if (['mp4', 'webm', 'mkv', 'ogv', 'ogg'].includes(ext)) return 'video';
     if (['mp3', 'wav', 'ogg', 'm4a', 'flac'].includes(ext)) return 'audio';
@@ -380,10 +381,11 @@ export class Search implements OnInit, OnDestroy {
   openFile(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string) {
     const mode = this.getModeForFilename(filename);
     const url = this.getFileUrl(identifier, filename);
+    console.log('[SearchPage] openFile:', { identifier, filename, mode, url });
     if (mode === 'emulator') {
       this.openInEmulator(identifier, filename, collectionTitle, collectionDescription);
     } else {
-      const qp: any = { mode, mediaUrl: url, displayLabel: filename };
+      const qp: any = { mode, mediaUrl: url, displayLabel: filename, identifier };
       if (collectionTitle) qp.collectionTitle = collectionTitle;
       if (collectionDescription) qp.collectionDescription = collectionDescription;
       this.router.navigate(['/media'], { queryParams: qp });
