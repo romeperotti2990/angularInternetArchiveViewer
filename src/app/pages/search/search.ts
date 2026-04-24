@@ -10,7 +10,6 @@ import { Pagination } from '../../components/pagination/pagination';
   standalone: true,
   imports: [CommonModule, Pagination],
   templateUrl: './search.html',
-  styleUrl: './search.css',
 })
 export class Search implements OnInit, OnDestroy {
   results: any[] = [];

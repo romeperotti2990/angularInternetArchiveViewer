@@ -7,7 +7,6 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './pagination.html',
-  styleUrl: './pagination.css',
 })
 export class Pagination {
   @Input() page = 1;

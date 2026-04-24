@@ -11,7 +11,6 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './home.html',
-  styleUrl: './home.css',
 })
 export class HomePage {
   lastItems: any[] = [];

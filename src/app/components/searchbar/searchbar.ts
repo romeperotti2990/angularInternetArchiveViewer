@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './searchbar.html',
-  styleUrls: ['./searchbar.css'],
 })
 export class Searchbar implements OnInit {
   query = '';

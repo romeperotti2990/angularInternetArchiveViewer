@@ -11,7 +11,6 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.html',
-  styleUrl: './login.css',
 })
 export class Login {
   email = '';

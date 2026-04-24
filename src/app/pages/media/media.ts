@@ -10,7 +10,6 @@ import { ComicViewerComponent } from '../../components/comic-viewer/comic-viewer
   standalone: true,
   imports: [CommonModule, ComicViewerComponent],
   templateUrl: './media.html',
-  styleUrl: './media.css',
 })
 export class Media implements OnInit {
   displayLabel: string | null = null;
