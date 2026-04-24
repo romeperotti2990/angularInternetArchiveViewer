@@ -33,6 +33,13 @@ only three small bugs maximum
 app must be published (It is deployed on render, just some backend stuff is not working because of CORS [I don't care though, if you look hard enough you can usually find what you need in a non zipped format])
 get 5 people to try it and give feedback (it never told me to fix the problems they find tho lol)
 1. corbin went to the website on his phone so he just complained that it was not mobile optimized
+2. thomas is working on it
+
+DEPLOYMENT PROBLEMS:
+- when you reload on a subpage it breaks and says not found because it is an spa being served as a static site
+- the open raw and libarchive stuff is not working unless i run the server loccaly on port 3001 because the links are hardcoded and wont work for all users
+- some things cause CORS issues for some reason, like the cbz reader and trying to use libarchive
+
 
 COMMANDS:
 

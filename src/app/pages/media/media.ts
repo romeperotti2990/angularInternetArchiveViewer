@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserDataService } from '../../services/user-data.service';
 import { ComicViewerComponent } from '../../components/comic-viewer/comic-viewer';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-media',
@@ -54,41 +55,23 @@ export class Media implements OnInit {
           return;
         }
 
-        // ... existing ping logic ...
-        let shouldPingBackend = false;
-        try {
-          const u = new URL(this.gameUrl);
-          if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') shouldPingBackend = true;
-        } catch (e) {
-          // ignore - if URL parsing fails we'll still try to use it
-        }
+        // Logic check for local/production backend health
+        const backendOrigin = environment.backendOrigin;
 
-        if (shouldPingBackend) {
-          const backendOrigin = (() => {
-            try {
-              return new URL(this.gameUrl as string).origin;
-            } catch (e) {
-              return null;
-            }
-          })();
-
-          if (backendOrigin) {
-            // quick ping to backend origin to see if it's running
-            fetch(backendOrigin, { method: 'GET' })
-              .then((r) => {
-                // proceed to open emulator regardless of status code
-                const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
-                this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-                // record last-viewed item (backend path)
-                try { this.saveLastItem(); } catch (e) {}
-                try { this.cdr.detectChanges(); } catch (e) {}
-              })
-              .catch(() => {
-                this.error = 'Backend proxy not reachable. Start it with: npm run start-backend';
-                try { this.cdr.detectChanges(); } catch (e) {}
-              });
-            return;
-          }
+        if (backendOrigin && this.gameUrl.includes(backendOrigin)) {
+          // Check if the configured backend is running
+          fetch(backendOrigin, { method: 'GET' })
+            .then(() => {
+              const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
+              this.emulatorUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+              try { this.saveLastItem(); } catch (e) {}
+              try { this.cdr.detectChanges(); } catch (e) {}
+            })
+            .catch(() => {
+              this.error = `Backend proxy (${backendOrigin}) not reachable.`;
+              try { this.cdr.detectChanges(); } catch (e) {}
+            });
+          return;
         }
 
         const url = `/emulator.html?core=${encodeURIComponent(this.core as string)}&gameUrl=${encodeURIComponent(this.gameUrl as string)}`;
