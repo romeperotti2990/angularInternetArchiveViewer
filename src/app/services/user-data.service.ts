@@ -110,7 +110,9 @@ export class UserDataService {
   }
 
   async saveLastItems(items: any[]) {
-    const sliced = items.slice(0, 50);
+    // Filter out any accidental blob URLs before saving to storage/cloud
+    const filteredItems = items.filter(it => it && it.url && !it.url.startsWith('blob:'));
+    const sliced = filteredItems.slice(0, 50);
     this.saveScopedArray(LASTITEMS_KEY, sliced, this.uid);
     if (!this.uid) return;
     try {

@@ -25,7 +25,6 @@ export class Media implements OnInit {
   documentContent: string | null = null;
   collectionTitle: string | null = null;
   collectionDescription: string | null = null;
-  private _keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef, private userData: UserDataService) {}
 
@@ -202,7 +201,7 @@ export class Media implements OnInit {
 
   private saveLastItem() {
     const url = this.mode === 'emulator' ? this.gameUrl : this.mediaRawUrl;
-    if (!url) return;
+    if (!url || url.startsWith('blob:')) return; // NEVER save blob URLs to history
     const item = {
       label: this.displayLabel || this.deriveLabel(),
       mode: this.mode,

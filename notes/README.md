@@ -3,12 +3,10 @@ the search is still going by IA metadata and not just showing individual files b
 sometimes the roms that are zips within the zips do not work.
 You cannot search for books, only text. hopfully this will be fixed after they are listed individually also, just general junk being shown to you unless you know exactly what you want.
 there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need
-pressing "show files" more than once makes it show up much faster (pressing it twice makes it appear as soon as it has loaded, not after a delay)
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
-looking into arichive types that are not zips appears to not be working currently
 things in zips are still shown as 'local item' if favoraited or updated by archive owner
-after clearing history there are a lot of visual bugs but everything works so its whatever
 there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
+going into a file from search does not update the top navbar
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
@@ -29,12 +27,12 @@ favoriteing items so you can go back to them
 a random button (filterable, of course)
 I would like for you to be able to look at a collection and view all the content in that collection, like in internet archive
 making queue of items (not roms, of course)
-we can probably remove almost all of the css files we dont need them because of tailwind
 
 ASSIGNMENT REQIREMENTS:
 only three small bugs maximum
-app must be published (i have a non functional start on render)
+app must be published (It is deployed on render, just some backend stuff is not working because of CORS [I don't care though, if you look hard enough you can usually find what you need in a non zipped format])
 get 5 people to try it and give feedback (it never told me to fix the problems they find tho lol)
+corbin went to the website on his phone so he just complained that it was not mobile optimized
 
 COMMANDS:
 
