@@ -5,8 +5,8 @@ You cannot search for books, only text. hopfully this will be fixed after they a
 there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
 things in zips are still shown as 'local item' if favoraited or updated by archive owner
+after clearing history there are a lot of visual bugs but everything works so its whatever (ITS BECAUS ITS SAVING THE BLOB FROM HISTORY INSTEAD OF NORAMALLY WHYYYYYYYYYY)
 there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
-going into a file from search does not update the top navbar
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)

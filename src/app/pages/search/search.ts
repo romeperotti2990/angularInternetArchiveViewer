@@ -264,8 +264,6 @@ export class Search implements OnInit, OnDestroy {
       const blob = await this.archive.extractFileFromArchive(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const core = this.getEmulatorCore(entryObj.name);
-      // We do NOT include identifier here because it is a local blob, not a remote IA file.
-      // The Media page's saveLastItem will ignore this because it starts with 'blob:'.
       const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel };
       if (collectionTitle) qp.collectionTitle = collectionTitle;
       if (collectionDescription) qp.collectionDescription = collectionDescription;
