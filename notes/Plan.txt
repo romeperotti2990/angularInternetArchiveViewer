@@ -9,3 +9,5 @@ if I had an exsisting userbase, what I would do is have a bunch of metadata prov
 another possible solution is to just show the files themselves and no description, and leave people to wander the data
 
 im having trouble deciding how I even want this to look like.
+I might just give up now. I think the app works fine without this. although this would separate it clearly from what internet archive already does.
+the only advantage this has over just using internet archive is emulatorjs and the crappy cbz reader.
