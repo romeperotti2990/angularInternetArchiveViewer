@@ -34,6 +34,7 @@ export class Search implements OnInit, OnDestroy {
   pageSize = 20;
   pageInput = '1';
   totalResults = 0;
+  expandedDescriptions: Record<string, boolean> = {};
 
   constructor(
     private route: ActivatedRoute,

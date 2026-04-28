@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserDataService } from '../../services/user-data.service';
 import { AuthService } from '../../services/auth.service';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-history',
@@ -13,10 +14,17 @@ import { AuthService } from '../../services/auth.service';
 export class HistoryPage {
   lastItems: any[] = [];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, private userData: UserDataService, private auth: AuthService) {
+  constructor(
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private userData: UserDataService,
+    private auth: AuthService,
+    public favorites: FavoritesService
+  ) {
     this.loadLastItems();
     try { this.auth.user$.subscribe(() => this.loadLastItems()); } catch (e) {}
     try { window.addEventListener('iav:lastItemsUpdated', () => this.loadLastItems()); } catch (e) {}
+    try { this.favorites.favorites$.subscribe(() => this.cdr.detectChanges()); } catch (e) {}
   }
 
   private loadLastItems() {
@@ -36,6 +44,13 @@ export class HistoryPage {
     if (item.collectionDescription) qp.collectionDescription = item.collectionDescription;
     qp[(item.mode === 'emulator') ? 'gameUrl' : 'mediaUrl'] = item.url;
     this.router.navigate(['/media'], { queryParams: qp });
+  }
+
+  toggleFavorite(event: Event, item: any) {
+    event.stopPropagation();
+    if (item && item.url) {
+      this.favorites.toggle('history::' + item.url);
+    }
   }
 
   clearHistory() {

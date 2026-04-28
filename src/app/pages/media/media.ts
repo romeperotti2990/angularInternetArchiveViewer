@@ -26,6 +26,7 @@ export class Media implements OnInit {
   documentContent: string | null = null;
   collectionTitle: string | null = null;
   collectionDescription: string | null = null;
+  showFullDescription = false;
   private _keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef, private userData: UserDataService) {}

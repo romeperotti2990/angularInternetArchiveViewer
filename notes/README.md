@@ -6,6 +6,9 @@ there are some files and filetypes that you can open in emulatorjs that have a h
 downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
 after clearing history there are a lot of visual bugs but everything works so its whatever (ITS BECAUSE ITS SAVING THE BLOB FROM HISTORY INSTEAD OF NORAMALLY WHYYYYYYYYYY)
 there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
+the star icon looks odd on the history page
+you cannot close the files after you press show files
+somehow there can be duplicate items in the history and favorites
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
@@ -17,10 +20,9 @@ you should be able to open the internet archive link normally (as in on internet
 deleting individual items from history
 seeing the 'show files' button on the media page with the description, so you can look at other files in the collection other than the one that you are looking at
 
-
 IDEAS:
 maybe with the top change we could have several files for using media, instead of one big one
-somtimes large items will take up the whole page so I could add minification/collapsing
+somtimes large items will take up the whole page so I could add minification/collapsing. another solution is to make it so you have to go into an item page to see the desc, metadata, imgs of an item.
 sometimes there are a lot of files from a collection so I could make like an item page to look at the whole thing
 favoriteing items so you can go back to them
 a random button (filterable, of course)
@@ -29,16 +31,22 @@ making queue of items (not roms, of course)
 i want the maximum amount of file compatiblitiy but i am just one guy and i dont know how many systems i would have to make to be able for you to just view every little type of obscure filetype........
 
 ASSIGNMENT REQIREMENTS:
+I should probably use pwa for stuff too blehhhhhh
 only three small bugs maximum
 app must be published (It is deployed on render, just some backend stuff is not working because of CORS [I don't care though, if you look hard enough you can usually find what you need in a non zipped format])
 get 5 people to try it and give feedback (it never told me to fix the problems they find tho lol)
 1. corbin went to the website on his phone so he just complained that it was not mobile optimized
-2. thomas is working on it
+2. thomas said the blue button in the homepage does not work and mentioned the spa deployment issue
+3. graydon back button in the login page, add google logo, add feedback to the buttons, minification, make search better, get rid of the tab, 'make it look cool'
+4. callin said "the icons at the top a little crowded on mobile" and was confused about the purpose
+5. 
 
 DEPLOYMENT PROBLEMS:
-- when you reload on a subpage it breaks and says not found because it is an spa being served as a static site
+- pressing 'open raw' just trys to open localhost and not the web service
 - the open raw and libarchive stuff is not working unless i run the server loccaly on port 3001 because the links are hardcoded and wont work for all users
 - some things cause CORS issues for some reason, like the cbz reader and trying to use libarchive
+- the firebase stuff is not syncing between the local and deployment be thats more of a me problem
+- the blue button in home takes you to not found
 
 
 COMMANDS:

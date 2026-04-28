@@ -22,7 +22,21 @@
 		<li *ngFor="let r of results" class="mb-2 border-b border-gray-300 pb-2">
 			<div class="font-bold">{{ r.title ?? r.identifier }}</div>
 			<div class="text-sm text-gray-600">ID: {{ r.identifier }} — {{ r.mediatype }}</div>
-			<div *ngIf="r.description" class="text-sm">{{ r.description }}</div>
+			<div *ngIf="r.description">
+				<div 
+					class="text-sm transition-all duration-300" 
+					[ngClass]="{'line-clamp-2': !expandedDescriptions[r.identifier]}"
+				>
+					{{ r.description }}
+				</div>
+				<button 
+					*ngIf="r.description.length > 150"
+					(click)="expandedDescriptions[r.identifier] = !expandedDescriptions[r.identifier]" 
+					class="text-xs font-semibold text-blue-600 hover:text-blue-800"
+				>
+					{{ expandedDescriptions[r.identifier] ? 'Show less' : 'Show more' }}
+				</button>
+			</div>
 			<button
 				class="mt-1 px-2 py-1 text-xs rounded bg-blue-600 text-white"
 				type="button"
