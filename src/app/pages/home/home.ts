@@ -61,6 +61,7 @@ export class HomePage {
       } else {
         qp.mediaUrl = url;
       }
+      // Note: Identifier is missing in this fallback case
       this.router.navigate(['/media'], { queryParams: qp });
       return;
     }
@@ -75,10 +76,10 @@ export class HomePage {
         const mode = this.archive.getModeForFilename(filePath);
         if (mode === 'emulator') {
           const core = this.archive.getEmulatorCore(filePath);
-          const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel: filePath };
+          const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel: filePath, identifier };
           this.router.navigate(['/media'], { queryParams: qp });
         } else {
-          const qp: any = { mode, mediaUrl: url, displayLabel: filePath };
+          const qp: any = { mode, mediaUrl: url, displayLabel: filePath, identifier };
           this.router.navigate(['/media'], { queryParams: qp });
         }
       } catch (e) {
@@ -97,7 +98,11 @@ export class HomePage {
 
   openLastItem(item: any) {
     if (!item || !item.url) return;
-    const qp: any = { mode: item.mode };
+    const qp: any = { 
+      mode: item.mode,
+      displayLabel: item.label || item.displayLabel,
+      identifier: item.identifier
+    };
     if (item.core) qp.core = item.core;
     if (item.collectionTitle) qp.collectionTitle = item.collectionTitle;
     if (item.collectionDescription) qp.collectionDescription = item.collectionDescription;

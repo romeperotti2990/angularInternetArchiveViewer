@@ -23,6 +23,7 @@ INSTRUCTIONS:
 Make your code as clean and small as possible. If a file gets too big (500+ lines) then you need to start thinking about splitting that file into multiple.
 Make sure you do not cause errors in the code and that your code matches with all the other code that is already there.
 Make sure your code is the same logically as other code in the workspace.
+After you are done with a feature, ask me exacly what the feature needs to do and what it does not need to do so we can remove extra code we do not need.
 
 CURRENT STATE:
 you can see inside of .zip files and other archives using libarchive.js. 

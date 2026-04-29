@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserDataService } from '../../services/user-data.service';
 import { ComicViewerComponent } from '../../components/comic-viewer/comic-viewer';
 import { environment } from '../../../environments/environment';
+import { Archive } from '../../services/archive';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-media',
@@ -27,9 +29,22 @@ export class Media implements OnInit {
   collectionTitle: string | null = null;
   collectionDescription: string | null = null;
   showFullDescription = false;
+  
+  itemFiles: any[] = [];
+  fileLoading = false;
+  fileError: string | null = null;
+
   private _keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
-  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef, private userData: UserDataService) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private router: Router,
+    private sanitizer: DomSanitizer, 
+    private cdr: ChangeDetectorRef, 
+    private userData: UserDataService,
+    public archive: Archive,
+    public favorites: FavoritesService
+  ) {}
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
@@ -42,13 +57,6 @@ export class Media implements OnInit {
       this.collectionDescription = params.get('collectionDescription');
       this.error = null;
       this.emulatorUrl = null;
-      
-      console.log('[MediaPage] Params received:', {
-        mode: this.mode,
-        gameUrl: this.gameUrl,
-        mediaUrl: params.get('mediaUrl'),
-        displayLabel: this.displayLabel
-      });
 
       if (this.mode === 'emulator') {
         if (!this.core || !this.gameUrl) {
@@ -86,7 +94,6 @@ export class Media implements OnInit {
 
       if (this.mode === 'comic') {
         this.mediaRawUrl = params.get('mediaUrl') ?? params.get('gameUrl') ?? null;
-        console.log('Media Page: Comic mode active, URL:', this.mediaRawUrl);
         if (!this.mediaRawUrl) {
           this.error = 'Missing mediaUrl parameter for comic.';
           return;
@@ -192,6 +199,7 @@ export class Media implements OnInit {
       mode: this.mode,
       core: this.core,
       url,
+      identifier: this.identifier,
       collectionTitle: this.collectionTitle,
       collectionDescription: this.collectionDescription,
       ts: Date.now(),
@@ -207,6 +215,81 @@ export class Media implements OnInit {
     } catch (e) {
       // ignore storage errors
     }
+  }
+
+  async loadItemFiles(): Promise<void> {
+    if (this.itemFiles.length > 0) {
+      this.itemFiles = [];
+      return;
+    }
+    if (!this.identifier) {
+      this.fileError = 'Could not find collection ID for this item.';
+      return;
+    }
+    if (this.fileLoading) return;
+
+    this.fileLoading = true;
+    this.fileError = null;
+
+    try {
+      const files = await this.archive.listFiles(this.identifier);
+      this.itemFiles = files || [];
+    } catch (err: any) {
+      this.fileError = err?.message ?? String(err);
+    } finally {
+      this.fileLoading = false;
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  isEmulatorFile(name: string): boolean {
+    const ext = name.split('.').pop()?.toLowerCase() || '';
+    return ['gba', 'gbc', 'gb', 'nes', 'snes', 'gen', 'md', 'sms', 'gg', 'n64', 'z64', 'v64'].includes(ext);
+  }
+
+  isArchiveFile(name: string): boolean {
+    const ext = name.split('.').pop()?.toLowerCase() || '';
+    return ['zip', '7z', 'rar', 'tar', 'gz'].includes(ext);
+  }
+
+  getFileUrl(identifier: string, filename: string): string {
+    return this.archive.getFileUrl(identifier, filename);
+  }
+
+  formatBytes(bytes: number, decimals = 2) {
+    if (!bytes) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  openFile(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string) {
+    const mode = this.archive.getModeForFilename(filename);
+    const url = this.archive.getFileUrl(identifier, filename);
+    
+    const qp: any = { 
+      mode, 
+      displayLabel: filename, 
+      identifier 
+    };
+
+    if (mode === 'emulator') {
+      qp.core = this.archive.getEmulatorCore(filename);
+      qp.gameUrl = url;
+    } else {
+      qp.mediaUrl = url;
+    }
+
+    if (collectionTitle) qp.collectionTitle = collectionTitle;
+    if (collectionDescription) qp.collectionDescription = collectionDescription;
+
+    this.router.navigate(['/media'], { queryParams: qp });
+  }
+
+  openInEmulator(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string) {
+    this.openFile(identifier, filename, collectionTitle, collectionDescription);
   }
 
 

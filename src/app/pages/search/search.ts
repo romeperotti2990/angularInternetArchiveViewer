@@ -255,7 +255,7 @@ export class Search implements OnInit, OnDestroy {
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
         const url = this.getFileUrl(identifier, entryObj.name);
         const core = this.getEmulatorCore(entryObj.name);
-        const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel };
+        const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel, identifier };
         if (collectionTitle) qp.collectionTitle = collectionTitle;
         if (collectionDescription) qp.collectionDescription = collectionDescription;
         this.router.navigate(['/media'], { queryParams: qp });
@@ -265,7 +265,7 @@ export class Search implements OnInit, OnDestroy {
       const blob = await this.archive.extractFileFromArchive(entryObj.entry);
       const url = URL.createObjectURL(blob);
       const core = this.getEmulatorCore(entryObj.name);
-      const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel };
+      const qp: any = { mode: 'emulator', core, gameUrl: url, displayLabel, identifier };
       if (collectionTitle) qp.collectionTitle = collectionTitle;
       if (collectionDescription) qp.collectionDescription = collectionDescription;
       this.router.navigate(['/media'], { queryParams: qp });
@@ -446,6 +446,7 @@ export class Search implements OnInit, OnDestroy {
       core,
       gameUrl,
       displayLabel: filename,
+      identifier
     };
     if (collectionTitle) qp.collectionTitle = collectionTitle;
     if (collectionDescription) qp.collectionDescription = collectionDescription;

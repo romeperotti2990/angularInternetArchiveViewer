@@ -15,6 +15,64 @@
       >
         {{ showFullDescription ? 'Show less' : 'Show more' }}
       </button>
+
+      <div class="mt-2 border-t border-blue-100 pt-2">
+        <button
+          class="px-2 py-1 text-xs rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+          type="button"
+          (click)="loadItemFiles()"
+        >
+          {{ itemFiles.length > 0 ? 'Close files' : 'Show files' }}
+        </button>
+
+        <div *ngIf="fileLoading" class="text-xs text-blue-500 mt-2 italic flex items-center">
+          <span class="animate-pulse mr-2">●</span> Loading file list...
+        </div>
+        <div *ngIf="fileError" class="text-xs text-red-500 mt-2">{{ fileError }}</div>
+
+        <ul *ngIf="itemFiles.length" class="mt-3 space-y-1 bg-white/50 rounded-lg border border-blue-100 divide-y divide-blue-50 max-h-64 overflow-y-auto custom-scrollbar">
+          <li *ngFor="let file of itemFiles" class="p-2 hover:bg-blue-100/50 transition-colors flex flex-wrap items-center gap-2">
+            <a
+              href="#"
+              (click)="$event.preventDefault(); openFile(identifier || '', file.name, collectionTitle || '', collectionDescription || '')"
+              class="text-blue-600 hover:text-blue-800 font-medium truncate flex-1 min-w-[150px] text-xs"
+            >
+              {{ file.name }}
+            </a>
+            
+            <div class="flex items-center gap-2 text-[10px]">
+              <span class="px-1.5 py-0.5 bg-blue-100 rounded text-blue-700 uppercase">{{ file.format }}</span>
+              <span class="text-blue-500">{{ file.size ? formatBytes(file.size) : '' }}</span>
+              
+              <button
+                type="button"
+                class="text-sm leading-none hover:scale-110 transition-transform"
+                [title]="favorites.isFavorited((identifier || '') + '::' + file.name) ? 'Unfavorite' : 'Favorite'"
+                (click)="favorites.toggle((identifier || '') + '::' + file.name)"
+              >
+                {{ favorites.isFavorited((identifier || '') + '::' + file.name) ? '★' : '☆' }}
+              </button>
+              
+              <a
+                [href]="getFileUrl(identifier || '', file.name)"
+                download
+                class="text-blue-600 hover:underline"
+              >
+                Download
+              </a>
+
+              <button
+                *ngIf="isEmulatorFile(file.name) && !isArchiveFile(file.name)"
+                class="px-1.5 py-0.5 rounded bg-green-600 text-white text-[9px] font-bold uppercase tracking-wider hover:bg-green-700"
+                type="button"
+                (click)="openInEmulator(identifier || '', file.name, collectionTitle || '', collectionDescription || '')"
+              >
+                Emulator
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
   <h2 class="text-xl font-semibold mb-3">{{ displayLabel || 'Item' }} <span *ngIf="mode" class="text-sm text-gray-500">({{ mode }})</span></h2>

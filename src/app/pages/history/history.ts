@@ -38,7 +38,11 @@ export class HistoryPage {
 
   openLastItem(item: any) {
     if (!item || !item.url) return;
-    const qp: any = { mode: item.mode };
+    const qp: any = { 
+      mode: item.mode,
+      displayLabel: item.label || item.displayLabel,
+      identifier: item.identifier
+    };
     if (item.core) qp.core = item.core;
     if (item.collectionTitle) qp.collectionTitle = item.collectionTitle;
     if (item.collectionDescription) qp.collectionDescription = item.collectionDescription;
