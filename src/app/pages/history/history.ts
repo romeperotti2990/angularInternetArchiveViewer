@@ -57,11 +57,14 @@ export class HistoryPage {
     }
   }
 
-  clearHistory() {
+  async clearHistory() {
+    if (!confirm('Are you sure you want to clear your entire play history?')) return;
     try {
-      try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
-      try { this.userData.saveLastItems([]); } catch (e) {}
+      await this.userData.saveLastItems([]);
       this.loadLastItems();
-    } catch (e) {}
+      window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated'));
+    } catch (e) {
+      console.error('Failed to clear history:', e);
+    }
   }
 }

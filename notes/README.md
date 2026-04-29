@@ -12,6 +12,8 @@ somehow there can be duplicate items in the history and favorites with this ↓
 after you clear history and then keep a favorite file, it goes into this strange state where it is no longer associated with its collection, so on the media page the desc will not be there, and it just shows the blob link in the homepage until you view it again. also many times when updating the way items work I have to re-find many items because they enter this state
 a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file
 when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up
+there is no option to peek archives when showing files on the media page so it ends up treating it as an "other" in the viewer and tries to download it
+sometimes the show more option is shown when it does not need to be but this is a small bug its fine
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
