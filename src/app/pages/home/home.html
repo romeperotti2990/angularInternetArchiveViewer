@@ -41,7 +41,7 @@
 		</ol>
 	</section>
 
-	<section class="mt-12 grid gap-6 md:grid-cols-2">
+	<section class="mt-12 grid gap-6">
 		<div class="p-6 border rounded-lg bg-gray-50">
 			<h3 class="font-semibold mb-2">Quick Tips</h3>
 			<ul class="text-sm text-gray-700 list-disc ml-5 space-y-1">
@@ -50,11 +50,6 @@
 				<li>Use filters to narrow results by mediatype (software, movies, texts, audio).</li>
 			</ul>
 		</div>
-		<div class="p-6 border rounded-lg bg-gray-50">
-			<h3 class="font-semibold mb-2">Commands</h3>
-			<pre class="text-sm bg-white p-3 rounded">ng serve
-node server.js</pre>
-		</div>
 	</section>
 
 	<section *ngIf="favoritesKeys.length" class="mt-12">
@@ -62,16 +57,30 @@ node server.js</pre>
 		<div class="grid gap-3">
 			<div *ngFor="let key of favoritesKeys" class="p-4 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition">
 				<div class="flex items-start justify-between">
-					<div (click)="openFavorite(key)" class="flex-1">
+					<div (click)="openFavorite(key)" class="flex-1 overflow-hidden">
 						<div class="font-semibold truncate">
-							<span *ngIf="key.startsWith('history::')">{{ (lastItems.find(i => i.url === (key.substring('history::'.length)))?.label) || key }}</span>
-							<span *ngIf="!key.startsWith('history::')">{{ key.split('::').slice(1).join('::') }}</span>
+							<!-- Metadata based title -->
+							<ng-container *ngIf="getFavoriteMeta(key) as meta; else fallbackLabel">
+								{{ meta.label || meta.displayLabel }}
+							</ng-container>
+							<ng-template #fallbackLabel>
+								<span *ngIf="key.startsWith('history::')">{{ key.substring('history::'.length) }}</span>
+								<span *ngIf="!key.startsWith('history::')">{{ key.split('::').slice(1).join('::') || key }}</span>
+							</ng-template>
 						</div>
-						<div *ngIf="key.startsWith('history::') && (lastItems.find(i => i.url === (key.substring('history::'.length)))?.mode)" class="text-sm text-gray-500 mt-1">{{ lastItems.find(i => i.url === (key.substring('history::'.length)))?.mode }}</div>
+						
+						<!-- Subtitle / Mode info -->
+						<div class="text-sm text-gray-500 mt-1 flex flex-wrap gap-2">
+							<ng-container *ngIf="getFavoriteMeta(key) as meta; else fallbackSub">
+								{{ meta.mode }} <span *ngIf="meta.collectionTitle">• {{ meta.collectionTitle }}</span>
+							</ng-container>
+							<ng-template #fallbackSub>
+								<span *ngIf="key.startsWith('history::')" class="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">From History</span>
+							</ng-template>
+						</div>
 					</div>
-					<div class="flex items-center gap-2">
-						<button class="text-sm" type="button" (click)="$event.stopPropagation(); favorites.toggle(key)">{{ favorites.isFavorited(key) ? '★' : '☆' }}</button>
-						<span *ngIf="key.startsWith('history::')" class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">History</span>
+					<div class="flex items-center gap-2 ml-4">
+						<button class="text-xl" type="button" (click)="$event.stopPropagation(); favorites.toggle(key)">{{ favorites.isFavorited(key) ? '★' : '☆' }}</button>
 					</div>
 				</div>
 			</div>
@@ -99,7 +108,7 @@ node server.js</pre>
 						<button
 							class="text-sm"
 							type="button"
-							(click)="$event.stopPropagation(); favorites.toggle('history::' + item.url)"
+							(click)="$event.stopPropagation(); favorites.toggle('history::' + item.url, item)"
 							title="{{ favorites.isFavorited('history::' + item.url) ? 'Unfavorite' : 'Favorite' }}"
 						>
 							{{ favorites.isFavorited('history::' + item.url) ? '★' : '☆' }}

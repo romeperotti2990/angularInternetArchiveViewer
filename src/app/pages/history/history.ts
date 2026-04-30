@@ -53,7 +53,7 @@ export class HistoryPage {
   toggleFavorite(event: Event, item: any) {
     event.stopPropagation();
     if (item && item.url) {
-      this.favorites.toggle('history::' + item.url);
+      this.favorites.toggle('history::' + item.url, item);
     }
   }
 

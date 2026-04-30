@@ -61,7 +61,16 @@
 						type="button"
 						class="ml-2 text-sm"
 						(title)="favorites.isFavorited(r.identifier + '::' + file.name) ? 'Unfavorite' : 'Favorite'"
-						(click)="favorites.toggle(r.identifier + '::' + file.name)"
+						(click)="favorites.toggle(r.identifier + '::' + file.name, {
+              label: file.name,
+              mode: archive.getModeForFilename(file.name),
+              core: (archive.getModeForFilename(file.name) === 'emulator' ? archive.getEmulatorCore(file.name) : null),
+              url: archive.getFileUrl(r.identifier, file.name),
+              identifier: r.identifier,
+              collectionTitle: r.title,
+              collectionDescription: r.description,
+              ts: 0
+            })"
 					>
 						{{ favorites.isFavorited(r.identifier + '::' + file.name) ? '★' : '☆' }}
 					</button>
@@ -107,7 +116,16 @@
 							type="button"
 							class="ml-2 text-sm"
 							(title)="favorites.isFavorited(r.identifier + '::' + file.name + '::' + entry.name) ? 'Unfavorite' : 'Favorite'"
-							(click)="favorites.toggle(r.identifier + '::' + file.name + '::' + entry.name)"
+							(click)="favorites.toggle(r.identifier + '::' + file.name + '::' + entry.name, {
+                label: entry.name,
+                mode: archive.getModeForFilename(entry.name),
+                core: (archive.getModeForFilename(entry.name) === 'emulator' ? archive.getEmulatorCore(entry.name) : null),
+                url: archive.getFileUrl(r.identifier, file.name),
+                identifier: r.identifier,
+                collectionTitle: r.title,
+                collectionDescription: r.description,
+                ts: 0
+              })"
 						>
 							{{ favorites.isFavorited(r.identifier + '::' + file.name + '::' + entry.name) ? '★' : '☆' }}
 						</button>

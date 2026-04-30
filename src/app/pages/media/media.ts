@@ -34,8 +34,6 @@ export class Media implements OnInit {
   fileLoading = false;
   fileError: string | null = null;
 
-  private _keydownHandler: ((e: KeyboardEvent) => void) | null = null;
-
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -57,6 +55,22 @@ export class Media implements OnInit {
       this.collectionDescription = params.get('collectionDescription');
       this.error = null;
       this.emulatorUrl = null;
+
+      // Try to restore metadata if missing (e.g. from Favorites)
+      if (!this.collectionTitle || !this.collectionDescription) {
+        const currentUrl = params.get('mediaUrl') ?? params.get('gameUrl') ?? '';
+        const favKey = this.identifier && !currentUrl.startsWith('blob:') ? `${this.identifier}::${this.displayLabel || 'Item'}` : `history::${currentUrl}`;
+        const metaRaw = localStorage.getItem(`iav:fav_meta:${favKey}`);
+        if (metaRaw) {
+          try {
+            const meta = JSON.parse(metaRaw);
+            if (!this.collectionTitle) this.collectionTitle = meta.collectionTitle;
+            if (!this.collectionDescription) this.collectionDescription = meta.collectionDescription;
+            if (!this.identifier) this.identifier = meta.identifier;
+            if (!this.displayLabel) this.displayLabel = meta.label;
+          } catch (e) {}
+        }
+      }
 
       if (this.mode === 'emulator') {
         if (!this.core || !this.gameUrl) {
@@ -191,7 +205,7 @@ export class Media implements OnInit {
     }
   }
 
-  private saveLastItem() {
+  saveLastItem() {
     const url = this.mode === 'emulator' ? this.gameUrl : this.mediaRawUrl;
     if (!url) return;
     const item = {
@@ -209,8 +223,22 @@ export class Media implements OnInit {
       const arr = this.userData.loadLastItems();
       const filtered = arr.filter((a: any) => a.url !== item.url);
       filtered.unshift(item);
-      const sliced = filtered.slice(0, 10);
+      const sliced = filtered.slice(0, 50); 
       try { this.userData.saveLastItems(sliced); } catch (e) {}
+      
+      // Update metadata for ALL items from this collection in favorites
+      const favs = this.favorites.getAll();
+      for (const fKey of favs) {
+        // If the favorite belongs to this identifier, update its metadata
+        if (this.identifier && fKey.startsWith(this.identifier + '::')) {
+          localStorage.setItem(`iav:fav_meta:${fKey}`, JSON.stringify(item));
+        }
+        // Also update if it's the exact same history item
+        if (fKey === `history::${url}`) {
+          localStorage.setItem(`iav:fav_meta:${fKey}`, JSON.stringify(item));
+        }
+      }
+      
       try { window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated')); } catch (e) {}
     } catch (e) {
       // ignore storage errors
@@ -269,10 +297,16 @@ export class Media implements OnInit {
     const mode = this.archive.getModeForFilename(filename);
     const url = this.archive.getFileUrl(identifier, filename);
     
+    // Check if we are passing new collections, or fall back to current page's metadata
+    const finalTitle = collectionTitle || this.collectionTitle;
+    const finalDesc = collectionDescription || this.collectionDescription;
+
     const qp: any = { 
       mode, 
       displayLabel: filename, 
-      identifier 
+      identifier,
+      collectionTitle: finalTitle,
+      collectionDescription: finalDesc
     };
 
     if (mode === 'emulator') {
@@ -281,9 +315,6 @@ export class Media implements OnInit {
     } else {
       qp.mediaUrl = url;
     }
-
-    if (collectionTitle) qp.collectionTitle = collectionTitle;
-    if (collectionDescription) qp.collectionDescription = collectionDescription;
 
     this.router.navigate(['/media'], { queryParams: qp });
   }

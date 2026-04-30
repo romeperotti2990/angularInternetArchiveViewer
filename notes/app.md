@@ -4,7 +4,7 @@ It should be designed to search internet archive, take only the files and displa
 For example, if I find a .gba file, we should be able to play it with emulator js, If I find a .mp3 file, I should be able to listen to it in the browser, etc etc.
 It should also be able to see what is inside of .zip folders and use those as well.
 USERS DO NOT NEED AN ACCOUNT OR AN EMAIL. it should just work. they can register using email or google oauth and it is stored in firebase. only if they want to.
-Also, do not mess with anything in the 4.2.3 folder, its just a dependency. treat it the same as you would the node_modules folder.
+Also, do not mess with anything in the 4.2.3 folder, its just a dependency(Emulatorjs). treat it the same as you would the node_modules folder.
 
 INTENDED UX:
 The user should go onto the site
@@ -28,4 +28,4 @@ After you are done with a feature, ask me exacly what the feature needs to do an
 CURRENT STATE:
 you can see inside of .zip files and other archives using libarchive.js. 
 the search still just shows IA metadata and it is hard to find what you are looking for through all the podcast junk, unless you are looking for something specific
-the app stores user data on firebase using firestore. it also supports google auth!
+the app stores user data on firebase using firestore. it also supports google auth! clearing history breaks some things sometimes

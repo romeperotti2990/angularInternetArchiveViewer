@@ -44,8 +44,28 @@ export class HomePage {
     }
   }
 
+  getFavoriteMeta(key: string): any {
+    const metaRaw = localStorage.getItem(`iav:fav_meta:${key}`);
+    if (metaRaw) {
+      try {
+        return JSON.parse(metaRaw);
+      } catch (e) {}
+    }
+    return null;
+  }
+
   openFavorite(key: string) {
     if (!key) return;
+
+    // Check if we have persistent metadata for this favorite
+    const metaRaw = localStorage.getItem(`iav:fav_meta:${key}`);
+    if (metaRaw) {
+      try {
+        const meta = JSON.parse(metaRaw);
+        return this.openLastItem(meta);
+      } catch (e) {}
+    }
+
     // history favorite: 'history::<url>'
     if (key.startsWith('history::')) {
       const url = key.substring('history::'.length);

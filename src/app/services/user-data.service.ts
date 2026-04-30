@@ -35,17 +35,11 @@ export class UserDataService {
     // This keeps guest data stored purely in LocalStorage.
     if (this.uid && !isGuest) {
       await this.syncLocalToRemote();
-      // Notify again after sync completes to show merged/remote data
-      window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated'));
     }
   }
 
   getCurrentUserId(): string | null {
     return this.uid;
-  }
-
-  private scopeKey(baseKey: string, uid: string | null = this.uid): string {
-    return `${baseKey}:${uid || ANONYMOUS_SCOPE}`;
   }
 
   private loadScopedArray<T>(baseKey: string, uid: string | null = this.uid): T[] {
@@ -117,13 +111,7 @@ export class UserDataService {
       const localLast = this.loadScopedArray<any>(LASTITEMS_KEY, this.uid);
       const remoteLast = Array.isArray(remote.lastItems) ? remote.lastItems : [];
       
-      // CRITICAL: Check if local state is empty (just cleared) while remote still has data.
-      // If the user just cleared history locally, we MUST trust the local empty state over the remote data.
-      // We look at the 'ts' (timestamp) to see if the server has something we actually want.
-      
       let finalLastItems: any[] = [];
-      const latestLocalTs = localLast.length > 0 ? Math.max(...localLast.map((i: any) => i.ts || 0)) : -1;
-      const latestRemoteTs = remoteLast.length > 0 ? Math.max(...remoteLast.map((i: any) => i.ts || 0)) : -1;
 
       if (localLast.length === 0 && remoteLast.length > 0) {
         // If local is empty but remote is not:
@@ -160,7 +148,7 @@ export class UserDataService {
       this.saveScopedArray(FAVORITES_KEY, mergedFavorites, this.uid);
       this.saveScopedArray(LASTITEMS_KEY, finalLastItems, this.uid);
       
-      // Notify components that history has been updated after sync completes
+      // Explicitly trigger reload for other services since storage might have changed from remote
       window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated'));
     } catch (e) {
       // ignore sync errors

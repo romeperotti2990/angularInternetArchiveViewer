@@ -14,6 +14,12 @@ export class FavoritesService {
     try {
       this.auth.user$.subscribe(() => this.reloadFromStorage());
     } catch (e) {}
+    
+    // Also reload when common events happen
+    try {
+      window.addEventListener('iav:lastItemsUpdated', () => this.reloadFromStorage());
+    } catch (e) {}
+
     this.reloadFromStorage();
   }
 
@@ -38,12 +44,21 @@ export class FavoritesService {
 
   remove(key: string) {
     this.favorites.delete(key);
+    try { localStorage.removeItem(`iav:fav_meta:${key}`); } catch (e) {}
     this.persist();
   }
 
-  toggle(key: string) {
-    if (this.isFavorited(key)) this.remove(key);
-    else this.add(key);
+  toggle(key: string, metadata?: any) {
+    if (this.isFavorited(key)) {
+      this.remove(key);
+    } else {
+      if (metadata) {
+        try {
+          localStorage.setItem(`iav:fav_meta:${key}`, JSON.stringify(metadata));
+        } catch (e) {}
+      }
+      this.add(key);
+    }
   }
 
   /** Return all favorite keys as an array (snapshot) */

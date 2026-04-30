@@ -4,7 +4,7 @@
     <div *ngIf="collectionDescription">
       <div 
         class="text-sm text-blue-800 mt-1 transition-all duration-300" 
-        [ngClass]="{'line-clamp-3': !showFullDescription}"
+        [ngStyle]="{'max-height': showFullDescription ? '2000px' : '4.5rem', 'overflow': 'hidden', 'display': '-webkit-box', '-webkit-line-clamp': showFullDescription ? 'none' : '3', '-webkit-box-orient': 'vertical'}"
       >
         {{ collectionDescription }}
       </div>
@@ -35,7 +35,7 @@
             <a
               href="#"
               (click)="$event.preventDefault(); openFile(identifier || '', file.name, collectionTitle || '', collectionDescription || '')"
-              class="text-blue-600 hover:text-blue-800 font-medium truncate flex-1 min-w-[150px] text-xs"
+              class="text-blue-600 hover:text-blue-800 font-medium truncate flex-1 min-w-37.5 text-xs"
             >
               {{ file.name }}
             </a>
@@ -48,7 +48,16 @@
                 type="button"
                 class="text-sm leading-none hover:scale-110 transition-transform"
                 [title]="favorites.isFavorited((identifier || '') + '::' + file.name) ? 'Unfavorite' : 'Favorite'"
-                (click)="favorites.toggle((identifier || '') + '::' + file.name)"
+                (click)="favorites.toggle((identifier || '') + '::' + file.name, {
+                  label: file.name,
+                  mode: archive.getModeForFilename(file.name),
+                  core: isEmulatorFile(file.name) ? archive.getEmulatorCore(file.name) : null,
+                  url: archive.getFileUrl(identifier || '', file.name),
+                  identifier: identifier,
+                  collectionTitle: collectionTitle,
+                  collectionDescription: collectionDescription,
+                  ts: 0
+                })"
               >
                 {{ favorites.isFavorited((identifier || '') + '::' + file.name) ? '★' : '☆' }}
               </button>
