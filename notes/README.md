@@ -28,7 +28,6 @@ search filters (they are minimal rn)
 search by filetype (we will have to look inside of zips, so it will have to search until it gets the amount of results as the pagination, then stop. this will still fetch a lot from internet archive and take a while, as it will have to use libarchive to peek into every one and extract it)
 loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
 you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
-deleting individual items from history
 after pressing close files it should not have to fetch what is there again it should be cached for as long as you are on the page
 a section that shows all the emulator files you have still downloaded in the browser (cached)
 gennerally the site looks bad because i did none of it myself

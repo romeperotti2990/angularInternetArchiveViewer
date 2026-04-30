@@ -200,4 +200,11 @@ export class UserDataService {
       console.error('UserDataService: Failed to save history to Firebase', e);
     }
   }
+
+  async deleteLastItem(url: string) {
+    const items = this.loadLastItems();
+    const updated = items.filter((it: any) => it.url !== url);
+    await this.saveLastItems(updated);
+    window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated'));
+  }
 }

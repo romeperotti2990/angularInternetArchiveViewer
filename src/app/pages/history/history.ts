@@ -57,6 +57,14 @@ export class HistoryPage {
     }
   }
 
+  async deleteHistoryItem(event: Event, item: any) {
+    event.stopPropagation();
+    if (!item || !item.url) return;
+    if (confirm(`Remove "${item.label}" from history?`)) {
+      await this.userData.deleteLastItem(item.url);
+    }
+  }
+
   async clearHistory() {
     if (!confirm('Are you sure you want to clear your entire play history?')) return;
     try {

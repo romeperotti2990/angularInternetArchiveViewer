@@ -132,4 +132,12 @@ export class HomePage {
     qp[(item.mode === 'emulator') ? 'gameUrl' : 'mediaUrl'] = item.url;
     this.router.navigate(['/media'], { queryParams: qp });
   }
+
+  async deleteHistoryItem(event: Event, item: any) {
+    event.stopPropagation();
+    if (!item || !item.url) return;
+    if (confirm(`Remove "${item.label}" from history?`)) {
+      await this.userData.deleteLastItem(item.url);
+    }
+  }
 }
