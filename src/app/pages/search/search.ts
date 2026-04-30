@@ -22,7 +22,9 @@ export class Search implements OnInit, OnDestroy {
   loadingSearch = false;
   loadedResults = 0;
   itemFiles: Record<string, any[]> = {};
+  itemFilesVisible: Record<string, boolean> = {};
   archiveContents: Record<string, any[]> = {};
+  archiveVisible: Record<string, boolean> = {};
   archiveLoading: Record<string, boolean> = {};
   archiveError: Record<string, string | null> = {};
   archiveProgress: Record<string, number> = {};
@@ -191,7 +193,11 @@ export class Search implements OnInit, OnDestroy {
   }
 
   async loadItemFiles(identifier: string): Promise<void> {
-    if (this.itemFiles[identifier] || this.fileLoading[identifier]) return;
+    if (this.itemFiles[identifier]) {
+      this.itemFilesVisible[identifier] = true;
+      return;
+    }
+    if (this.fileLoading[identifier]) return;
 
     this.fileLoading[identifier] = true;
     this.fileError[identifier] = null;
@@ -199,6 +205,7 @@ export class Search implements OnInit, OnDestroy {
     try {
       const files = await this.archive.listFiles(identifier);
       this.itemFiles[identifier] = files;
+      this.itemFilesVisible[identifier] = true;
       if (!files.length) {
         this.fileError[identifier] = 'No files found';
       }
@@ -213,6 +220,23 @@ export class Search implements OnInit, OnDestroy {
     }
   }
 
+  toggleItemFiles(identifier: string) {
+    if (this.itemFilesVisible[identifier]) {
+      this.itemFilesVisible[identifier] = false;
+    } else {
+      this.loadItemFiles(identifier);
+    }
+  }
+
+  toggleArchiveFiles(identifier: string, filename: string) {
+    const key = `${identifier}::${filename}`;
+    if (this.archiveVisible[key]) {
+      this.archiveVisible[key] = false;
+    } else {
+      this.peekArchive(identifier, filename);
+    }
+  }
+
   private isArchiveFilename(filename: string): boolean {
     const ext = (filename || '').toLowerCase().split('.').pop() || '';
     return ['zip', '7z', 'rar', 'tar', 'gz', 'bz2', 'xz'].includes(ext);
@@ -221,7 +245,11 @@ export class Search implements OnInit, OnDestroy {
   // Peek inside a remote archive file without downloading the whole item.
   async peekArchive(identifier: string, archiveFilename: string) {
     const key = `${identifier}::${archiveFilename}`;
-    if (this.archiveContents[key] || this.archiveLoading[key]) return;
+    if (this.archiveContents[key]) {
+      this.archiveVisible[key] = true;
+      return;
+    }
+    if (this.archiveLoading[key]) return;
 
     this.archiveLoading[key] = true;
     this.archiveError[key] = null;
@@ -233,6 +261,7 @@ export class Search implements OnInit, OnDestroy {
         try { this.cdr.detectChanges(); } catch (e) {}
       });
       this.archiveContents[key] = entries || [];
+      this.archiveVisible[key] = true;
       if (!this.archiveContents[key].length) this.archiveError[key] = 'No entries found in archive';
       try { this.cdr.detectChanges(); } catch (e) {}
     } catch (err: any) {

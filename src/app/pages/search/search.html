@@ -40,15 +40,15 @@
 			<button
 				class="mt-1 px-2 py-1 text-xs rounded bg-blue-600 text-white"
 				type="button"
-				(click)="loadItemFiles(r.identifier)"
+				(click)="toggleItemFiles(r.identifier)"
 			>
-				Show files
+				{{ itemFilesVisible[r.identifier] ? 'Hide files' : 'Show files' }}
 			</button>
 
 			<div *ngIf="fileLoading[r.identifier]" class="text-xs text-gray-500 mt-1">Loading file list…</div>
 			<div *ngIf="fileError[r.identifier]" class="text-xs text-red-500 mt-1">{{ fileError[r.identifier] }}</div>
 
-			<ul *ngIf="itemFiles[r.identifier]?.length" class="ml-4 mt-2 text-sm">
+			<ul *ngIf="itemFilesVisible[r.identifier] && itemFiles[r.identifier]?.length" class="ml-4 mt-2 text-sm">
 				<li *ngFor="let file of itemFiles[r.identifier]" class="py-0.5">
 					<a
 						href="#"
@@ -96,9 +96,9 @@
 					*ngIf="isArchiveFile(file.name)"
 					class="ml-2 px-2 py-1 text-xs rounded bg-yellow-600 text-white"
 					type="button"
-					(click)="peekArchive(r.identifier, file.name)"
+					(click)="toggleArchiveFiles(r.identifier, file.name)"
 				>
-					Peek inside archive
+					{{ archiveVisible[r.identifier + '::' + file.name] ? 'Hide archive' : 'Peek inside archive' }}
 				</button>
 
 				<div *ngIf="archiveLoading[r.identifier + '::' + file.name]" class="text-xs text-gray-500 mt-1">
@@ -109,7 +109,7 @@
 				</div>
 				<div *ngIf="archiveError[r.identifier + '::' + file.name]" class="text-xs text-red-500 mt-1">{{ archiveError[r.identifier + '::' + file.name] }}</div>
 
-				<ul *ngIf="archiveContents[r.identifier + '::' + file.name]?.length" class="ml-4 mt-1 text-sm">
+				<ul *ngIf="archiveVisible[r.identifier + '::' + file.name] && archiveContents[r.identifier + '::' + file.name]?.length" class="ml-4 mt-1 text-sm">
 					<li *ngFor="let entry of archiveContents[r.identifier + '::' + file.name]" class="py-0.5">
 						<span class="text-gray-800">{{ entry.name }}</span>
 						<button

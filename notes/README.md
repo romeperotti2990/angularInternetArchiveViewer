@@ -10,7 +10,6 @@ BUGS/ PROBLEMS:
     
     UI:
     the star icon looks odd on the history page
-    you cannot close the files after you press show files on the search page (same thing with archives[zips, rars, etc])
     sometimes the show more option is shown when it does not need to be but this is a small bug its fine
     the star icon is different on the favorites section than in the history section in home
 
@@ -21,6 +20,12 @@ BUGS/ PROBLEMS:
     on the media page show files it does not show if a file is already starred or not, they just all end up not starred
     the files within the show files on the media page count as different items than the ones on the search page
 
+    ACCOUNTS:
+    uhhhhh i just realized there is
+    no customization
+    you cant delete your account
+    you cant export your data
+
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
 metadata provider/service
@@ -29,7 +34,7 @@ search by filetype (we will have to look inside of zips, so it will have to sear
 loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
 you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
 after pressing close files it should not have to fetch what is there again it should be cached for as long as you are on the page
-a section that shows all the emulator files you have still downloaded in the browser (cached)
+a section/page that shows all the emulator files you have still downloaded in the browser (cached)
 gennerally the site looks bad because i did none of it myself
 
 IDEAS:
@@ -42,7 +47,7 @@ i want the maximum amount of file compatiblitiy but i am just one guy and i dont
 
 ASSIGNMENT REQIREMENTS:
 I should probably use pwa for stuff too blehhhhhh
-only three small bugs maximum
+only three small bugs maximum (small being described as something affecting functionality)
 app must be published (It is deployed on render, just some backend stuff is not working because of CORS [I don't care though, if you look hard enough you can usually find what you need in a non zipped format])
 get 5 people to try it and give feedback (it never told me to fix the problems they find tho lol)
 1. corbin went to the website on his phone so he just complained that it was not mobile optimized(PLUHHHHHH)
