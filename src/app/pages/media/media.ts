@@ -194,10 +194,12 @@ export class Media implements OnInit {
     const u = (this.mode === 'emulator' ? this.gameUrl : this.mediaRawUrl) || '';
     try {
       if (!u) return 'Item';
-      if (u.startsWith('blob:')) return 'Local item';
+      // If it's a blob URL, we should NOT return "Local item" as a label 
+      // if we have a way to derive a better one (like from identifier/pathname)
       const parsed = new URL(u, window.location.href);
       const seg = (parsed.pathname || '').split('/').filter(Boolean).pop();
-      return decodeURIComponent(seg || parsed.hostname || 'Item');
+      const label = decodeURIComponent(seg || parsed.hostname || 'Item');
+      return label === 'blob' ? 'Local item' : label;
     } catch (e) {
       // fallback: try to take last path-like segment
       const parts = u.split('/').filter(Boolean);

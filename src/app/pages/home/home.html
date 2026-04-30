@@ -80,7 +80,7 @@
 						</div>
 					</div>
 					<div class="flex items-center gap-2 ml-4">
-						<button class="text-xl" type="button" (click)="$event.stopPropagation(); favorites.toggle(key)">{{ favorites.isFavorited(key) ? '★' : '☆' }}</button>
+						<button class="text-xl" type="button" (click)="$event.stopPropagation(); favorites.toggle(key, getFavoriteMeta(key))">{{ favorites.isFavorited(key) ? '★' : '☆' }}</button>
 					</div>
 				</div>
 			</div>

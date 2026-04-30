@@ -1,18 +1,25 @@
 BUGS/ PROBLEMS: 
-the search is still going by IA metadata and not just showing individual files based on seperate metadata assigned to it
-sometimes the roms that are zips within the zips do not work.
-You cannot search for books, only text. hopfully this will be fixed after they are listed individually also, just general junk being shown to you unless you know exactly what you want.
-there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need
-downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
-there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
-the star icon looks odd on the history page
-you cannot close the files after you press show files on the search page (same thing with archives[zips, rars, etc])
-a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file
-when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up
-there is no option to peek archives when showing files on the media page so it ends up treating it as an "other" in the viewer and tries to download it
-sometimes the show more option is shown when it does not need to be but this is a small bug its fine
-on the media page show files it does not show if a file is already starred or not, they just all end up not starred
-the files within the show files on the media page count as different items than the ones on the search page
+    GENERAL:
+    the search is still going by IA metadata and not just showing individual files based on seperate metadata assigned to it
+    sometimes the roms that are zips within the zips do not work.
+    You cannot search for books, only text. hopfully this will be fixed after they are listed individually also, just general junk being shown to you unless you know exactly what you want.
+    there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need
+    downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
+    there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
+    a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file
+    
+    UI:
+    the star icon looks odd on the history page
+    you cannot close the files after you press show files on the search page (same thing with archives[zips, rars, etc])
+    sometimes the show more option is shown when it does not need to be but this is a small bug its fine
+    the star icon is different on the favorites section than in the history section in home
+
+    
+    MEDIA PAGE:
+    when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up
+    there is no option to peek archives when showing files on the media page so it ends up treating it as an "other" in the viewer and tries to download it
+    on the media page show files it does not show if a file is already starred or not, they just all end up not starred
+    the files within the show files on the media page count as different items than the ones on the search page
 
 FEATURES NEEDED:
 emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
