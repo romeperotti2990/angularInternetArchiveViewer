@@ -8,6 +8,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file. idk what the page should do though, as you cant view these files
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up
+    sometimes items in the favorites will show up as the localhost version but idk why and it fixes itself as soon as you click on it and go back
 
     UI:
     sometimes the show more option is shown when it does not need to be but this is a small bug its fine
@@ -44,6 +45,8 @@ IDEAS: (things that could be done but nessicarily need to be)
     a random button (filterable, of course)
     I would like for you to be able to look at a collection and view all the content in that collection, like in internet archive
     making queue of items (not roms, of course)
+    A favorites page
+    thumbnails
 
     UI:
     on the search page if you have not searched anything it should tell you to search for something instead of the default nothing found message
@@ -54,16 +57,19 @@ IDEAS: (things that could be done but nessicarily need to be)
 
 
 ASSIGNMENT REQIREMENTS:
-I should probably use pwa for stuff too blehhhhhh (not an actual reqirement)
-only three small bugs maximum (small being described as something affecting functionality, if I dont mention the .cbz reader, everything is fine for the most part)
-app must be published (DONE)
-get 5 people to try it and give feedback (DONE)
-1. corbin went to the website on his phone so he just complained that it was not mobile optimized(PLUHHHHHH)
-2. thomas said the blue button in the homepage does not work and mentioned the spa deployment issue(both of which I fixed)
-3. graydon back button in the login page, add google logo, add feedback to the buttons, minification(which I did), make search better(????), get rid of the tab(tab?????), 'make it look cool'(fair)
-4. callin said "the icons at the top a little crowded on mobile" and was confused about the purpose
-5. Korman said "Instead of no results it should say start searching or something close to that"
-user auth(DONE)
+    GENERAL:
+    I should probably use pwa for stuff too blehhhhhh (not an actual reqirement)
+    only three small bugs maximum (small being described as something affecting functionality, if I dont mention the .cbz reader, everything is fine for the most part)
+    app must be published (DONE)
+    get 5 people to try it and give feedback (DONE)
+    user auth(DONE)
+
+    FEEDBACK:
+    1. corbin went to the website on his phone so he just complained that it was not mobile optimized(PLUHHHHHH)
+    2. thomas said the blue button in the homepage does not work and mentioned the spa deployment issue(both of which I fixed)
+    3. graydon back button in the login page, add google logo, add feedback to the buttons, minification(which I did), make search better(????), get rid of the tab(tab?????), 'make it look cool'(fair)
+    4. callin said "the icons at the top a little crowded on mobile" and was confused about the purpose
+    5. Korman said "Instead of no results it should say start searching or something close to that"
 
 
 DEPLOYMENT PROBLEMS:
