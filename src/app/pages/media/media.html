@@ -78,6 +78,42 @@
               >
                 Emulator
               </button>
+
+              <button
+                *ngIf="isArchiveFile(file.name)"
+                class="px-1.5 py-0.5 rounded bg-yellow-600 text-white text-[9px] font-bold uppercase tracking-wider hover:bg-yellow-700"
+                type="button"
+                (click)="toggleArchiveFiles(identifier || '', file.name)"
+              >
+                {{ archiveVisible[(identifier || '') + '::' + file.name] ? 'Hide' : 'Peek' }}
+              </button>
+            </div>
+
+            <div *ngIf="archiveVisible[(identifier || '') + '::' + file.name] || archiveLoading[(identifier || '') + '::' + file.name]" class="w-full mt-2 ml-4 border-l-2 border-yellow-400 pl-2 pb-2">
+              <div *ngIf="archiveLoading[(identifier || '') + '::' + file.name]" class="text-[10px] text-gray-500 italic">
+                Listing archive contents... ({{ archiveProgress[(identifier || '') + '::' + file.name] }}%)
+              </div>
+              <div *ngIf="archiveError[(identifier || '') + '::' + file.name]" class="text-[10px] text-red-500">{{ archiveError[(identifier || '') + '::' + file.name] }}</div>
+              
+              <ul *ngIf="archiveVisible[(identifier || '') + '::' + file.name] && archiveContents[(identifier || '') + '::' + file.name]?.length" class="space-y-1">
+                <li *ngFor="let entry of archiveContents[(identifier || '') + '::' + file.name]" class="flex items-center gap-2 text-[11px]">
+                  <span class="truncate flex-1">{{ entry.name }}</span>
+                  <button
+                    *ngIf="isEmulatorFile(entry.name)"
+                    class="px-1 py-0.5 rounded bg-green-600 text-white text-[8px] font-bold uppercase hover:bg-green-700"
+                    (click)="playArchiveEntry(identifier || '', file.name, entry, collectionTitle || '', collectionDescription || '')"
+                  >
+                    Play
+                  </button>
+                  <button
+                    *ngIf="!isEmulatorFile(entry.name)"
+                    class="px-1 py-0.5 rounded bg-blue-600 text-white text-[8px] font-bold uppercase hover:bg-blue-700"
+                    (click)="playArchiveEntry(identifier || '', file.name, entry, collectionTitle || '', collectionDescription || '')"
+                  >
+                    Open
+                  </button>
+                </li>
+              </ul>
             </div>
           </li>
         </ul>

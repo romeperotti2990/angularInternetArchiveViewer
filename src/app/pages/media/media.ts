@@ -31,6 +31,11 @@ export class Media implements OnInit {
   showFullDescription = false;
   
   itemFiles: any[] = [];
+  archiveContents: Record<string, any[]> = {};
+  archiveVisible: Record<string, boolean> = {};
+  archiveLoading: Record<string, boolean> = {};
+  archiveError: Record<string, string | null> = {};
+  archiveProgress: Record<string, number> = {};
   fileLoading = false;
   fileError: string | null = null;
 
@@ -325,6 +330,81 @@ export class Media implements OnInit {
     this.openFile(identifier, filename, collectionTitle, collectionDescription);
   }
 
+  // Archive handling methods synced from Search page
+  async peekArchive(identifier: string, archiveFilename: string) {
+    const key = `${identifier}::${archiveFilename}`;
+    if (this.archiveContents[key]) {
+      this.archiveVisible[key] = true;
+      return;
+    }
+    if (this.archiveLoading[key]) return;
+
+    this.archiveLoading[key] = true;
+    this.archiveError[key] = null;
+    this.archiveProgress[key] = 0;
+
+    try {
+      const entries = await this.archive.listArchiveContents(identifier, archiveFilename as string, (p: number) => {
+        this.archiveProgress[key] = Math.max(0, Math.min(100, Math.floor(p)));
+        try { this.cdr.detectChanges(); } catch (e) {}
+      });
+      this.archiveContents[key] = entries || [];
+      this.archiveVisible[key] = true;
+      if (!this.archiveContents[key].length) this.archiveError[key] = 'No entries found in archive';
+      try { this.cdr.detectChanges(); } catch (e) {}
+    } catch (err: any) {
+      this.archiveError[key] = err?.message ?? String(err);
+      this.archiveContents[key] = [];
+      try { this.cdr.detectChanges(); } catch (e) {}
+    } finally {
+      this.archiveLoading[key] = false;
+      this.archiveProgress[key] = 100;
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  async playArchiveEntry(identifier: string, archiveFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
+    try {
+      const displayLabel = entryObj?.name || archiveFilename;
+      if (!entryObj.entry || entryObj.entry.metadataOnly) {
+        this.openFile(identifier, entryObj.name, collectionTitle, collectionDescription);
+        return;
+      }
+
+      const blob = await this.archive.extractFileFromArchive(entryObj.entry);
+      const url = URL.createObjectURL(blob);
+      const mode = this.archive.getModeForFilename(entryObj.name);
+      const qp: any = { 
+        mode, 
+        displayLabel, 
+        identifier,
+        collectionTitle: collectionTitle || this.collectionTitle,
+        collectionDescription: collectionDescription || this.collectionDescription
+      };
+      
+      if (mode === 'emulator') {
+        qp.core = this.archive.getEmulatorCore(entryObj.name);
+        qp.gameUrl = url;
+      } else {
+        qp.mediaUrl = url;
+      }
+      
+      this.router.navigate(['/media'], { queryParams: qp });
+    } catch (err: any) {
+      const key = `${identifier}::${archiveFilename}`;
+      this.archiveError[key] = err?.message ?? String(err);
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  toggleArchiveFiles(identifier: string, filename: string) {
+    const key = `${identifier}::${filename}`;
+    if (this.archiveVisible[key]) {
+      this.archiveVisible[key] = false;
+    } else {
+      this.peekArchive(identifier, filename);
+    }
+  }
 
   // called from template when media finishes loading
   onMediaLoaded() {
