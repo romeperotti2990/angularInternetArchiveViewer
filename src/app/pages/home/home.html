@@ -80,7 +80,14 @@
 						</div>
 					</div>
 					<div class="flex items-center gap-2 ml-4">
-						<button class="text-xl" type="button" (click)="$event.stopPropagation(); favorites.toggle(key, getFavoriteMeta(key))">{{ favorites.isFavorited(key) ? '★' : '☆' }}</button>
+						<button 
+							class="text-sm p-1 hover:bg-gray-100 rounded transition-colors" 
+							type="button" 
+							(click)="$event.stopPropagation(); favorites.toggle(key, getFavoriteMeta(key))"
+							title="{{ favorites.isFavorited(key) ? 'Unfavorite' : 'Favorite' }}"
+						>
+							{{ favorites.isFavorited(key) ? '★' : '☆' }}
+						</button>
 					</div>
 				</div>
 			</div>

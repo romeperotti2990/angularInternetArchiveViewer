@@ -59,8 +59,8 @@
 					</a>
 					<button
 						type="button"
-						class="ml-2 text-sm"
-						(title)="favorites.isFavorited(r.identifier + '::' + file.name) ? 'Unfavorite' : 'Favorite'"
+						class="ml-2 text-sm p-1 hover:bg-gray-100 rounded transition-colors"
+						title="{{ favorites.isFavorited(r.identifier + '::' + file.name) ? 'Unfavorite' : 'Favorite' }}"
 						(click)="favorites.toggle(r.identifier + '::' + file.name, {
               label: file.name,
               mode: archive.getModeForFilename(file.name),
@@ -114,8 +114,8 @@
 						<span class="text-gray-800">{{ entry.name }}</span>
 						<button
 							type="button"
-							class="ml-2 text-sm"
-							(title)="favorites.isFavorited(r.identifier + '::' + file.name + '::' + entry.name) ? 'Unfavorite' : 'Favorite'"
+							class="ml-2 text-sm p-1 hover:bg-gray-100 rounded transition-colors"
+							title="{{ favorites.isFavorited(r.identifier + '::' + file.name + '::' + entry.name) ? 'Unfavorite' : 'Favorite' }}"
 							(click)="favorites.toggle(r.identifier + '::' + file.name + '::' + entry.name, {
                 label: entry.name,
                 mode: archive.getModeForFilename(entry.name),
