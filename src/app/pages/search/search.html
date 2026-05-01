@@ -20,7 +20,24 @@
 
 	<ul *ngIf="results.length">
 		<li *ngFor="let r of results" class="mb-2 border-b border-gray-300 pb-2">
-			<div class="font-bold">{{ r.title ?? r.identifier }}</div>
+			<div class="flex items-center gap-2">
+				<div class="font-bold flex-1">{{ r.title ?? r.identifier }}</div>
+				<button
+					type="button"
+					class="text-sm p-1 hover:bg-gray-100 rounded transition-colors"
+					[title]="favorites.isFavorited(r.identifier) ? 'Unfavorite collection' : 'Favorite collection'"
+					(click)="$event.stopPropagation(); favorites.toggle(r.identifier, {
+						label: r.title || r.identifier,
+						mode: 'collection',
+						identifier: r.identifier,
+						collectionTitle: r.title,
+						collectionDescription: r.description,
+						ts: 0
+					})"
+				>
+					{{ favorites.isFavorited(r.identifier) ? '★' : '☆' }}
+				</button>
+			</div>
 			<div class="text-sm text-gray-600">ID: {{ r.identifier }} — {{ r.mediatype }}</div>
 			<div *ngIf="r.description">
 				<div 
@@ -45,124 +62,17 @@
 				{{ itemFilesVisible[r.identifier] ? 'Hide files' : 'Show files' }}
 			</button>
 
-			<div *ngIf="fileLoading[r.identifier]" class="text-xs text-gray-500 mt-1">Loading file list…</div>
-			<div *ngIf="fileError[r.identifier]" class="text-xs text-red-500 mt-1">{{ fileError[r.identifier] }}</div>
-
-			<ul *ngIf="itemFilesVisible[r.identifier] && itemFiles[r.identifier]?.length" class="ml-4 mt-2 text-sm">
-				<li *ngFor="let file of itemFiles[r.identifier]" class="py-0.5">
-					<a
-						href="#"
-						(click)="$event.preventDefault(); openFile(r.identifier, file.name, r.title, r.description)"
-						class="text-blue-600 hover:text-blue-800"
-					>
-						{{ file.name }}
-					</a>
-					<button
-						type="button"
-						class="ml-2 text-sm p-1 hover:bg-gray-100 rounded transition-colors"
-						title="{{ favorites.isFavorited(r.identifier + '::' + file.name) ? 'Unfavorite' : 'Favorite' }}"
-						(click)="favorites.toggle(r.identifier + '::' + file.name, {
-              label: file.name,
-              mode: archive.getModeForFilename(file.name),
-              core: (archive.getModeForFilename(file.name) === 'emulator' ? archive.getEmulatorCore(file.name) : null),
-              url: archive.getFileUrl(r.identifier, file.name),
-              identifier: r.identifier,
-              collectionTitle: r.title,
-              collectionDescription: r.description,
-              ts: 0
-            })"
-					>
-						{{ favorites.isFavorited(r.identifier + '::' + file.name) ? '★' : '☆' }}
-					</button>
-					<a
-						[href]="getFileUrl(r.identifier, file.name)"
-						download
-						class="ml-2 text-sm text-gray-600"
-					>
-						Download
-					</a>
-					<span class="text-gray-500">({{ file.format }} {{ file.size ? formatBytes(file.size) : '' }})</span>
-				<button
-					*ngIf="isEmulatorFile(file.name) && !isArchiveFile(file.name)"
-					class="ml-2 px-2 py-1 text-xs rounded bg-green-600 text-white"
-					type="button"
-					(click)="openInEmulator(r.identifier, file.name, r.title, r.description)"
-				>
-					Open in emulator
-				</button>
-
-				<!-- Archive handling: peek inside and play entries -->
-				<button
-					*ngIf="isArchiveFile(file.name)"
-					class="ml-2 px-2 py-1 text-xs rounded bg-yellow-600 text-white"
-					type="button"
-					(click)="toggleArchiveFiles(r.identifier, file.name)"
-				>
-					{{ archiveVisible[r.identifier + '::' + file.name] ? 'Hide archive' : 'Peek inside archive' }}
-				</button>
-
-				<div *ngIf="archiveLoading[r.identifier + '::' + file.name]" class="text-xs text-gray-500 mt-1">
-					<div>Listing archive contents…</div>
-					<div *ngIf="archiveProgress[r.identifier + '::' + file.name] >= 0" class="w-full bg-gray-200 rounded h-2 mt-1 overflow-hidden">
-						<div class="bg-blue-600 h-2" [style.width.%]="archiveProgress[r.identifier + '::' + file.name]"></div>
-					</div>
-				</div>
-				<div *ngIf="archiveError[r.identifier + '::' + file.name]" class="text-xs text-red-500 mt-1">{{ archiveError[r.identifier + '::' + file.name] }}</div>
-
-				<ul *ngIf="archiveVisible[r.identifier + '::' + file.name] && archiveContents[r.identifier + '::' + file.name]?.length" class="ml-4 mt-1 text-sm">
-					<li *ngFor="let entry of archiveContents[r.identifier + '::' + file.name]" class="py-0.5">
-						<span class="text-gray-800">{{ entry.name }}</span>
-						<button
-							type="button"
-							class="ml-2 text-sm p-1 hover:bg-gray-100 rounded transition-colors"
-							title="{{ favorites.isFavorited(r.identifier + '::' + file.name + '::' + entry.name) ? 'Unfavorite' : 'Favorite' }}"
-							(click)="favorites.toggle(r.identifier + '::' + file.name + '::' + entry.name, {
-                label: entry.name,
-                mode: archive.getModeForFilename(entry.name),
-                core: (archive.getModeForFilename(entry.name) === 'emulator' ? archive.getEmulatorCore(entry.name) : null),
-                url: archive.getFileUrl(r.identifier, file.name),
-                identifier: r.identifier,
-                collectionTitle: r.title,
-                collectionDescription: r.description,
-                ts: 0
-              })"
-						>
-							{{ favorites.isFavorited(r.identifier + '::' + file.name + '::' + entry.name) ? '★' : '☆' }}
-						</button>
-						<span class="text-gray-500">&nbsp;</span>
-						<button
-							*ngIf="isEmulatorFile(entry.name)"
-							class="ml-2 px-2 py-1 text-xs rounded bg-green-600 text-white"
-							type="button"
-							(click)="playArchiveEntry(r.identifier, file.name, entry, r.title, r.description)"
-					>
-						Play
-					</button>
-						<button
-							*ngIf="isArchiveFile(entry.name)"
-							class="ml-2 px-2 py-1 text-xs rounded bg-yellow-600 text-white"
-							type="button"
-							(click)="peekArchiveEntry(r.identifier, file.name, entry)"
-						>
-							Peek
-						</button>
-					<button
-						*ngIf="!isEmulatorFile(entry.name) && !isArchiveFile(entry.name)"
-						class="ml-2 px-2 py-1 text-xs rounded bg-blue-600 text-white"
-						type="button"
-						(click)="openArchiveEntry(r.identifier, file.name, entry, r.title, r.description)"
-						>
-							Open
-						</button>
-						<ul *ngIf="archiveContents[r.identifier + '::' + file.name + '::' + entry.name]?.length" class="ml-4 mt-1 text-xs text-gray-600">
-							<li *ngFor="let nested of archiveContents[r.identifier + '::' + file.name + '::' + entry.name]" class="py-0.5">
-								{{ nested.name }}
-							</li>
-						</ul>
-					</li>
-				</ul>
-				</li>
-			</ul>
+			<app-files
+				*ngIf="itemFilesVisible[r.identifier]"
+				[identifier]="r.identifier"
+				[collectionTitle]="r.title"
+				[collectionDescription]="r.description"
+				[files]="itemFiles[r.identifier] || []"
+				[loading]="fileLoading[r.identifier]"
+				[error]="fileError[r.identifier]"
+				(fileOpened)="openFile(r.identifier, $event.filename, r.title, r.description)"
+				(emulatorOpened)="openInEmulator(r.identifier, $event.filename, r.title, r.description)"
+			></app-files>
 		</li>
 	</ul>
 

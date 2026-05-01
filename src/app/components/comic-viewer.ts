@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Archive } from '../../services/archive';
+import { Archive } from '../services/archive';
 
 @Component({
   selector: 'app-comic-viewer',

@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserDataService } from '../../services/user-data.service';
-import { ComicViewerComponent } from '../../components/comic-viewer/comic-viewer';
+import { ComicViewerComponent } from '../../components/comic-viewer';
+import { FilesComponent } from '../../components/files';
 import { environment } from '../../../environments/environment';
 import { Archive } from '../../services/archive';
 import { FavoritesService } from '../../services/favorites.service';
@@ -11,7 +12,7 @@ import { FavoritesService } from '../../services/favorites.service';
 @Component({
   selector: 'app-media',
   standalone: true,
-  imports: [CommonModule, ComicViewerComponent],
+  imports: [CommonModule, ComicViewerComponent, FilesComponent],
   templateUrl: './media.html',
 })
 export class Media implements OnInit {
@@ -31,11 +32,6 @@ export class Media implements OnInit {
   showFullDescription = false;
   
   itemFiles: any[] = [];
-  archiveContents: Record<string, any[]> = {};
-  archiveVisible: Record<string, boolean> = {};
-  archiveLoading: Record<string, boolean> = {};
-  archiveError: Record<string, string | null> = {};
-  archiveProgress: Record<string, number> = {};
   fileLoading = false;
   fileError: string | null = null;
 
@@ -51,6 +47,13 @@ export class Media implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
+      // Clear previous file list immediately on navigation to new item
+      if (this.identifier !== params.get('identifier')) {
+        this.itemFiles = [];
+        this.fileLoading = false;
+        this.fileError = null;
+      }
+
       this.mode = params.get('mode');
       this.core = params.get('core');
       this.gameUrl = params.get('gameUrl');
@@ -228,6 +231,7 @@ export class Media implements OnInit {
 
     try {
       const arr = this.userData.loadLastItems();
+      // Use URL as unique key for history de-duplication
       const filtered = arr.filter((a: any) => a.url !== item.url);
       filtered.unshift(item);
       const sliced = filtered.slice(0, 50); 
@@ -282,11 +286,6 @@ export class Media implements OnInit {
     return ['gba', 'gbc', 'gb', 'nes', 'snes', 'gen', 'md', 'sms', 'gg', 'n64', 'z64', 'v64'].includes(ext);
   }
 
-  isArchiveFile(name: string): boolean {
-    const ext = name.split('.').pop()?.toLowerCase() || '';
-    return ['zip', '7z', 'rar', 'tar', 'gz'].includes(ext);
-  }
-
   getFileUrl(identifier: string, filename: string): string {
     return this.archive.getFileUrl(identifier, filename);
   }
@@ -323,87 +322,12 @@ export class Media implements OnInit {
       qp.mediaUrl = url;
     }
 
-    this.router.navigate(['/media'], { queryParams: qp });
+    // Force refresh the component by clearing any blob URLs or using a navigation strategy
+    this.router.navigate(['/media'], { queryParams: qp, queryParamsHandling: 'merge' });
   }
 
   openInEmulator(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string) {
     this.openFile(identifier, filename, collectionTitle, collectionDescription);
-  }
-
-  // Archive handling methods synced from Search page
-  async peekArchive(identifier: string, archiveFilename: string) {
-    const key = `${identifier}::${archiveFilename}`;
-    if (this.archiveContents[key]) {
-      this.archiveVisible[key] = true;
-      return;
-    }
-    if (this.archiveLoading[key]) return;
-
-    this.archiveLoading[key] = true;
-    this.archiveError[key] = null;
-    this.archiveProgress[key] = 0;
-
-    try {
-      const entries = await this.archive.listArchiveContents(identifier, archiveFilename as string, (p: number) => {
-        this.archiveProgress[key] = Math.max(0, Math.min(100, Math.floor(p)));
-        try { this.cdr.detectChanges(); } catch (e) {}
-      });
-      this.archiveContents[key] = entries || [];
-      this.archiveVisible[key] = true;
-      if (!this.archiveContents[key].length) this.archiveError[key] = 'No entries found in archive';
-      try { this.cdr.detectChanges(); } catch (e) {}
-    } catch (err: any) {
-      this.archiveError[key] = err?.message ?? String(err);
-      this.archiveContents[key] = [];
-      try { this.cdr.detectChanges(); } catch (e) {}
-    } finally {
-      this.archiveLoading[key] = false;
-      this.archiveProgress[key] = 100;
-      try { this.cdr.detectChanges(); } catch (e) {}
-    }
-  }
-
-  async playArchiveEntry(identifier: string, archiveFilename: string, entryObj: any, collectionTitle?: string, collectionDescription?: string) {
-    try {
-      const displayLabel = entryObj?.name || archiveFilename;
-      if (!entryObj.entry || entryObj.entry.metadataOnly) {
-        this.openFile(identifier, entryObj.name, collectionTitle, collectionDescription);
-        return;
-      }
-
-      const blob = await this.archive.extractFileFromArchive(entryObj.entry);
-      const url = URL.createObjectURL(blob);
-      const mode = this.archive.getModeForFilename(entryObj.name);
-      const qp: any = { 
-        mode, 
-        displayLabel, 
-        identifier,
-        collectionTitle: collectionTitle || this.collectionTitle,
-        collectionDescription: collectionDescription || this.collectionDescription
-      };
-      
-      if (mode === 'emulator') {
-        qp.core = this.archive.getEmulatorCore(entryObj.name);
-        qp.gameUrl = url;
-      } else {
-        qp.mediaUrl = url;
-      }
-      
-      this.router.navigate(['/media'], { queryParams: qp });
-    } catch (err: any) {
-      const key = `${identifier}::${archiveFilename}`;
-      this.archiveError[key] = err?.message ?? String(err);
-      try { this.cdr.detectChanges(); } catch (e) {}
-    }
-  }
-
-  toggleArchiveFiles(identifier: string, filename: string) {
-    const key = `${identifier}::${filename}`;
-    if (this.archiveVisible[key]) {
-      this.archiveVisible[key] = false;
-    } else {
-      this.peekArchive(identifier, filename);
-    }
   }
 
   // called from template when media finishes loading

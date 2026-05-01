@@ -4,11 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Archive } from '../../services/archive';
 import { FavoritesService } from '../../services/favorites.service';
 import { Pagination } from '../../components/pagination/pagination';
+import { FilesComponent } from '../../components/files';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, Pagination],
+  imports: [CommonModule, Pagination, FilesComponent],
   templateUrl: './search.html',
 })
 export class Search implements OnInit, OnDestroy {

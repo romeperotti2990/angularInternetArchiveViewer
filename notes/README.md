@@ -1,4 +1,4 @@
-BUGS/ PROBLEMS: 
+BUGS/ PROBLEMS: (things that are active issues with the app)
     GENERAL:
     the search is still going by IA metadata and not just showing individual files based on seperate metadata assigned to it
     sometimes the roms that are zips within the zips do not work.
@@ -7,17 +7,15 @@ BUGS/ PROBLEMS:
     downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file. idk what the page should do though, as you cant view these files
-    after searching for a file that is already favorited, you can find it again and it will not recognise it as the same file (this causes many issues)
-    
+    when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up
+
     UI:
     sometimes the show more option is shown when it does not need to be but this is a small bug its fine
 
-    
-    MEDIA PAGE:
-    when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up
-    on the media page show files it does not show if a file is already starred or not, they just all end up not starred this is because ↓
-    the files within the show files on the media page count as different items than the ones on the search page
-    the show files on the media page looks wildly different than on the search page
+    SHOW FILES:
+    The UI is small and hard to use
+    there is no progress bar when pressing show files
+    the peek function uses a percentage rather than a bar
 
     ACCOUNTS:
     uhhhhh i just realized there is
@@ -25,20 +23,22 @@ BUGS/ PROBLEMS:
     you cant delete your account
     you cant export your data
 
-FEATURES NEEDED:
-emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
-metadata provider/service (might want to give up on that)
-search filters (they are minimal rn)
-search by filetype (we will have to look inside of zips, so it will have to search until it gets the amount of results as the pagination, then stop. this will still fetch a lot from internet archive and take a while, as it will have to use libarchive to peek into every one and extract it)
-loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
-you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
-after pressing close files it should not have to fetch what is there again it should be cached for as long as you are on the page
-a section/page that shows all the emulator files you have still downloaded in the browser (cached)
-gennerally the site looks bad because i did none of it myself
-add minification to history items
-cancelling peeking archives
+FEATURES NEEDED: (things that need to be done that dont break anything, but would greatly add to the app)
+    FUNCTIONALITY:
+    search filters (they are minimal rn)
+    emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
+    metadata provider/service (might want to give up on that)\
+    search by filetype (we will have to look inside of zips, so it will have to search until it gets the amount of results as the pagination, then stop. this will still fetch a lot from internet archive and take a while, as it will have to use libarchive to peek into every one and extract it)
+    you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
+    a section/page that shows all the emulator files you have still downloaded in the browser (cached)
+    cancelling peeking archives
 
-IDEAS:
+    UX/UI:
+    loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
+    gennerally the site looks bad because i did none of it myself
+    add minification to history items
+
+IDEAS: (things that could be done but nessicarily need to be)
     FEATURES:
     sometimes there are a lot of files from a collection so I could make like an item page to look at the whole thing
     a random button (filterable, of course)
@@ -47,6 +47,7 @@ IDEAS:
 
     UI:
     on the search page if you have not searched anything it should tell you to search for something instead of the default nothing found message
+    in the media page show files it should show which one you are looking at currently
 
     CODE:
     we could have several files for using media, instead of one big one
