@@ -24,6 +24,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     you cant delete your account
     you cant export your data
 
+
 FEATURES NEEDED: (things that need to be done that dont break anything, but would greatly add to the app)
     FUNCTIONALITY:
     search filters (they are minimal rn)
@@ -38,6 +39,7 @@ FEATURES NEEDED: (things that need to be done that dont break anything, but woul
     loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
     gennerally the site looks bad because i did none of it myself
     add minification to history items
+
 
 IDEAS: (things that could be done but nessicarily need to be)
     FEATURES:
