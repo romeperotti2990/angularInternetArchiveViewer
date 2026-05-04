@@ -7,16 +7,15 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file. idk what the page should do though, as you cant view these files
-    when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up
+    when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
     sometimes items in the favorites will show up as the localhost version but idk why and it fixes itself as soon as you click on it and go back
+    there is some weird syncing stuff if you are looking at/playing files in zips
 
     UI:
     sometimes the show more option is shown when it does not need to be but this is a small bug its fine
 
     SHOW FILES:
     The UI is small and hard to use
-    there is no progress bar when pressing show files
-    the peek function uses a percentage rather than a bar
 
     ACCOUNTS:
     uhhhhh i just realized there is

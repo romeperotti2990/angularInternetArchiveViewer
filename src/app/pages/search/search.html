@@ -63,7 +63,7 @@
 			</button>
 
 			<app-files
-				*ngIf="itemFilesVisible[r.identifier]"
+				*ngIf="itemFilesVisible[r.identifier] || fileLoading[r.identifier]"
 				[identifier]="r.identifier"
 				[collectionTitle]="r.title"
 				[collectionDescription]="r.description"

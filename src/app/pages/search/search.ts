@@ -202,6 +202,7 @@ export class Search implements OnInit, OnDestroy {
 
     this.fileLoading[identifier] = true;
     this.fileError[identifier] = null;
+    try { this.cdr.detectChanges(); } catch (e) {}
 
     try {
       const files = await this.archive.listFiles(identifier);

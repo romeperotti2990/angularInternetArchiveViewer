@@ -269,6 +269,7 @@ export class Media implements OnInit {
 
     this.fileLoading = true;
     this.fileError = null;
+    try { this.cdr.detectChanges(); } catch (e) {}
 
     try {
       const files = await this.archive.listFiles(this.identifier);

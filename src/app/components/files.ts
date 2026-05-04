@@ -10,8 +10,13 @@ import { Router } from '@angular/router';
   imports: [CommonModule],
   template: `
     <div class="mt-2">
-      <div *ngIf="loading" class="text-xs text-gray-500 italic flex items-center mb-2">
-        <span class="animate-pulse mr-2">●</span> Loading file list...
+      <div *ngIf="loading" class="text-xs text-gray-500 italic mb-2">
+        <div class="flex items-center mb-1">
+          <span class="animate-pulse mr-2">●</span> Loading file list...
+        </div>
+        <div class="w-full bg-gray-200 rounded h-1.5 overflow-hidden">
+          <div class="bg-blue-600 h-full animate-progress-indeterminate"></div>
+        </div>
       </div>
       <div *ngIf="error" class="text-xs text-red-500 mb-2">{{ error }}</div>
 
@@ -71,7 +76,11 @@ import { Router } from '@angular/router';
           <div *ngIf="archiveVisible[identifier + '::' + file.name] || archiveLoading[identifier + '::' + file.name]" 
                class="mt-2 ml-4 border-l-2 border-yellow-400 pl-2 pb-2 bg-yellow-50/30 rounded-r">
             <div *ngIf="archiveLoading[identifier + '::' + file.name]" class="text-[10px] text-gray-500 italic">
-              Listing archive contents... ({{ archiveProgress[identifier + '::' + file.name] }}%)
+              <div>Listing archive contents...</div>
+              <div *ngIf="archiveProgress[identifier + '::' + file.name] >= 0" class="w-full bg-gray-200 rounded h-1.5 mt-1 overflow-hidden">
+                <div class="bg-blue-600 h-full transition-all duration-300" [style.width.%]="archiveProgress[identifier + '::' + file.name]"></div>
+              </div>
+              <div class="mt-0.5 text-[9px] text-right">{{ archiveProgress[identifier + '::' + file.name] }}%</div>
             </div>
             <div *ngIf="archiveError[identifier + '::' + file.name]" class="text-[10px] text-red-500">{{ archiveError[identifier + '::' + file.name] }}</div>
             
@@ -114,6 +123,16 @@ import { Router } from '@angular/router';
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    @keyframes progress-indeterminate {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(0); }
+      100% { transform: translateX(100%); }
+    }
+    .animate-progress-indeterminate {
+      width: 100%;
+      animation: progress-indeterminate 1.5s infinite linear;
+    }
   `]
 })
 export class FilesComponent {
