@@ -40,7 +40,7 @@ export class Search implements OnInit, OnDestroy {
   expandedDescriptions: Record<string, boolean> = {};
 
   constructor(
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     private router: Router,
     public archive: Archive,
     private cdr: ChangeDetectorRef,

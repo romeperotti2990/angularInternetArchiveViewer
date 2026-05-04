@@ -87,5 +87,11 @@
 		></app-pagination>
 	</div>
 
-	<div *ngIf="!results.length && !loadingSearch">No results</div>
+	<div *ngIf="!results.length && !loadingSearch" class="flex flex-col items-center justify-center py-20">
+		<img src="eyeglass.png" class="w-32 h-32 mb-4 opacity-50">
+		<p class="text-lg font-medium">
+			{{ route.snapshot.queryParamMap.get('q') ? 'No results found for "' + route.snapshot.queryParamMap.get('q') + '"' : 'Start searching for something!' }}
+		</p>
+		<p class="text-sm mt-1">Try searching for games, movies, or music.</p>
+	</div>
 </div>
