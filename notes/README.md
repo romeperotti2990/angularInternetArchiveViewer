@@ -4,9 +4,8 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     sometimes the roms that are zips within the zips do not work.
     You cannot search for books, only text. hopfully this will be fixed after they are listed individually also, just general junk being shown to you unless you know exactly what you want.
     there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need (.iso, .img, etc)
-    downloading things other than roms has it not show the progress until it is done, meaning the user has no feedback until the download is done
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
-    a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file. idk what the page should do though, as you cant view these files
+    a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file(like the way I want every other file to download too). idk what the page should do though, as you cant view these files
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
     sometimes items in the favorites will show up as the localhost version but idk why and it fixes itself as soon as you click on it and go back
     there is some weird favorite syncing stuff if you are looking at/playing files in zips
@@ -15,13 +14,17 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     sometimes the show more option is shown when it does not need to be but this is a small bug its fine
 
     SHOW FILES:
-    The UI is small and hard to use
+    The UI in the items component is small and hard to use
 
     ACCOUNTS:
     uhhhhh i just realized there is
     no customization
     you cant delete your account
     you cant export your data
+
+    DOWNLOADING:
+    when pressing download on an item in the media page, it does not show you anything until it is done.
+    when pressing download on a file in a collection using the show files button, it just opens it using the server on that tab.
 
 
 FEATURES NEEDED: (things that need to be done that dont break anything, but would greatly add to the app)
@@ -50,11 +53,11 @@ IDEAS: (things that could be done but nessicarily need to be)
     thumbnails
 
     UI:
-    on the search page if you have not searched anything it should tell you to search for something instead of the default nothing found message
     in the media page show files it should show which one you are looking at currently
 
     CODE:
-    we could have several files for using media, instead of one big one
+    I could have several files for using media, instead of one big one
+    there are probably a few things that I 
 
 
 ASSIGNMENT REQIREMENTS:

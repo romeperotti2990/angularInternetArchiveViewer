@@ -1,7 +1,7 @@
 This is an internet archive view/use tool coded in angular using standalone components called Internet Archive Viewer (IAV for short). 
 It is styled using tailwind.
 It should be designed to search internet archive, take only the files and display them all with their own metadata from a different provider, and then use the files it finds without the user having to download them. 
-For example, if I find a .gba file, we should be able to play it with emulator js, If I find a .mp3 file, I should be able to listen to it in the browser, etc etc.
+For example, if I find a .gba file, I should be able to play it with emulator js, If I find a .mp3 file, I should be able to listen to it in the browser, etc etc.
 It should also be able to see what is inside of .zip folders and use those as well.
 USERS DO NOT NEED AN ACCOUNT OR AN EMAIL. it should just work. they can register using email or google oauth and it is stored in firebase. only if they want to.
 Also, do not mess with anything in the 4.2.3 folder, its just a dependency(Emulatorjs). treat it the same as you would the node_modules folder.

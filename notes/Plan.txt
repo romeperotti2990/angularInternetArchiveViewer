@@ -1,5 +1,5 @@
 The hardest hurdle of this app, the problem I dont even know how to start solving, is the problem of displaying the files as their own thing, like i did in the react emulator with crocdb(deprecated)
-we need to somehow look at every file in IA, figure out what they are, based on what they are, give them metadata(images, desc, etc..) and then display them as an item, when you click on that item, see its full desc, then be able to consume that media, in browser.
+I need to somehow look at every file in IA, figure out what they are, based on what they are, give them metadata(images, desc, etc..) and then display them as an item, when you click on that item, see its full desc, then be able to consume that media, in browser.
 the hardest hurdle of this is scanning ALL of internet archive. even if I did know how to search by filetype, just searching up something as obscure as .gba will give thousands of results, and hundreds of duplicate files, or possibly even malware.
 
 
