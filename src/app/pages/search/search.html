@@ -41,13 +41,14 @@
 			<div class="text-sm text-gray-600">ID: {{ r.identifier }} — {{ r.mediatype }}</div>
 			<div *ngIf="r.description">
 				<div 
+					#descContainer
 					class="text-sm transition-all duration-300" 
 					[ngClass]="{'line-clamp-2': !expandedDescriptions[r.identifier]}"
 				>
 					{{ r.description }}
 				</div>
 				<button 
-					*ngIf="r.description.length > 150"
+					*ngIf="descContainer.scrollHeight > 40"
 					(click)="expandedDescriptions[r.identifier] = !expandedDescriptions[r.identifier]" 
 					class="text-xs font-semibold text-blue-600 hover:text-blue-800"
 				>
