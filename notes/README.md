@@ -8,7 +8,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file(like the way I want every other file to download too). idk what the page should do though, as you cant view these files
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
     sometimes items in the favorites will show up as the localhost version but idk why and it fixes itself as soon as you click on it and go back
-    there is some weird favorite syncing stuff if you are looking at/playing files in zips
+    there is some weird favorite syncing stuff if you are looking at/playing files in zips because the zip and the file inside it count as different items
 
     UI:
     sometimes the show more option is shown when it does not need to be but this is a small bug its fine
