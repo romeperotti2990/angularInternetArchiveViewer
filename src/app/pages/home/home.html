@@ -54,41 +54,40 @@
 
 	<section *ngIf="favoritesKeys.length" class="mt-12">
 		<h2 class="text-2xl font-bold mb-4">Your Favorites</h2>
-		<div class="grid gap-3">
-			<div *ngFor="let key of favoritesKeys" class="p-4 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition">
-				<div class="flex items-start justify-between">
-					<div (click)="openFavorite(key)" class="flex-1 overflow-hidden">
-						<div class="font-semibold truncate">
-							<!-- Metadata based title -->
-							<ng-container *ngIf="getFavoriteMeta(key) as meta; else fallbackLabel">
-								{{ meta.label || meta.displayLabel }}
-							</ng-container>
-							<ng-template #fallbackLabel>
-								<span *ngIf="key.startsWith('history::')">{{ key.substring('history::'.length) }}</span>
-								<span *ngIf="!key.startsWith('history::')">{{ key.split('::').slice(1).join('::') || key }}</span>
-							</ng-template>
-						</div>
-						
-						<!-- Subtitle / Mode info -->
-						<div class="text-sm text-gray-500 mt-1 flex flex-wrap gap-2">
-							<ng-container *ngIf="getFavoriteMeta(key) as meta; else fallbackSub">
-								{{ meta.mode }} <span *ngIf="meta.collectionTitle">• {{ meta.collectionTitle }}</span>
-							</ng-container>
-							<ng-template #fallbackSub>
-								<span *ngIf="key.startsWith('history::')" class="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">From History</span>
-							</ng-template>
-						</div>
+		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+			<div *ngFor="let key of favoritesKeys" 
+           class="p-3 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition flex flex-col justify-between h-full group">
+				<div (click)="openFavorite(key)" class="overflow-hidden text-center">
+					<div class="font-semibold text-sm truncate" [title]="key">
+						<!-- Metadata based title -->
+						<ng-container *ngIf="getFavoriteMeta(key) as meta; else fallbackLabel">
+							{{ meta.label || meta.displayLabel }}
+						</ng-container>
+						<ng-template #fallbackLabel>
+							<span *ngIf="key.startsWith('history::')">{{ key.substring('history::'.length) }}</span>
+							<span *ngIf="!key.startsWith('history::')">{{ key.split('::').slice(1).join('::') || key }}</span>
+						</ng-template>
 					</div>
-					<div class="flex items-center gap-2 ml-4">
-						<button 
-							class="text-sm p-1 hover:bg-gray-100 rounded transition-colors" 
-							type="button" 
-							(click)="$event.stopPropagation(); favorites.toggle(key, getFavoriteMeta(key))"
-							title="{{ favorites.isFavorited(key) ? 'Unfavorite' : 'Favorite' }}"
-						>
-							{{ favorites.isFavorited(key) ? '★' : '☆' }}
-						</button>
+					
+					<!-- Subtitle / Mode info -->
+					<div class="text-[10px] text-gray-400 mt-1 truncate">
+						<ng-container *ngIf="getFavoriteMeta(key) as meta; else fallbackSub">
+							{{ meta.mode }} <span *ngIf="meta.collectionTitle">• {{ meta.collectionTitle }}</span>
+						</ng-container>
+						<ng-template #fallbackSub>
+							<span *ngIf="key.startsWith('history::')" class="text-[9px] bg-green-50 text-green-700 px-1 py-0.5 rounded">From History</span>
+						</ng-template>
 					</div>
+				</div>
+				<div class="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-gray-50">
+					<button 
+						class="text-xs p-1 hover:bg-gray-100 rounded transition-colors" 
+						type="button" 
+						(click)="$event.stopPropagation(); favorites.toggle(key, getFavoriteMeta(key))"
+						title="{{ favorites.isFavorited(key) ? 'Unfavorite' : 'Favorite' }}"
+					>
+						{{ favorites.isFavorited(key) ? '★' : '☆' }}
+					</button>
 				</div>
 			</div>
 		</div>
@@ -102,35 +101,37 @@
 				<button class="px-3 py-1 bg-red-600 text-white rounded text-sm" (click)="clearHistory()">Clear history</button>
 			</div>
 		</div>
-		<div class="grid gap-3">
-			<div *ngFor="let item of lastItems" class="p-4 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition">
-				<div class="flex items-start justify-between">
-					<div (click)="openLastItem(item)" class="flex-1">
-						<div class="font-semibold">{{ item.label }}</div>
-						<div *ngIf="item.collectionTitle" class="text-sm text-gray-700 mt-1">{{ item.collectionTitle }}</div>
-						<div *ngIf="item.collectionDescription" class="text-sm text-gray-500 mt-1">{{ item.collectionDescription }}</div>
-						<div class="text-sm text-gray-500">{{ item.mode }}</div>
-					</div>
-					<div class="flex items-center gap-2">
-						<button
-							class="text-sm p-1 hover:bg-gray-100 rounded transition-colors"
-							type="button"
-							(click)="$event.stopPropagation(); favorites.toggle('history::' + item.url, item)"
-							title="{{ favorites.isFavorited('history::' + item.url) ? 'Unfavorite' : 'Favorite' }}"
-						>
-							{{ favorites.isFavorited('history::' + item.url) ? '★' : '☆' }}
-						</button>
-						<button 
-							class="text-gray-400 hover:text-red-600 p-1 transition-colors"
-							title="Remove from history"
-							(click)="deleteHistoryItem($event, item)"
-						>
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-							</svg>
-						</button>
-						<span *ngIf="item.mode === 'emulator'" class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Emulator</span>
-					</div>
+		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+			<div *ngFor="let item of lastItems" 
+           class="p-3 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition flex flex-col justify-between h-full group" 
+           (click)="openLastItem(item)">
+				<div class="overflow-hidden text-center">
+					<div class="font-semibold text-sm truncate" [title]="item.label">{{ item.label }}</div>
+					<div *ngIf="item.collectionTitle" class="text-[10px] text-gray-400 mt-1 truncate" [title]="item.collectionTitle">
+            {{ item.collectionTitle }}
+          </div>
+				</div>
+				<div class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-gray-50">
+          <span class="text-[9px] uppercase tracking-wider font-bold text-gray-400">{{ item.mode }}</span>
+					<div class="flex items-center gap-1">
+            <button
+              class="text-xs p-1 hover:bg-gray-100 rounded transition-colors"
+              type="button"
+              (click)="$event.stopPropagation(); favorites.toggle('history::' + item.url, item)"
+              [title]="favorites.isFavorited('history::' + item.url) ? 'Unfavorite' : 'Favorite'"
+            >
+              {{ favorites.isFavorited('history::' + item.url) ? '★' : '☆' }}
+            </button>
+            <button 
+              class="text-gray-300 hover:text-red-600 p-1 transition-colors"
+              title="Remove from history"
+              (click)="deleteHistoryItem($event, item)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
 				</div>
 			</div>
 		</div>

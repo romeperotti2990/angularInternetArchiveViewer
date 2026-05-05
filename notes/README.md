@@ -14,7 +14,8 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     uhhh you can favorite entire collections idk how that works
 
     UI:
-    Nothing for now
+    When you favorite and unfavorite things in the home page its a little snappy
+    you cant undo unfavoriteing the item is just gone
 
     SHOW FILES:
     The UI in the items component is small and hard to use
@@ -36,14 +37,13 @@ FEATURES NEEDED: (things that need to be done that dont break anything, but woul
     emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
     metadata provider/service (might want to give up on that)\
     search by filetype (we will have to look inside of zips, so it will have to search until it gets the amount of results as the pagination, then stop. this will still fetch a lot from internet archive and take a while, as it will have to use libarchive to peek into every one and extract it)
-    you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source
+    you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source (idk why this is so hard to do)
     a section/page that shows all the emulator files you have still downloaded in the browser (cached)
     cancelling peeking archives
 
     UX/UI:
     loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
     gennerally the site looks bad because i did none of it myself
-    add minification to history items
     Fullscreen view for images and whatnot
     A next button for the media page that will go to and show the next file
 

@@ -8,34 +8,39 @@
 
   <div *ngIf="!lastItems.length" class="text-gray-600">No history items.</div>
 
-  <div *ngIf="lastItems.length" class="grid gap-3">
-    <div *ngFor="let item of lastItems" class="p-4 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition" (click)="openLastItem(item)">
-      <div class="flex items-start justify-between">
-        <div class="flex-1">
-          <div class="font-semibold">{{ item.label }}</div>
-          <div *ngIf="item.collectionTitle" class="text-sm text-gray-700 mt-1">{{ item.collectionTitle }}</div>
-          <div *ngIf="item.collectionDescription" class="text-sm text-gray-500 mt-1">{{ item.collectionDescription }}</div>
-          <div class="text-sm text-gray-500">{{ item.mode }} • {{ item.ts | date:'short' }}</div>
+  <div *ngIf="lastItems.length" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+    <div *ngFor="let item of lastItems" 
+         class="p-3 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition flex flex-col justify-between h-full group" 
+         (click)="openLastItem(item)">
+      <div class="overflow-hidden">
+        <div class="font-semibold text-sm truncate" [title]="item.label">{{ item.label }}</div>
+        <div *ngIf="item.collectionTitle" class="text-[10px] text-gray-500 mt-1 truncate" [title]="item.collectionTitle">
+          {{ item.collectionTitle }}
         </div>
-        <div class="flex items-center gap-2">
-          <button
-            class="text-sm p-1 hover:bg-gray-100 rounded transition-colors"
-            type="button"
-            (click)="toggleFavorite($event, item)"
-            [title]="favorites.isFavorited('history::' + item.url) ? 'Unfavorite' : 'Favorite'"
-          >
-            {{ favorites.isFavorited('history::' + item.url) ? '★' : '☆' }}
-          </button>
-          <button 
-						class="text-gray-400 hover:text-red-600 p-2 transition-colors"
-						title="Remove from history"
-						(click)="deleteHistoryItem($event, item)"
-					>
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-						</svg>
-					</button>
+        <div class="text-[10px] text-gray-400 mt-1 flex items-center justify-between">
+          <span>{{ item.mode }}</span>
+          <span>{{ item.ts | date:'shortDate' }}</span>
         </div>
+      </div>
+      
+      <div class="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-gray-50">
+        <button
+          class="text-xs p-1 hover:bg-gray-100 rounded transition-colors"
+          type="button"
+          (click)="toggleFavorite($event, item)"
+          [title]="favorites.isFavorited('history::' + item.url) ? 'Unfavorite' : 'Favorite'"
+        >
+          {{ favorites.isFavorited('history::' + item.url) ? '★' : '☆' }}
+        </button>
+        <button 
+          class="text-gray-300 hover:text-red-600 p-1 transition-colors"
+          title="Remove from history"
+          (click)="deleteHistoryItem($event, item)"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
