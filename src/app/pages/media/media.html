@@ -29,6 +29,7 @@
         <app-files
           *ngIf="itemFiles.length > 0 || fileLoading"
           [identifier]="identifier || ''"
+          [currentFilename]="displayLabel"
           [collectionTitle]="collectionTitle || ''"
           [collectionDescription]="collectionDescription || ''"
           [files]="itemFiles"

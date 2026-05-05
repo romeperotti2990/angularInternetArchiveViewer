@@ -44,6 +44,8 @@ FEATURES NEEDED: (things that need to be done that dont break anything, but woul
     loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
     gennerally the site looks bad because i did none of it myself
     add minification to history items
+    Fullscreen view for images and whatnot
+    A next button for the media page that will go to and show the next file
 
 
 IDEAS: (things that could be done but nessicarily need to be)
@@ -54,9 +56,8 @@ IDEAS: (things that could be done but nessicarily need to be)
     making queue of items (not roms, of course)
     A favorites page
     thumbnails
-
-    UI:
-    in the media page show files it should show which one you are looking at currently
+    A description of every filetype that you can view in the media page, so you know what you are actually looking at. It could also have tips on how to use it
+    custom descriptions for things, for example i could rename something localy
 
     CODE:
     I could have several files for using media, instead of one big one

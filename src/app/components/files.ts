@@ -21,7 +21,9 @@ import { Router } from '@angular/router';
       <div *ngIf="error" class="text-xs text-red-500 mb-2">{{ error }}</div>
 
       <ul *ngIf="files.length" class="space-y-1 bg-white/50 rounded-lg border border-gray-100 divide-y divide-gray-50 max-h-80 overflow-y-auto custom-scrollbar">
-        <li *ngFor="let file of files" class="p-2 hover:bg-blue-50/50 transition-colors">
+        <li *ngFor="let file of files" 
+            class="p-2 transition-colors"
+            [ngClass]="{'bg-blue-100/70 border-l-4 border-blue-500': currentFilename === file.name, 'hover:bg-blue-50/50': currentFilename !== file.name}">
           <div class="flex flex-wrap items-center gap-2">
             <a
               href="#"
@@ -137,6 +139,7 @@ import { Router } from '@angular/router';
 })
 export class FilesComponent {
   @Input() identifier: string = '';
+  @Input() currentFilename: string | null = null;
   @Input() collectionTitle: string = '';
   @Input() collectionDescription: string = '';
   @Input() files: any[] = [];
