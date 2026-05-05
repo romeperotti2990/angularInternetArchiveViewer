@@ -1,11 +1,13 @@
 BUGS/ PROBLEMS: (things that are active issues with the app)
-    GENERAL:
+    METADATA: (related to the immpossible problem in plan.txt)
     the search is still going by IA metadata and not just showing individual files based on seperate metadata assigned to it
-    sometimes the roms that are zips within the zips do not work.
     You cannot search for books, only text. hopfully this will be fixed after they are listed individually also, just general junk being shown to you unless you know exactly what you want.
     there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need (.iso, .img, etc)
-    there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file(like the way I want every other file to download too). idk what the page should do though, as you cant view these files
+
+    GENERAL:
+    sometimes the roms that are zips within the zips do not work.
+    there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
     sometimes items in the favorites will show up as the localhost version but idk why and it fixes itself as soon as you click on it and go back
     there is some weird favorite syncing stuff if you are looking at/playing files in zips because the zip and the file inside it count as different items
