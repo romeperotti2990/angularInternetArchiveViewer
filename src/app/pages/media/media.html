@@ -37,6 +37,7 @@
           [error]="fileError"
           (fileOpened)="openFile(identifier || '', $event.filename)"
           (emulatorOpened)="openInEmulator(identifier || '', $event.filename)"
+          (archiveCancel)="cancelArchivePeek($event)"
         ></app-files>
       </div>
     </div>

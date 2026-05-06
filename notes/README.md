@@ -10,10 +10,11 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
     sometimes items in the favorites will show up as the localhost version but idk why and it fixes itself as soon as you click on it and go back
-    there is some weird favorite syncing stuff if you are looking at/playing files in zips because the zip and the file inside it count as different items
+    there is some weird favorite syncing stuff if you are looking at/playing files in zips because the zip and the file inside it count as different items, I think to fix this I will just make it so you cant favorite zips
     uhhh you can favorite entire collections idk how that works
+    there is lots of duplacate code in search and media that could probably be moved to files
 
-    UI:
+    UI/UX:
     When you favorite and unfavorite things in the home page its a little snappy
     you cant undo unfavoriteing the item is just gone
 
@@ -50,14 +51,17 @@ FEATURES NEEDED: (things that need to be done that dont break anything, but woul
 
 IDEAS: (things that could be done but nessicarily need to be)
     FEATURES:
-    sometimes there are a lot of files from a collection so I could make like an item page to look at the whole thing
     a random button (filterable, of course)
-    I would like for you to be able to look at a collection and view all the content in that collection, like in internet archive
     making queue of items (not roms, of course)
     A favorites page
     thumbnails
-    A description of every filetype that you can view in the media page, so you know what you are actually looking at. It could also have tips on how to use it
     custom descriptions for things, for example i could rename something localy
+    
+    UX/UI:
+    if an archive is taking a while to be peeked, it should tell you and say "this is taking a while, maybe should cancel it" or something like that
+    A description of every filetype that you can view in the media page, so you know what you are actually looking at. It could also have tips on how to use it
+    I am only using the pixel font in 2 places but it looks REALLY GOOD so i am thinking I should add a pixel athstetic to the whole site but i'm not sure how to do that
+
 
     CODE:
     I could have several files for using media, instead of one big one
@@ -75,7 +79,7 @@ ASSIGNMENT REQIREMENTS:
     FEEDBACK:
     1. corbin went to the website on his phone so he just complained that it was not mobile optimized and that the emulator didnt work(PLUHHHHHH)
     2. thomas said the blue button in the homepage does not work and mentioned the spa deployment issue(both of which I fixed)
-    3. graydon back button in the login page, add google logo, add feedback to the buttons, minification(which I did), make search better(????), get rid of the tab(tab?????), 'make it look cool'(fair)
+    3. graydon back button in the login page, add google logo, add feedback to the buttons, minification(which I did), make search better(I did), get rid of the tab(I think I did?), 'make it look cool'(fair)
     4. callin said "the icons at the top a little crowded on mobile" and was confused about the purpose
     5. Korman said "Instead of no results it should say start searching or something close to that"(did it)
 

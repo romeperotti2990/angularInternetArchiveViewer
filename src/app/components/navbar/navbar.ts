@@ -10,7 +10,6 @@ import { UserDataService } from '../../services/user-data.service';
   standalone: true,
   imports: [RouterModule, CommonModule],
   templateUrl: './navbar.html',
-  styleUrls: ['./navbar.css'],
 })
 export class Navbar {
   lastItems: any[] = [];

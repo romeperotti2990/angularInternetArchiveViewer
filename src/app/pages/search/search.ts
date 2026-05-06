@@ -29,6 +29,7 @@ export class Search implements OnInit, OnDestroy {
   archiveLoading: Record<string, boolean> = {};
   archiveError: Record<string, string | null> = {};
   archiveProgress: Record<string, number> = {};
+  private archiveAbortControllers: Record<string, AbortController> = {};
   fileLoading: Record<string, boolean> = {};
   fileError: Record<string, string | null> = {};
   error: string | null = null;
@@ -256,24 +257,39 @@ export class Search implements OnInit, OnDestroy {
     this.archiveLoading[key] = true;
     this.archiveError[key] = null;
     this.archiveProgress[key] = 0;
+    
+    const controller = new AbortController();
+    this.archiveAbortControllers[key] = controller;
 
     try {
       const entries = await this.archive.listArchiveContents(identifier, archiveFilename as string, (p: number) => {
         this.archiveProgress[key] = Math.max(0, Math.min(100, Math.floor(p))); // integer 0-100
         try { this.cdr.detectChanges(); } catch (e) {}
-      });
+      }, controller.signal);
       this.archiveContents[key] = entries || [];
       this.archiveVisible[key] = true;
       if (!this.archiveContents[key].length) this.archiveError[key] = 'No entries found in archive';
       try { this.cdr.detectChanges(); } catch (e) {}
     } catch (err: any) {
-      this.archiveError[key] = err?.message ?? String(err);
+      if (err.name === 'AbortError' || err.message === 'Aborted') {
+        this.archiveError[key] = 'Peeking cancelled';
+      } else {
+        this.archiveError[key] = err?.message ?? String(err);
+      }
       this.archiveContents[key] = [];
       try { this.cdr.detectChanges(); } catch (e) {}
     } finally {
       this.archiveLoading[key] = false;
       this.archiveProgress[key] = 100;
+      delete this.archiveAbortControllers[key];
       try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  cancelArchivePeek(identifier: string, archiveFilename: string) {
+    const key = `${identifier}::${archiveFilename}`;
+    if (this.archiveAbortControllers[key]) {
+      this.archiveAbortControllers[key].abort();
     }
   }
 

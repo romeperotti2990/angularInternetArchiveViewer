@@ -78,7 +78,16 @@ import { Router } from '@angular/router';
           <div *ngIf="archiveVisible[identifier + '::' + file.name] || archiveLoading[identifier + '::' + file.name]" 
                class="mt-2 ml-4 border-l-2 border-yellow-400 pl-2 pb-2 bg-yellow-50/30 rounded-r">
             <div *ngIf="archiveLoading[identifier + '::' + file.name]" class="text-[10px] text-gray-500 italic">
-              <div>Listing archive contents...</div>
+              <div class="flex justify-between items-center pr-2">
+                <span>Listing archive contents...</span>
+                <button 
+                  type="button"
+                  (click)="cancelArchivePeek(file.name)"
+                  class="text-red-500 hover:text-red-700 font-bold uppercase text-[8px] bg-red-50 px-1 rounded border border-red-200"
+                >
+                  Cancel
+                </button>
+              </div>
               <div *ngIf="archiveProgress[identifier + '::' + file.name] >= 0" class="w-full bg-gray-200 rounded h-1.5 mt-1 overflow-hidden">
                 <div class="bg-blue-600 h-full transition-all duration-300" [style.width.%]="archiveProgress[identifier + '::' + file.name]"></div>
               </div>
@@ -148,12 +157,14 @@ export class FilesComponent {
 
   @Output() fileOpened = new EventEmitter<{filename: string}>();
   @Output() emulatorOpened = new EventEmitter<{filename: string}>();
+  @Output() archiveCancel = new EventEmitter<string>();
 
   archiveContents: Record<string, any[]> = {};
   archiveVisible: Record<string, boolean> = {};
   archiveLoading: Record<string, boolean> = {};
   archiveError: Record<string, string | null> = {};
   archiveProgress: Record<string, number> = {};
+  private archiveAbortControllers: Record<string, AbortController> = {};
 
   constructor(
     public archive: Archive,
@@ -226,20 +237,36 @@ export class FilesComponent {
     this.archiveLoading[key] = true;
     this.archiveError[key] = null;
     this.archiveProgress[key] = 0;
+    
+    const controller = new AbortController();
+    this.archiveAbortControllers[key] = controller;
 
     try {
       const entries = await this.archive.listArchiveContents(this.identifier, filename, (p: number) => {
         this.archiveProgress[key] = Math.floor(p);
         this.cdr.detectChanges();
-      });
+      }, controller.signal);
       this.archiveContents[key] = entries || [];
       this.archiveVisible[key] = true;
     } catch (err: any) {
-      this.archiveError[key] = err?.message || String(err);
+      if (err.name === 'AbortError' || err.message === 'Aborted') {
+        this.archiveError[key] = 'Peeking cancelled';
+      } else {
+        this.archiveError[key] = err?.message || String(err);
+      }
     } finally {
       this.archiveLoading[key] = false;
+      delete this.archiveAbortControllers[key];
       this.cdr.detectChanges();
     }
+  }
+
+  cancelArchivePeek(filename: string) {
+    const key = this.identifier + '::' + filename;
+    if (this.archiveAbortControllers[key]) {
+      this.archiveAbortControllers[key].abort();
+    }
+    this.archiveCancel.emit(filename);
   }
 
   async onPlayArchiveEntry(archiveName: string, entryObj: any) {

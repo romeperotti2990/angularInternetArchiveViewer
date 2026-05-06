@@ -34,6 +34,7 @@ export class Media implements OnInit {
   itemFiles: any[] = [];
   fileLoading = false;
   fileError: string | null = null;
+  private archiveAbortControllers: Record<string, AbortController> = {};
 
   constructor(
     private route: ActivatedRoute, 
@@ -271,14 +272,30 @@ export class Media implements OnInit {
     this.fileError = null;
     try { this.cdr.detectChanges(); } catch (e) {}
 
+    const controller = new AbortController();
+    const key = `collection::${this.identifier}`;
+    this.archiveAbortControllers[key] = controller;
+
     try {
-      const files = await this.archive.listFiles(this.identifier);
+      const files = await this.archive.listFiles(this.identifier, controller.signal);
       this.itemFiles = files || [];
     } catch (err: any) {
-      this.fileError = err?.message ?? String(err);
+      if (err.name === 'AbortError' || err.message === 'Aborted') {
+        this.fileError = 'Listing cancelled';
+      } else {
+        this.fileError = err?.message ?? String(err);
+      }
     } finally {
       this.fileLoading = false;
+      delete this.archiveAbortControllers[key];
       try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  cancelArchivePeek(filename?: string) {
+    const key = filename ? `${this.identifier}::${filename}` : `collection::${this.identifier}`;
+    if (this.archiveAbortControllers[key]) {
+      this.archiveAbortControllers[key].abort();
     }
   }
 

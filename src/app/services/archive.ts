@@ -31,10 +31,13 @@ export class Archive {
     identifier: string,
     archiveFilename: string,
     progressCb?: (percent: number, message?: string) => void,
+    signal?: AbortSignal,
   ): Promise<any[]> {
     try {
+      if (signal?.aborted) throw new Error('Aborted');
       if (progressCb) progressCb(10, 'Fetching IA metadata');
       const meta = await this.getMetadata(identifier);
+      if (signal?.aborted) throw new Error('Aborted');
       const files = meta?.files ?? [];
       const base = (archiveFilename || '').replace(/\.[^.]+$/i, '');
 
@@ -70,34 +73,40 @@ export class Archive {
     }
 
     const url = this.getFileUrl(identifier, archiveFilename);
-    return this.listArchiveBlobContentsFromUrl(url, archiveFilename, progressCb);
+    return this.listArchiveBlobContentsFromUrl(url, archiveFilename, progressCb, signal);
   }
 
-  async listArchiveBlobContents(blob: Blob, progressCb?: (percent: number, message?: string) => void, fileName = 'archive'): Promise<any[]> {
+  async listArchiveBlobContents(blob: Blob, progressCb?: (percent: number, message?: string) => void, fileName = 'archive', signal?: AbortSignal): Promise<any[]> {
     await this.ensureLibarchiveReady();
+    if (signal?.aborted) throw new Error('Aborted');
     if (progressCb) progressCb(60, 'Opening archive');
     const archiveFile = blob instanceof File ? blob : new File([blob], fileName);
     const archive = await LibArchive.open(archiveFile);
-    return this.extractArchiveEntries(archive, progressCb);
+    if (signal?.aborted) throw new Error('Aborted');
+    return this.extractArchiveEntries(archive, progressCb, signal);
   }
 
-  private async listArchiveBlobContentsFromUrl(url: string, fileName: string, progressCb?: (percent: number, message?: string) => void): Promise<any[]> {
+  private async listArchiveBlobContentsFromUrl(url: string, fileName: string, progressCb?: (percent: number, message?: string) => void, signal?: AbortSignal): Promise<any[]> {
     await this.ensureLibarchiveReady();
+    if (signal?.aborted) throw new Error('Aborted');
 
     if (progressCb) progressCb(30, 'Downloading archive');
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
     if (!response.ok) {
       throw new Error(`Archive fetch failed: ${response.status}`);
     }
 
     const blob = await response.blob();
-    return this.listArchiveBlobContents(blob, progressCb, fileName);
+    if (signal?.aborted) throw new Error('Aborted');
+    return this.listArchiveBlobContents(blob, progressCb, fileName, signal);
   }
 
-  private async extractArchiveEntries(archive: any, progressCb?: (percent: number, message?: string) => void): Promise<any[]> {
+  private async extractArchiveEntries(archive: any, progressCb?: (percent: number, message?: string) => void, signal?: AbortSignal): Promise<any[]> {
     try {
+      if (signal?.aborted) throw new Error('Aborted');
       if (progressCb) progressCb(80, 'Listing entries');
       const entries = await archive.getFilesArray();
+      if (signal?.aborted) throw new Error('Aborted');
       const normalized = (entries || [])
         .map((entry: any) => {
           const file = entry?.file ?? null;
@@ -202,8 +211,8 @@ export class Archive {
     }
   }
 
-  async listFiles(identifier: string): Promise<any[]> {
-    const meta = await this.getMetadata(identifier);
+  async listFiles(identifier: string, signal?: AbortSignal): Promise<any[]> {
+    const meta = await this.getMetadata(identifier, signal);
     return meta?.files ?? [];
   }
 
@@ -266,9 +275,9 @@ export class Archive {
     ].includes(ext);
   }
 
-  async getMetadata(identifier: string): Promise<any> {
+  async getMetadata(identifier: string, signal?: AbortSignal): Promise<any> {
     const url = `${IA_BASE}/metadata/${encodeURIComponent(identifier)}`;
-    const res = await fetch(url);
+    const res = await fetch(url, { signal });
     if (!res.ok) throw new Error(`Metadata fetch failed: ${res.status}`);
     return res.json();
   }
