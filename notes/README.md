@@ -10,13 +10,14 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
     uhhh you can favorite entire collections in the search page and idk how that works
-    you still cannot peek zips within zips
     sometimes the favorites function in the files acts oddly until you reload the page
+    the peek canncelling feature probably does not work, I just really have not gotten the chance to test it, its not needed often
 
     UI/UX:
     When you favorite and unfavorite things in the home page its a little snappy
     you cant undo unfavoriteing. the item is just gone
     for rom filetypes it shows unknown as the filetype on the right, it should say what type of rom it is
+    the extraction bar never seems to do anything else but go from 10 to 30 then to full after a long wait. I dont think its actually showing the extraction progress
 
     SHOW FILES:
     The UI in the items component is small and hard to use

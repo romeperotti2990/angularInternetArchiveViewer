@@ -107,40 +107,99 @@ import { Router } from '@angular/router';
             <div *ngIf="archiveError[identifier + '::' + file.name]" class="text-[10px] text-red-500">{{ archiveError[identifier + '::' + file.name] }}</div>
             
             <ul *ngIf="archiveVisible[identifier + '::' + file.name] && archiveContents[identifier + '::' + file.name]?.length" class="space-y-1 mt-1">
-              <li *ngFor="let entry of archiveContents[identifier + '::' + file.name]" class="flex items-center gap-2 text-[11px]">
-                <span 
-                  [ngClass]="archive.isSupportedFile(entry.name) ? 'text-gray-700' : 'text-gray-400'"
-                  class="truncate flex-1"
-                >
-                  {{ entry.name }}
-                </span>
-                
-                <button
-                  type="button"
-                  class="text-xs p-0.5 hover:bg-gray-100 rounded transition-colors"
-                  [title]="favorites.isFavorited(identifier + '::' + file.name + '::' + entry.name) ? 'Unfavorite' : 'Favorite'"
-                  (click)="$event.stopPropagation(); toggleArchiveEntryFavorite(file.name, entry)"
-                >
-                  {{ favorites.isFavorited(identifier + '::' + file.name + '::' + entry.name) ? '★' : '☆' }}
-                </button>
+              <li *ngFor="let entry of archiveContents[identifier + '::' + file.name]" class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 text-[11px]">
+                  <span 
+                    [ngClass]="(archive.isSupportedFile(entry.name) || archive.isArchiveFile(entry.name)) ? 'text-blue-600 font-medium cursor-pointer hover:underline' : 'text-gray-400'"
+                    class="truncate flex-1"
+                    (click)="archive.isArchiveFile(entry.name) ? toggleNestedArchive(file.name, entry) : null"
+                  >
+                    {{ entry.name }}
+                  </span>
+                  
+                  <button
+                    type="button"
+                    class="text-xs p-0.5 hover:bg-gray-100 rounded transition-colors"
+                    [title]="favorites.isFavorited(identifier + '::' + file.name + '::' + entry.name) ? 'Unfavorite' : 'Favorite'"
+                    (click)="$event.stopPropagation(); toggleArchiveEntryFavorite(file.name, entry)"
+                  >
+                    {{ favorites.isFavorited(identifier + '::' + file.name + '::' + entry.name) ? '★' : '☆' }}
+                  </button>
 
-                <!-- Emulator Button -->
-                <button
-                  *ngIf="archive.isEmulatorFile(entry.name)"
-                  class="px-1 py-0.5 rounded bg-green-600 text-white text-[8px] font-bold uppercase hover:bg-green-700"
-                  (click)="onPlayArchiveEntry(file.name, entry)"
-                >
-                  Play
-                </button>
+                  <!-- Emulator Button -->
+                  <button
+                    *ngIf="archive.isEmulatorFile(entry.name)"
+                    class="px-1 py-0.5 rounded bg-green-600 text-white text-[8px] font-bold uppercase hover:bg-green-700"
+                    (click)="onPlayArchiveEntry(file.name, entry)"
+                  >
+                    Play
+                  </button>
 
-                <!-- General Open Button (only if supported and not emulator) -->
-                <button
-                  *ngIf="archive.isSupportedFile(entry.name) && !archive.isEmulatorFile(entry.name)"
-                  class="px-1 py-0.5 rounded bg-blue-600 text-white text-[8px] font-bold uppercase hover:bg-blue-700"
-                  (click)="onPlayArchiveEntry(file.name, entry)"
-                >
-                  Open
-                </button>
+                  <!-- General Open Button (only if supported and not emulator/archive) -->
+                  <button
+                    *ngIf="archive.isSupportedFile(entry.name) && !archive.isEmulatorFile(entry.name) && !archive.isArchiveFile(entry.name)"
+                    class="px-1 py-0.5 rounded bg-blue-600 text-white text-[8px] font-bold uppercase hover:bg-blue-700"
+                    (click)="onPlayArchiveEntry(file.name, entry)"
+                  >
+                    Open
+                  </button>
+
+                  <!-- Peek Button (for nested archives) -->
+                  <button
+                    *ngIf="archive.isArchiveFile(entry.name)"
+                    class="px-1 py-0.5 rounded bg-yellow-600 text-white text-[8px] font-bold uppercase hover:bg-yellow-700"
+                    (click)="toggleNestedArchive(file.name, entry)"
+                  >
+                    {{ archiveVisible[identifier + '::' + file.name] ? 'Hide' : 'Peek' }}
+                  </button>
+                </div>
+
+                <!-- Nested Archive contents -->
+                <div *ngIf="archiveVisible[identifier + '::' + file.name + '::' + entry.name] || archiveLoading[identifier + '::' + file.name + '::' + entry.name]" 
+                     class="ml-4 border-l-2 border-yellow-300 pl-2 pb-1 bg-yellow-50/20 rounded-r mt-0.5">
+                  <div *ngIf="archiveLoading[identifier + '::' + file.name + '::' + entry.name]" class="text-[9px] text-gray-500 italic">
+                    <div class="flex justify-between items-center pr-2">
+                       <span>Listing contents...</span>
+                       <button 
+                         type="button"
+                         (click)="cancelArchivePeek(file.name + '::' + entry.name)"
+                         class="text-red-500 hover:text-red-700 font-bold uppercase text-[7px] bg-red-50 px-1 rounded border border-red-200"
+                       >
+                         Cancel
+                       </button>
+                    </div>
+                    <div *ngIf="archiveProgress[identifier + '::' + file.name + '::' + entry.name] >= 0" class="w-full bg-gray-200 rounded h-1 mt-1 overflow-hidden">
+                      <div class="bg-blue-500 h-full transition-all duration-300" [style.width.%]="archiveProgress[identifier + '::' + file.name + '::' + entry.name]"></div>
+                    </div>
+                  </div>
+                  <div *ngIf="archiveError[identifier + '::' + file.name + '::' + entry.name]" class="text-[9px] text-red-500">{{ archiveError[identifier + '::' + file.name + '::' + entry.name] }}</div>
+                  
+                  <ul *ngIf="archiveVisible[identifier + '::' + file.name + '::' + entry.name] && archiveContents[identifier + '::' + file.name + '::' + entry.name]?.length" class="space-y-0.5 mt-0.5">
+                    <li *ngFor="let nest of archiveContents[identifier + '::' + file.name + '::' + entry.name]" class="flex items-center gap-2 text-[10px]">
+                      <span 
+                        [ngClass]="(archive.isSupportedFile(nest.name) || archive.isArchiveFile(nest.name)) ? 'text-blue-600 font-medium cursor-pointer hover:underline' : 'text-gray-400'"
+                        class="truncate flex-1"
+                        (click)="(archive.isArchiveFile(nest.name)) ? toggleNestedArchive(file.name + '::' + entry.name, nest) : null"
+                      >
+                        {{ nest.name }}
+                      </span>
+                      <button
+                        *ngIf="archive.isEmulatorFile(nest.name)"
+                        class="px-1 py-0.5 rounded bg-green-600 text-white text-[7px] font-bold uppercase hover:bg-green-700"
+                        (click)="onPlayNestedArchiveEntry(file.name + '::' + entry.name, nest)"
+                      >
+                        Play
+                      </button>
+                      <button
+                        *ngIf="archive.isSupportedFile(nest.name) && !archive.isEmulatorFile(nest.name)"
+                        class="px-1 py-0.5 rounded bg-blue-600 text-white text-[7px] font-bold uppercase hover:bg-blue-700"
+                        (click)="onPlayNestedArchiveEntry(file.name + '::' + entry.name, nest)"
+                      >
+                        Open
+                      </button>
+                    </li>
+                  </ul>
+                </div>
               </li>
             </ul>
           </div>
@@ -289,6 +348,57 @@ export class FilesComponent {
       this.archive.openFile(this.identifier, entryObj.name, this.collectionTitle, this.collectionDescription, url);
     } catch (err: any) {
       this.archiveError[this.identifier + '::' + archiveName] = err?.message || String(err);
+      this.cdr.detectChanges();
+    }
+  }
+
+  async toggleNestedArchive(parentArchiveName: string, entryObj: any) {
+    const key = this.identifier + '::' + parentArchiveName + '::' + entryObj.name;
+    if (this.archiveContents[key]) {
+      this.archiveVisible[key] = !this.archiveVisible[key];
+      return;
+    }
+
+    this.archiveLoading[key] = true;
+    this.archiveError[key] = null;
+    this.archiveProgress[key] = 0;
+
+    const controller = new AbortController();
+    this.archiveAbortControllers[key] = controller;
+
+    try {
+      // 1. Extract the nested archive blob from the parent archive
+      const blob = await this.archive.extractFileFromArchive(entryObj.entry);
+      // 2. List its contents
+      const entries = await this.archive.listArchiveBlobContents(blob, (p: number) => {
+        this.archiveProgress[key] = Math.floor(p);
+        this.cdr.detectChanges();
+      }, entryObj.name, controller.signal);
+
+      this.archiveContents[key] = entries || [];
+      this.archiveVisible[key] = true;
+    } catch (err: any) {
+      if (err.name === 'AbortError' || err.message === 'Aborted') {
+        this.archiveError[key] = 'Peeking cancelled';
+      } else {
+        this.archiveError[key] = err?.message || String(err);
+      }
+    } finally {
+      this.archiveLoading[key] = false;
+      delete this.archiveAbortControllers[key];
+      this.cdr.detectChanges();
+    }
+  }
+
+  async onPlayNestedArchiveEntry(fullArchivePath: string, nestEntry: any) {
+    try {
+      // This is a triple-nested file (Collection -> Parent Zip -> Nested Zip -> File)
+      // Extract the file from the nested archive entry
+      const blob = await this.archive.extractFileFromArchive(nestEntry.entry);
+      const url = URL.createObjectURL(blob);
+      this.archive.openFile(this.identifier, nestEntry.name, this.collectionTitle, this.collectionDescription, url);
+    } catch (err: any) {
+      this.archiveError[this.identifier + '::' + fullArchivePath] = err?.message || String(err);
       this.cdr.detectChanges();
     }
   }

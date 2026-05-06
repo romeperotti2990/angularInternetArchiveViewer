@@ -332,7 +332,7 @@ export class Archive {
 
   private isEmulatorExt(ext: string): boolean {
     return [
-      'gba', 'gb', 'gbc', 'nes', 'smc', 'sfc', 'bin', 'zip', 'nds', 'n64', 'z64', 'iso', 'cue', 'rom', 'img', 'pbp'
+      'gba', 'gb', 'gbc', 'nes', 'smc', 'sfc', 'bin', 'nds', 'n64', 'z64', 'iso', 'cue', 'rom', 'img', 'pbp'
     ].includes(ext);
   }
 
