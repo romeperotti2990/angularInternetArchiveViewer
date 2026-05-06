@@ -9,14 +9,14 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     sometimes the roms that are zips within the zips do not work.
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
-    sometimes items in the favorites will show up as the localhost version but idk why and it fixes itself as soon as you click on it and go back
-    there is some weird favorite syncing stuff if you are looking at/playing files in zips because the zip and the file inside it count as different items, I think to fix this I will just make it so you cant favorite zips
     uhhh you can favorite entire collections in the search page and idk how that works
-    there is lots of duplacate code in search and media that could probably be moved to files
+    you still cannot peek zips within zips
+    sometimes the favorites function in the files acts oddly until you reload the page
 
     UI/UX:
     When you favorite and unfavorite things in the home page its a little snappy
-    you cant undo unfavoriteing the item is just gone
+    you cant undo unfavoriteing. the item is just gone
+    for rom filetypes it shows unknown as the filetype on the right, it should say what type of rom it is
 
     SHOW FILES:
     The UI in the items component is small and hard to use
@@ -29,24 +29,23 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
 
     DOWNLOADING:
     when pressing download on an item in the media page, it does not show you anything until it is done.
-    when pressing download on a file in a collection using the show files button, it just opens it using the server on that tab.(this does give you an option to download it, but it redirected you away from the website, and the user would have to figure that out)
+    when pressing download on a file in a collection using the show files button, it just opens it using the server on that tab.(this does give you an option to download it, but it redirected you away from the website, and the user would have to figure that out) there is also a download button on many filetypes within the player anyway
 
 
 FEATURES NEEDED: (things that need to be done that dont break anything, but would greatly add to the app)
     FUNCTIONALITY:
     search filters (they are minimal rn)
     emulatorjs (its essentially done, just having saving in game stay between sessions would be the only thing I would want, but this has proven incredibly hard in the past)
-    metadata provider/service (might want to give up on that)\
+    metadata provider/service (might want to give up on that)
     search by filetype (we will have to look inside of zips, so it will have to search until it gets the amount of results as the pagination, then stop. this will still fetch a lot from internet archive and take a while, as it will have to use libarchive to peek into every one and extract it)
     you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source (idk why this is so hard to do)
-    a section/page that shows all the emulator files you have still downloaded in the browser (cached)
-    cancelling peeking archives
+
 
     UX/UI:
-    loading screens for pagination or a spinner (might not need it, might just want to have it show what it has loaded as it loads it)
     gennerally the site looks bad because i did none of it myself
     Fullscreen view for images and whatnot
     A next button for the media page that will go to and show the next file
+    when you press show more on the media page it is smooth but when you press show less it just snaps. make them both smooth
 
 
 IDEAS: (things that could be done but nessicarily need to be)
@@ -56,11 +55,14 @@ IDEAS: (things that could be done but nessicarily need to be)
     A favorites page
     thumbnails for files and whatnot
     custom descriptions for things, for example i could rename something localy
+    page that explains what several filetypes are, or a description section in media
     
     UX/UI:
     if an archive is taking a while to be peeked, it should tell you and say "this is taking a while, maybe should cancel it" or something like that
     A description of every filetype that you can view in the media page, so you know what you are actually looking at. It could also have tips on how to use it
     I am only using the pixel font in 2 places but it looks REALLY GOOD so i am thinking I should add a pixel athstetic to the whole site but i'm not sure how to do that
+    if you could drag and rearrange the favorites on the home screen that would be cool
+    if your search ends up with something you already have favorited it should end up at the top
 
 
     CODE:

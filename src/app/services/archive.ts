@@ -232,6 +232,10 @@ export class Archive {
   }
 
   openFile(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string, mediaUrlOverride?: string) {
+    if (this.isArchiveFile(filename)) {
+      console.warn('[Archive] Blocking direct open of archive:', filename);
+      return; 
+    }
     const mode = this.getModeForFilename(filename);
     const url = mediaUrlOverride || this.getFileUrl(identifier, filename);
     const qp: any = {
@@ -262,6 +266,7 @@ export class Archive {
 
   getModeForFilename(filename: string): string {
     const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    if (this.isArchiveFile(filename)) return 'other'; // Prevent archives from being directly "opened"
     if (this.isComicExt(ext)) return 'comic';
     if (this.isEmulatorExt(ext)) return 'emulator';
     if (['mp4', 'webm', 'mkv', 'ogv', 'ogg'].includes(ext)) return 'video';
@@ -270,6 +275,16 @@ export class Archive {
     if (['pdf', 'epub', 'html', 'htm'].includes(ext)) return 'document';
     if (['txt', 'md', 'csv', 'json'].includes(ext)) return 'text';
     return 'other';
+  }
+
+  isSupportedFile(filename: string): boolean {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    // If it's an archive we can peek it, so it's "supported" in the file list sense
+    if (this.isArchiveFile(filename)) return true;
+    
+    // Otherwise check if it has a recognized non-'other' mode
+    const mode = this.getModeForFilename(filename);
+    return mode !== 'other';
   }
 
   isComicExt(ext: string): boolean {

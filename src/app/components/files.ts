@@ -25,19 +25,30 @@ import { Router } from '@angular/router';
             class="p-2 transition-colors"
             [ngClass]="{'bg-blue-100/70 border-l-4 border-blue-500': currentFilename === file.name, 'hover:bg-blue-50/50': currentFilename !== file.name}">
           <div class="flex flex-wrap items-center gap-2">
+            <!-- Supported file OR Archive: Clickable Link -->
             <a
+              *ngIf="archive.isSupportedFile(file.name) || archive.isArchiveFile(file.name)"
               href="#"
               (click)="onOpenFile($event, file.name)"
               class="text-blue-600 hover:text-blue-800 font-medium truncate flex-1 min-w-37.5 text-xs"
             >
               {{ file.name }}
             </a>
+            <!-- Truly Unsupported file: Grey Text -->
+            <span
+              *ngIf="!archive.isSupportedFile(file.name) && !archive.isArchiveFile(file.name)"
+              class="text-gray-400 font-medium truncate flex-1 min-w-37.5 text-xs cursor-help"
+              [title]="'This file type is not viewable in the browser. Use Download instead.'"
+            >
+              {{ file.name }}
+            </span>
             
             <div class="flex items-center gap-2 text-[10px]">
               <span class="px-1.5 py-0.5 bg-gray-100 rounded text-gray-700 uppercase">{{ file.format }}</span>
               <span class="text-gray-500">{{ file.size ? archive.formatBytes(file.size) : '' }}</span>
               
               <button
+                *ngIf="!archive.isArchiveFile(file.name)"
                 type="button"
                 class="text-sm p-1 hover:bg-gray-100 rounded transition-colors"
                 [title]="favorites.isFavorited(identifier + '::' + file.name) ? 'Unfavorite' : 'Favorite'"
@@ -97,7 +108,12 @@ import { Router } from '@angular/router';
             
             <ul *ngIf="archiveVisible[identifier + '::' + file.name] && archiveContents[identifier + '::' + file.name]?.length" class="space-y-1 mt-1">
               <li *ngFor="let entry of archiveContents[identifier + '::' + file.name]" class="flex items-center gap-2 text-[11px]">
-                <span class="truncate flex-1 text-gray-700">{{ entry.name }}</span>
+                <span 
+                  [ngClass]="archive.isSupportedFile(entry.name) ? 'text-gray-700' : 'text-gray-400'"
+                  class="truncate flex-1"
+                >
+                  {{ entry.name }}
+                </span>
                 
                 <button
                   type="button"
@@ -108,6 +124,7 @@ import { Router } from '@angular/router';
                   {{ favorites.isFavorited(identifier + '::' + file.name + '::' + entry.name) ? '★' : '☆' }}
                 </button>
 
+                <!-- Emulator Button -->
                 <button
                   *ngIf="archive.isEmulatorFile(entry.name)"
                   class="px-1 py-0.5 rounded bg-green-600 text-white text-[8px] font-bold uppercase hover:bg-green-700"
@@ -115,8 +132,10 @@ import { Router } from '@angular/router';
                 >
                   Play
                 </button>
+
+                <!-- General Open Button (only if supported and not emulator) -->
                 <button
-                  *ngIf="!archive.isEmulatorFile(entry.name)"
+                  *ngIf="archive.isSupportedFile(entry.name) && !archive.isEmulatorFile(entry.name)"
                   class="px-1 py-0.5 rounded bg-blue-600 text-white text-[8px] font-bold uppercase hover:bg-blue-700"
                   (click)="onPlayArchiveEntry(file.name, entry)"
                 >
@@ -175,8 +194,12 @@ export class FilesComponent {
 
   onOpenFile(event: Event, filename: string) {
     event.preventDefault();
-    this.archive.openFile(this.identifier, filename, this.collectionTitle, this.collectionDescription);
-    this.fileOpened.emit({ filename });
+    if (this.archive.isArchiveFile(filename)) {
+      this.toggleArchive(filename);
+    } else {
+      this.archive.openFile(this.identifier, filename, this.collectionTitle, this.collectionDescription);
+      this.fileOpened.emit({ filename });
+    }
   }
 
   onOpenInEmulator(filename: string) {
