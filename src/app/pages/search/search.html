@@ -71,8 +71,8 @@
 				[files]="itemFiles[r.identifier] || []"
 				[loading]="fileLoading[r.identifier]"
 				[error]="fileError[r.identifier]"
-				(fileOpened)="openFile(r.identifier, $event.filename, r.title, r.description)"
-				(emulatorOpened)="openInEmulator(r.identifier, $event.filename, r.title, r.description)"
+				(fileOpened)="archive.openFile(r.identifier, $event.filename, r.title, r.description)"
+				(emulatorOpened)="archive.openFile(r.identifier, $event.filename, r.title, r.description)"
 			></app-files>
 		</li>
 	</ul>

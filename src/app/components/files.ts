@@ -35,7 +35,7 @@ import { Router } from '@angular/router';
             
             <div class="flex items-center gap-2 text-[10px]">
               <span class="px-1.5 py-0.5 bg-gray-100 rounded text-gray-700 uppercase">{{ file.format }}</span>
-              <span class="text-gray-500">{{ file.size ? formatBytes(file.size) : '' }}</span>
+              <span class="text-gray-500">{{ file.size ? archive.formatBytes(file.size) : '' }}</span>
               
               <button
                 type="button"
@@ -55,7 +55,7 @@ import { Router } from '@angular/router';
               </a>
 
               <button
-                *ngIf="isEmulatorFile(file.name) && !isArchiveFile(file.name)"
+                *ngIf="archive.isEmulatorFile(file.name) && !archive.isArchiveFile(file.name)"
                 class="px-1.5 py-0.5 rounded bg-green-600 text-white text-[9px] font-bold uppercase tracking-wider hover:bg-green-700"
                 type="button"
                 (click)="onOpenInEmulator(file.name)"
@@ -64,7 +64,7 @@ import { Router } from '@angular/router';
               </button>
 
               <button
-                *ngIf="isArchiveFile(file.name)"
+                *ngIf="archive.isArchiveFile(file.name)"
                 class="px-1.5 py-0.5 rounded bg-yellow-600 text-white text-[9px] font-bold uppercase tracking-wider hover:bg-yellow-700"
                 type="button"
                 (click)="toggleArchive(file.name)"
@@ -109,14 +109,14 @@ import { Router } from '@angular/router';
                 </button>
 
                 <button
-                  *ngIf="isEmulatorFile(entry.name)"
+                  *ngIf="archive.isEmulatorFile(entry.name)"
                   class="px-1 py-0.5 rounded bg-green-600 text-white text-[8px] font-bold uppercase hover:bg-green-700"
                   (click)="onPlayArchiveEntry(file.name, entry)"
                 >
                   Play
                 </button>
                 <button
-                  *ngIf="!isEmulatorFile(entry.name)"
+                  *ngIf="!archive.isEmulatorFile(entry.name)"
                   class="px-1 py-0.5 rounded bg-blue-600 text-white text-[8px] font-bold uppercase hover:bg-blue-700"
                   (click)="onPlayArchiveEntry(file.name, entry)"
                 >
@@ -173,30 +173,14 @@ export class FilesComponent {
     private router: Router
   ) {}
 
-  formatBytes(bytes: number): string {
-    if (!bytes) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  }
-
-  isEmulatorFile(name: string): boolean {
-    const ext = name.split('.').pop()?.toLowerCase() || '';
-    return ['gba', 'gbc', 'gb', 'nes', 'snes', 'gen', 'md', 'sms', 'gg', 'n64', 'z64', 'v64', 'nds', 'iso', 'img', 'pbp', 'cue', 'bin'].includes(ext);
-  }
-
-  isArchiveFile(name: string): boolean {
-    const ext = name.split('.').pop()?.toLowerCase() || '';
-    return ['zip', '7z', 'rar', 'tar', 'gz'].includes(ext);
-  }
-
   onOpenFile(event: Event, filename: string) {
     event.preventDefault();
+    this.archive.openFile(this.identifier, filename, this.collectionTitle, this.collectionDescription);
     this.fileOpened.emit({ filename });
   }
 
   onOpenInEmulator(filename: string) {
+    this.archive.openFile(this.identifier, filename, this.collectionTitle, this.collectionDescription);
     this.emulatorOpened.emit({ filename });
   }
 
@@ -204,7 +188,7 @@ export class FilesComponent {
     this.favorites.toggle(this.identifier + '::' + file.name, {
       label: file.name,
       mode: this.archive.getModeForFilename(file.name),
-      core: this.isEmulatorFile(file.name) ? this.archive.getEmulatorCore(file.name) : null,
+      core: this.archive.isEmulatorFile(file.name) ? this.archive.getEmulatorCore(file.name) : null,
       url: this.archive.getFileUrl(this.identifier, file.name),
       identifier: this.identifier,
       collectionTitle: this.collectionTitle,
@@ -218,7 +202,7 @@ export class FilesComponent {
     this.favorites.toggle(key, {
       label: entry.name,
       mode: this.archive.getModeForFilename(entry.name),
-      core: this.isEmulatorFile(entry.name) ? this.archive.getEmulatorCore(entry.name) : null,
+      core: this.archive.isEmulatorFile(entry.name) ? this.archive.getEmulatorCore(entry.name) : null,
       url: this.archive.getFileUrl(this.identifier, archiveName),
       identifier: this.identifier,
       collectionTitle: this.collectionTitle,
@@ -272,29 +256,14 @@ export class FilesComponent {
   async onPlayArchiveEntry(archiveName: string, entryObj: any) {
     try {
       if (!entryObj.entry || entryObj.entry.metadataOnly) {
+        this.archive.openFile(this.identifier, entryObj.name, this.collectionTitle, this.collectionDescription);
         this.fileOpened.emit({ filename: entryObj.name });
         return;
       }
 
       const blob = await this.archive.extractFileFromArchive(entryObj.entry);
       const url = URL.createObjectURL(blob);
-      const mode = this.archive.getModeForFilename(entryObj.name);
-      const qp: any = { 
-        mode, 
-        displayLabel: entryObj.name, 
-        identifier: this.identifier,
-        collectionTitle: this.collectionTitle,
-        collectionDescription: this.collectionDescription
-      };
-      
-      if (mode === 'emulator') {
-        qp.core = this.archive.getEmulatorCore(entryObj.name);
-        qp.gameUrl = url;
-      } else {
-        qp.mediaUrl = url;
-      }
-      
-      this.router.navigate(['/media'], { queryParams: qp });
+      this.archive.openFile(this.identifier, entryObj.name, this.collectionTitle, this.collectionDescription, url);
     } catch (err: any) {
       this.archiveError[this.identifier + '::' + archiveName] = err?.message || String(err);
       this.cdr.detectChanges();

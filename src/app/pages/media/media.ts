@@ -299,55 +299,6 @@ export class Media implements OnInit {
     }
   }
 
-  isEmulatorFile(name: string): boolean {
-    const ext = name.split('.').pop()?.toLowerCase() || '';
-    return ['gba', 'gbc', 'gb', 'nes', 'snes', 'gen', 'md', 'sms', 'gg', 'n64', 'z64', 'v64'].includes(ext);
-  }
-
-  getFileUrl(identifier: string, filename: string): string {
-    return this.archive.getFileUrl(identifier, filename);
-  }
-
-  formatBytes(bytes: number, decimals = 2) {
-    if (!bytes) return '0 Bytes';
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-  }
-
-  openFile(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string) {
-    const mode = this.archive.getModeForFilename(filename);
-    const url = this.archive.getFileUrl(identifier, filename);
-    
-    // Check if we are passing new collections, or fall back to current page's metadata
-    const finalTitle = collectionTitle || this.collectionTitle;
-    const finalDesc = collectionDescription || this.collectionDescription;
-
-    const qp: any = { 
-      mode, 
-      displayLabel: filename, 
-      identifier,
-      collectionTitle: finalTitle,
-      collectionDescription: finalDesc
-    };
-
-    if (mode === 'emulator') {
-      qp.core = this.archive.getEmulatorCore(filename);
-      qp.gameUrl = url;
-    } else {
-      qp.mediaUrl = url;
-    }
-
-    // Force refresh the component by clearing any blob URLs or using a navigation strategy
-    this.router.navigate(['/media'], { queryParams: qp, queryParamsHandling: 'merge' });
-  }
-
-  openInEmulator(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string) {
-    this.openFile(identifier, filename, collectionTitle, collectionDescription);
-  }
-
   // called from template when media finishes loading
   onMediaLoaded() {
     this.isLoading = false;

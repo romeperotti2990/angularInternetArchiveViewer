@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Archive as LibArchive } from 'libarchive.js';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 const IA_BASE = 'https://archive.org';
 const BACKEND_ORIGIN = environment.backendOrigin;
@@ -13,6 +14,8 @@ export class Archive {
   // Use OMDb (free up to 1k/day) or TMDB for the "Good" metadata
   private EXTERNAL_METADATA_API = 'https://www.omdbapi.com';
   private libarchiveReady: Promise<void> | null = null;
+
+  constructor(private router: Router) {}
 
   private ensureLibarchiveReady(): Promise<void> {
     if (!this.libarchiveReady) {
@@ -216,6 +219,39 @@ export class Archive {
     return meta?.files ?? [];
   }
 
+  isArchiveFile(filename: string): boolean {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    return ['zip', '7z', 'rar', 'tar', 'gz', 'bz2', 'xz'].includes(ext);
+  }
+
+  isEmulatorFile(filename: string): boolean {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    return [
+      'gba', 'gb', 'gbc', 'nes', 'snes', 'smc', 'sfc', 'bin', 'nds', 'n64', 'z64', 'v64', 'iso', 'cue', 'img', 'pbp'
+    ].includes(ext);
+  }
+
+  openFile(identifier: string, filename: string, collectionTitle?: string, collectionDescription?: string, mediaUrlOverride?: string) {
+    const mode = this.getModeForFilename(filename);
+    const url = mediaUrlOverride || this.getFileUrl(identifier, filename);
+    const qp: any = {
+      mode,
+      displayLabel: filename,
+      identifier,
+      collectionTitle,
+      collectionDescription
+    };
+
+    if (mode === 'emulator') {
+      qp.core = this.getEmulatorCore(filename);
+      qp.gameUrl = url;
+    } else {
+      qp.mediaUrl = url;
+    }
+
+    this.router.navigate(['/media'], { queryParams: qp });
+  }
+
   getFileUrl(identifier: string, filename: string): string {
     // Return backend proxy URL if origin is available, otherwise direct IA URL
     if (BACKEND_ORIGIN) {
@@ -267,6 +303,16 @@ export class Archive {
       default:
         return 'mgba';
     }
+  }
+
+  formatBytes(bytes: number | string | null | undefined): string {
+    if (bytes == null || isNaN(Number(bytes))) return '';
+    const b = Number(bytes);
+    if (b < 1024) return b + ' B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(b) / Math.log(k));
+    return parseFloat((b / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   }
 
   private isEmulatorExt(ext: string): boolean {

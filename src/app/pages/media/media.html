@@ -35,8 +35,8 @@
           [files]="itemFiles"
           [loading]="fileLoading"
           [error]="fileError"
-          (fileOpened)="openFile(identifier || '', $event.filename)"
-          (emulatorOpened)="openInEmulator(identifier || '', $event.filename)"
+          (fileOpened)="archive.openFile(identifier || '', $event.filename, collectionTitle || '', collectionDescription || '')"
+          (emulatorOpened)="archive.openFile(identifier || '', $event.filename, collectionTitle || '', collectionDescription || '')"
           (archiveCancel)="cancelArchivePeek($event)"
         ></app-files>
       </div>

@@ -11,7 +11,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
     sometimes items in the favorites will show up as the localhost version but idk why and it fixes itself as soon as you click on it and go back
     there is some weird favorite syncing stuff if you are looking at/playing files in zips because the zip and the file inside it count as different items, I think to fix this I will just make it so you cant favorite zips
-    uhhh you can favorite entire collections idk how that works
+    uhhh you can favorite entire collections in the search page and idk how that works
     there is lots of duplacate code in search and media that could probably be moved to files
 
     UI/UX:
@@ -29,7 +29,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
 
     DOWNLOADING:
     when pressing download on an item in the media page, it does not show you anything until it is done.
-    when pressing download on a file in a collection using the show files button, it just opens it using the server on that tab.
+    when pressing download on a file in a collection using the show files button, it just opens it using the server on that tab.(this does give you an option to download it, but it redirected you away from the website, and the user would have to figure that out)
 
 
 FEATURES NEEDED: (things that need to be done that dont break anything, but would greatly add to the app)
@@ -54,7 +54,7 @@ IDEAS: (things that could be done but nessicarily need to be)
     a random button (filterable, of course)
     making queue of items (not roms, of course)
     A favorites page
-    thumbnails
+    thumbnails for files and whatnot
     custom descriptions for things, for example i could rename something localy
     
     UX/UI:
@@ -65,7 +65,6 @@ IDEAS: (things that could be done but nessicarily need to be)
 
     CODE:
     I could have several files for using media, instead of one big one
-    there are probably a few things that I 
 
 
 ASSIGNMENT REQIREMENTS:
