@@ -43,10 +43,9 @@ FEATURES NEEDED: (things that need to be done that dont break anything, but woul
 
 
     UX/UI:
-    gennerally the site looks bad because i did none of it myself
+    gennerally the site looks bad because i did none of it myself (besides the pixel font)
     Fullscreen view for images and whatnot
     A next button for the media page that will go to and show the next file
-    when you press show more on the media page it is smooth but when you press show less it just snaps. make them both smooth
 
 
 IDEAS: (things that could be done but nessicarily need to be)
