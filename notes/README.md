@@ -3,7 +3,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     the search is still going by IA metadata and not just showing individual files based on seperate metadata assigned to it
     You cannot search for books, only text. hopfully this will be fixed after they are listed individually also, just general junk being shown to you unless you know exactly what you want.
     there are some files and filetypes that you can open in emulatorjs that have a high probability of not being a game so you download something you do not need (.iso, .img, etc)
-    a lot of times when attempting to view files considered as "other"(torrents, other strange filetypes) it just leaves the viewer box empty and downloads the file(like the way I want every other file to download too). idk what the page should do though, as you cant view these files
+    because some systems use the same filetype emulatorjs can get the core wrong, for example psx and sega genisis
 
     GENERAL:
     sometimes the roms that are zips within the zips do not work.
@@ -15,7 +15,6 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
 
     UI/UX:
     When you favorite and unfavorite things in the home page its a little snappy
-    for rom filetypes it shows unknown as the filetype on the right, it should say what type of rom it is
     the extraction bar never seems to do anything else but go from 10 to 30 then to full after a long wait. I dont think its actually showing the extraction progress
 
     SHOW FILES:
@@ -55,6 +54,7 @@ IDEAS: (things that could be done but nessicarily need to be)
     thumbnails for files and whatnot
     custom descriptions for things, for example i could rename something localy
     page that explains what several filetypes are, or a description section in media
+    the history page hsould show the full item descriptions like there used to be
     
     UX/UI:
     if an archive is taking a while to be peeked, it should tell you and say "this is taking a while, maybe should cancel it" or something like that

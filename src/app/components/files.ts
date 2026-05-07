@@ -44,7 +44,9 @@ import { Router } from '@angular/router';
             </span>
             
             <div class="flex items-center gap-2 text-[10px]">
-              <span class="px-1.5 py-0.5 bg-gray-100 rounded text-gray-700 uppercase">{{ file.format }}</span>
+              <span class="px-1.5 py-0.5 bg-gray-100 rounded text-gray-700 uppercase" [title]="archive.getConsoleName(file.name) || file.format">
+                {{ archive.getConsoleName(file.name) || (archive.isEmulatorFile(file.name) ? 'ROM' : file.format) }}
+              </span>
               <span class="text-gray-500">{{ file.size ? archive.formatBytes(file.size) : '' }}</span>
               
               <button

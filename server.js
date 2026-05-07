@@ -20,7 +20,10 @@ app.use('/archive', (req, res) => {
   // strip our /archive prefix before forwarding to archive.org
   const proxiedPath = originalPath.replace(/^\/archive/, '');
   const query = req.url && req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
-  const initialUrl = new URL(targetBase + proxiedPath + query).href;
+  
+  // Construct URL WITHOUT using the new URL() constructor on the initial string
+  // This prevents issues with unencoded special characters in filenames (like parentheses)
+  const initialUrl = targetBase + proxiedPath + query;
 
   function doRequest(targetUrl, redirects = 0) {
     if (redirects > MAX_REDIRECTS) {
@@ -57,13 +60,18 @@ app.use('/archive', (req, res) => {
 
     proxyReq.on('error', (err) => {
       console.error('Proxy request error:', err);
-      if (!res.headersSent) res.status(502).send('Bad gateway');
+      if (!res.headersSent) res.status(500).json({ error: 'Proxy request error', details: err.message });
     });
 
     req.pipe(proxyReq);
   }
 
-  doRequest(initialUrl);
+  try {
+    doRequest(initialUrl);
+  } catch (err) {
+    console.error('Proxy top-level error:', err);
+    if (!res.headersSent) res.status(500).json({ error: 'Server error', details: err.message });
+  }
 });
 
 // Health endpoints so frontend pings get 200 instead of 404

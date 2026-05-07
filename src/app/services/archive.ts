@@ -291,6 +291,36 @@ export class Archive {
     return ['cbz', 'cbr', 'cb7'].includes(ext);
   }
 
+  getConsoleName(filename: string): string {
+    const ext = (filename || '').toLowerCase().split('.').pop() || '';
+    switch (ext) {
+      case 'gba': return 'Game Boy Advance';
+      case 'gb': return 'Game Boy';
+      case 'gbc': return 'Game Boy Color';
+      case 'nes': return 'NES';
+      case 'smc':
+      case 'sfc': return 'Super Nintendo';
+      case 'nds': return 'Nintendo DS';
+      case 'n64':
+      case 'v64':
+      case 'z64': return 'Nintendo 64';
+      case 'iso':
+      case 'cue':
+      case 'bin': return 'PlayStation';
+      case 'pbp': return 'PSP';
+      case 'rvz':
+      case 'wbfs':
+      case 'gcm': return 'GameCube / Wii';
+      case 'md':
+      case 'smd':
+      case 'gen': return 'Genesis';
+      case 'vb': return 'Virtual Boy';
+      case 'gg': return 'Game Gear';
+      case 'sms': return 'Master System';
+      default: return '';
+    }
+  }
+
   getEmulatorCore(filename: string): string {
     const ext = (filename || '').toLowerCase().split('.').pop() || '';
     switch (ext) {
