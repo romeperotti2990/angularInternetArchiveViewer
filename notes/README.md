@@ -15,7 +15,6 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
 
     UI/UX:
     When you favorite and unfavorite things in the home page its a little snappy
-    you cant undo unfavoriteing. the item is just gone
     for rom filetypes it shows unknown as the filetype on the right, it should say what type of rom it is
     the extraction bar never seems to do anything else but go from 10 to 30 then to full after a long wait. I dont think its actually showing the extraction progress
 

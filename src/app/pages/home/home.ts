@@ -15,6 +15,8 @@ import { AuthService } from '../../services/auth.service';
 export class HomePage {
   lastItems: any[] = [];
   favoritesKeys: string[] = [];
+  undoFavorite: { key: string; meta: any } | null = null;
+  undoTimeout: any = null;
 
   constructor(private router: Router, private cdr: ChangeDetectorRef, public favorites: FavoritesService, private archive: Archive, private userData: UserDataService, private auth: AuthService) {
     this.loadLastItems();
@@ -41,6 +43,31 @@ export class HomePage {
       try { this.cdr.detectChanges(); } catch (e) {}
     } catch (e) {
       this.favoritesKeys = [];
+    }
+  }
+
+  toggleFavorite(event: Event, key: string, meta: any) {
+    event.stopPropagation();
+    if (this.favorites.isFavorited(key)) {
+      // Unfavoriting - Setup Undo
+      this.undoFavorite = { key, meta };
+      if (this.undoTimeout) clearTimeout(this.undoTimeout);
+      this.undoTimeout = setTimeout(() => {
+        this.undoFavorite = null;
+        try { this.cdr.detectChanges(); } catch (e) {}
+      }, 8000);
+    } else {
+      // Re-favoriting or regular favoriting
+      this.undoFavorite = null;
+    }
+    this.favorites.toggle(key, meta);
+  }
+
+  performUndoFavorite() {
+    if (this.undoFavorite) {
+      this.favorites.toggle(this.undoFavorite.key, this.undoFavorite.meta);
+      this.undoFavorite = null;
+      if (this.undoTimeout) clearTimeout(this.undoTimeout);
     }
   }
 

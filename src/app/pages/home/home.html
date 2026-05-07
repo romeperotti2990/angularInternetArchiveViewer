@@ -53,7 +53,14 @@
 	</section>
 
 	<section *ngIf="favoritesKeys.length" class="mt-12">
-		<h2 class="text-2xl font-bold mb-4">Your Favorites</h2>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-bold">Your Favorites</h2>
+      <div *ngIf="undoFavorite" 
+           class="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg text-sm animate-in fade-in slide-in-from-top-2 duration-300">
+        <span class="text-blue-800">Removed from favorites</span>
+        <button (click)="performUndoFavorite()" class="font-bold text-blue-600 hover:underline">Undo</button>
+      </div>
+    </div>
 		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
 			<div *ngFor="let key of favoritesKeys" 
            class="p-3 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition flex flex-col justify-between h-full group">
@@ -83,7 +90,7 @@
 					<button 
 						class="text-xs p-1 hover:bg-gray-100 rounded transition-colors" 
 						type="button" 
-						(click)="$event.stopPropagation(); favorites.toggle(key, getFavoriteMeta(key))"
+						(click)="toggleFavorite($event, key, getFavoriteMeta(key))"
 						title="{{ favorites.isFavorited(key) ? 'Unfavorite' : 'Favorite' }}"
 					>
 						{{ favorites.isFavorited(key) ? '★' : '☆' }}
@@ -117,7 +124,7 @@
             <button
               class="text-xs p-1 hover:bg-gray-100 rounded transition-colors"
               type="button"
-              (click)="$event.stopPropagation(); favorites.toggle('history::' + item.url, item)"
+              (click)="toggleFavorite($event, 'history::' + item.url, item)"
               [title]="favorites.isFavorited('history::' + item.url) ? 'Unfavorite' : 'Favorite'"
             >
               {{ favorites.isFavorited('history::' + item.url) ? '★' : '☆' }}
