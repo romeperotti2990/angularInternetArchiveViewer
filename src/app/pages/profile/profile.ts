@@ -50,6 +50,45 @@ export class ProfilePage {
     }
   }
 
+  async exportData() {
+    await this.userData.exportUserData();
+  }
+
+  async importData(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      try {
+        const content = e.target?.result as string;
+        const data = JSON.parse(content);
+
+        if (!data.favorites || !data.history) {
+          throw new Error("Invalid IAV data format.");
+        }
+
+        const confirmMsg = `Are you sure you want to import this data? This will OVERWRITE your current favorites and history. This action cannot be undone.`;
+        if (confirm(confirmMsg)) {
+          // Save to local storage and sync to remote
+          await this.userData.saveFavorites(data.favorites);
+          await this.userData.saveLastItems(data.history);
+          
+          alert("Data imported successfully! The page will now reload to apply changes.");
+          window.location.reload();
+        }
+      } catch (err) {
+        alert("Failed to import data: " + (err instanceof Error ? err.message : "Invalid file format"));
+      } finally {
+        input.value = ''; // Reset input
+      }
+    };
+
+    reader.readAsText(file);
+  }
+
   async signOut() {
     try {
       await this.auth.signOut();

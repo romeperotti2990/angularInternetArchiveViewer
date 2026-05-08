@@ -1,16 +1,44 @@
 <div class="mx-auto max-w-4xl px-4 py-8">
   <div class="bg-white shadow rounded-lg p-6">
-    <div class="flex items-center gap-4 mb-6 border-b pb-6">
-      <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center text-3xl font-bold text-gray-500">
-        {{ (auth.user$ | async)?.displayName?.[0] || (auth.user$ | async)?.email?.[0] || '?' }}
+    <div class="flex items-center gap-6 mb-8 border-b pb-8">
+      <div class="relative w-24 h-24 flex items-center justify-center">
+        <!-- Pixel Circle Image Background -->
+        <img src="Pixel-circle.webp" class="absolute inset-0 w-full h-full object-contain brightness-0" style="image-rendering: pixelated;" alt="">
+        
+        <!-- Initial -->
+        <span class="relative z-10 text-gray-800 text-3xl font-bold pixel-font leading-none flex items-center justify-center -translate-y-0.5">
+          {{ (auth.user$ | async)?.displayName?.[0] || (auth.user$ | async)?.email?.[0] || '?' | uppercase }}
+        </span>
       </div>
       <div>
-        <h2 class="text-2xl font-bold text-gray-900">{{ (auth.user$ | async)?.displayName || 'User' }}</h2>
-        <p class="text-gray-500">{{ (auth.user$ | async)?.email }}</p>
+        <h2 class="text-3xl font-bold text-gray-900 pixel-font tracking-tight uppercase">{{ (auth.user$ | async)?.displayName || 'User' }}</h2>
+        <p class="text-gray-500 font-medium">{{ (auth.user$ | async)?.email }}</p>
       </div>
     </div>
 
     <div class="space-y-8">
+      <!-- Data Management -->
+      <section>
+        <h3 class="text-lg font-semibold mb-4">Data Management</h3>
+        <div class="flex flex-wrap gap-4">
+          <button (click)="exportData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export Data
+          </button>
+          
+          <label class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors cursor-pointer flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            Import Data
+            <input type="file" (change)="importData($event)" class="hidden" accept=".json">
+          </label>
+        </div>
+        <p class="text-[10px] text-gray-500 mt-2">Export your favorites and history to a JSON file, or import a previous backup. (Warning: Importing will overwrite current data)</p>
+      </section>
+
       <!-- Preferences/Customization placeholder -->
       <section>
         <h3 class="text-lg font-semibold mb-3">Preferences</h3>

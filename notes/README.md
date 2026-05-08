@@ -15,16 +15,14 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     UI/UX:
     When you favorite and unfavorite things in the home page its a little snappy
     the extraction bar never seems to do anything else but go from 10 to 30 then to full after a long wait. I dont think its actually showing the extraction progress
+    because the top nav history just shows the collection name it sometimes is not very acurate to what you will see when you click on it. I should make it show the item name or something else.
 
     SHOW FILES:
     The UI in the items component is small and hard to use
 
     ACCOUNTS:
-    uhhhhh i just realized there is
-    no customization
-    you cant delete your account
-    you cant export your data
-    you cant import new data
+    there is no customization
+    the account page does not match the rest of the website
 
     DOWNLOADING:
     when pressing download on an item in the media page, it does not show you anything until it is done.
