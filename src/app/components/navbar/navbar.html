@@ -32,8 +32,13 @@
   <div class="ml-auto flex items-center gap-3">
     <a routerLink="/history" class="text-gray-300 no-underline">History</a>
     <ng-container *ngIf="auth.user$ | async as user; else loggedOut">
-      <span class="text-gray-300 text-sm mr-2">{{ user.displayName || user.email }}</span>
-      <button (click)="signOut()" class="text-gray-300 no-underline">Sign out</button>
+      <a routerLink="/profile" class="flex items-center gap-2 group no-underline">
+        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white group-hover:bg-blue-500 transition-colors">
+          {{ user.displayName?.[0] || user.email?.[0] || '?' }}
+        </div>
+        <span class="text-gray-300 text-sm group-hover:text-white transition-colors">{{ user.displayName || user.email }}</span>
+      </a>
+      <button (click)="signOut()" class="text-gray-300 no-underline transition-colors hover:text-white">Sign out</button>
     </ng-container>
     <ng-template #loggedOut>
       <a routerLink="/login" class="text-gray-300 no-underline">Sign in</a>

@@ -6,7 +6,6 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     because some systems use the same filetype emulatorjs can get the core wrong, for example psx and sega genisis
 
     GENERAL:
-    sometimes the roms that are zips within the zips do not work.
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
     uhhh you can favorite entire collections in the search page and idk how that works
@@ -25,6 +24,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     no customization
     you cant delete your account
     you cant export your data
+    you cant import new data
 
     DOWNLOADING:
     when pressing download on an item in the media page, it does not show you anything until it is done.

@@ -61,4 +61,12 @@ export class AuthService {
     const auth = getAuth();
     await firebaseSignOut(auth);
   }
+
+  async deleteAccount(): Promise<void> {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      await user.delete();
+    }
+  }
 }

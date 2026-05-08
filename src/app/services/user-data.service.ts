@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { AuthService } from './auth.service';
 
 const FAVORITES_KEY = 'iav:favorites';
@@ -206,5 +206,36 @@ export class UserDataService {
     const updated = items.filter((it: any) => it.url !== url);
     await this.saveLastItems(updated);
     window.dispatchEvent(new CustomEvent('iav:lastItemsUpdated'));
+  }
+
+  async exportUserData() {
+    const data = {
+      favorites: this.loadFavorites(),
+      history: this.loadLastItems(),
+      exportedAt: new Date().toISOString(),
+      uid: this.uid
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `iav-user-data-${new Date().getTime()}.json`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  async deleteUserData() {
+    if (!this.uid) return;
+    try {
+      const db = getFirestore();
+      const ref = doc(db, 'users', this.uid);
+      await deleteDoc(ref);
+      
+      // Clear local storage for this user as well
+      localStorage.removeItem(`${FAVORITES_KEY}:${this.uid}`);
+      localStorage.removeItem(`${LASTITEMS_KEY}:${this.uid}`);
+    } catch (e) {
+      console.error('UserDataService: Failed to delete user data', e);
+    }
   }
 }

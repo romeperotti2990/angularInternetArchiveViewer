@@ -1,8 +1,9 @@
 <div class="mx-auto max-w-4xl px-4 py-8">
   <div class="flex items-center justify-between mb-4">
     <h2 class="text-2xl font-bold">Full History</h2>
-    <div>
-      <button class="px-3 py-1 bg-red-600 text-white rounded" (click)="clearHistory()">Clear history</button>
+    <div class="flex gap-2">
+      <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm" (click)="exportData()">Export Data</button>
+      <button class="px-3 py-1 bg-red-600 text-white rounded text-sm" (click)="clearHistory()">Clear history</button>
     </div>
   </div>
 

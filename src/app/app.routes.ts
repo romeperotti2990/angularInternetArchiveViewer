@@ -5,6 +5,7 @@ import { Search } from './pages/search/search';
 import { Login } from './pages/login/login';
 import { Signup } from './pages/signup/signup';
 import { HistoryPage } from './pages/history/history';
+import { ProfilePage } from './pages/profile/profile';
 
 export const routes: Routes = [
     { path: '', component: HomePage },
@@ -14,4 +15,5 @@ export const routes: Routes = [
     { path: 'login', component: Login },
     { path: 'signup', component: Signup },
     { path: 'history', component: HistoryPage },
+    { path: 'profile', component: ProfilePage },
 ];

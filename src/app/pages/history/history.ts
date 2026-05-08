@@ -18,7 +18,7 @@ export class HistoryPage {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private userData: UserDataService,
-    private auth: AuthService,
+    public auth: AuthService,
     public favorites: FavoritesService
   ) {
     this.loadLastItems();
@@ -74,5 +74,9 @@ export class HistoryPage {
     } catch (e) {
       console.error('Failed to clear history:', e);
     }
+  }
+
+  async exportData() {
+    await this.userData.exportUserData();
   }
 }
