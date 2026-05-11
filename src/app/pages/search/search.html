@@ -22,21 +22,6 @@
 		<li *ngFor="let r of results" class="mb-2 border-b border-gray-300 pb-2">
 			<div class="flex items-center gap-2">
 				<div class="font-bold flex-1">{{ r.title ?? r.identifier }}</div>
-				<button
-					type="button"
-					class="text-sm p-1 hover:bg-gray-100 rounded transition-colors"
-					[title]="favorites.isFavorited(r.identifier) ? 'Unfavorite collection' : 'Favorite collection'"
-					(click)="$event.stopPropagation(); favorites.toggle(r.identifier, {
-						label: r.title || r.identifier,
-						mode: 'collection',
-						identifier: r.identifier,
-						collectionTitle: r.title,
-						collectionDescription: r.description,
-						ts: 0
-					})"
-				>
-					{{ favorites.isFavorited(r.identifier) ? '★' : '☆' }}
-				</button>
 			</div>
 			<div class="text-sm text-gray-600">ID: {{ r.identifier }} — {{ r.mediatype }}</div>
 			<div *ngIf="r.description">

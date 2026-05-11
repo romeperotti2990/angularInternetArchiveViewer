@@ -8,7 +8,6 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     GENERAL:
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
-    uhhh you can favorite entire collections in the search page and idk how that works
     sometimes the favorites function in the files acts oddly until you reload the page
     the peek canncelling feature probably does not work, I just really have not gotten the chance to test it, its not needed often
 
