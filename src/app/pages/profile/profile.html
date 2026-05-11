@@ -2,18 +2,18 @@
   <div class="bg-white shadow rounded-lg p-6">
     <div class="flex items-center gap-6 mb-8 border-b pb-8">
       <div class="relative w-24 h-24 flex items-center justify-center">
-        <!-- Pixel Circle Image Background -->
-        <img src="Pixel-circle.webp" class="absolute inset-0 w-full h-full object-contain brightness-0" style="image-rendering: pixelated;" alt="">
-        
-        <!-- Photo Overrides the initial inside the circle -->
+        <!-- Photo/Initial under the circle (Z-10) -->
         <ng-container *ngIf="(auth.user$ | async)?.photoURL; else initial">
-          <img [src]="(auth.user$ | async)?.photoURL" class="relative z-10 w-16 h-16 rounded-full object-cover" alt="Profile">
+          <img [src]="(auth.user$ | async)?.photoURL" class="relative z-10 w-22 h-22 rounded-full object-cover" alt="Profile">
         </ng-container>
         <ng-template #initial>
           <span class="relative z-10 text-gray-800 text-3xl font-bold pixel-font leading-none flex items-center justify-center -translate-y-0.5">
             {{ (auth.user$ | async)?.displayName?.[0] || (auth.user$ | async)?.email?.[0] || '?' | uppercase }}
           </span>
         </ng-template>
+
+        <!-- Pixel Circle Overlay (Z-20) -->
+        <img src="Pixel-circle.webp" class="absolute inset-0 w-full h-full object-contain brightness-0 z-20 pointer-events-none" style="image-rendering: pixelated;" alt="">
       </div>
       <div>
         <h2 class="text-3xl font-bold text-gray-900 pixel-font tracking-tight uppercase">{{ (auth.user$ | async)?.displayName || 'User' }}</h2>

@@ -34,13 +34,18 @@
     <ng-container *ngIf="auth.user$ | async as user; else loggedOut">
       <a routerLink="/profile" class="flex items-center no-underline" title="{{ user.displayName || user.email }}">
         <div class="relative w-9 h-9 flex items-center justify-center transition-transform hover:scale-110 will-change-transform">
-          <!-- Main Pixel Circle (Inverted to White) -->
-          <img src="Pixel-circle.webp" class="absolute inset-0 w-full h-full object-contain invert z-20" style="image-rendering: pixelated;" alt="">
-          
-          <!-- Initial (Bigger and stabilized) -->
-          <span class="relative z-30 text-white text-[14px] font-bold pixel-font leading-none flex items-center justify-center translate-y-[-0.5px] antialiased">
-            {{ user.displayName?.[0] || user.email?.[0] || '?' | uppercase }}
-          </span>
+          <!-- Photo Overrides the initial inside the circle (Z-10 so it's below the circle) -->
+          <ng-container *ngIf="user.photoURL; else initial">
+            <img [src]="user.photoURL" class="relative z-10 w-8 h-8 rounded-full object-cover" alt="Profile">
+          </ng-container>
+          <ng-template #initial>
+            <span class="relative z-10 text-white text-[14px] font-bold pixel-font leading-none flex items-center justify-center translate-y-[-0.5px] antialiased">
+              {{ user.displayName?.[0] || user.email?.[0] || '?' | uppercase }}
+            </span>
+          </ng-template>
+
+          <!-- Main Pixel Circle (Inverted to White) (Z-20 so it's above the image/initial) -->
+          <img src="Pixel-circle.webp" class="absolute inset-0 w-full h-full object-contain invert z-20 pointer-events-none" style="image-rendering: pixelated;" alt="">
         </div>
       </a>
       <button (click)="signOut()" class="text-gray-300 text-xs no-underline transition-colors hover:text-white ml-2">Sign out</button>
