@@ -9,6 +9,9 @@ import {
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   User,
+  updateProfile,
+  updateEmail,
+  updatePassword
 } from 'firebase/auth';
 
 @Injectable({ providedIn: 'root' })
@@ -19,6 +22,34 @@ export class AuthService {
     const unsub = onAuthStateChanged(auth, (u) => subscriber.next(u));
     return { unsubscribe: unsub } as any;
   });
+
+  async updateProfileName(name: string): Promise<void> {
+    const auth = getAuth();
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, { displayName: name });
+    }
+  }
+
+  async updateProfileImage(photoURL: string): Promise<void> {
+    const auth = getAuth();
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, { photoURL });
+    }
+  }
+
+  async updateEmailAddress(email: string): Promise<void> {
+    const auth = getAuth();
+    if (auth.currentUser) {
+      await updateEmail(auth.currentUser, email);
+    }
+  }
+
+  async updateUserPassword(password: string): Promise<void> {
+    const auth = getAuth();
+    if (auth.currentUser) {
+      await updatePassword(auth.currentUser, password);
+    }
+  }
 
   async signInWithGoogle(): Promise<void> {
     const auth = getAuth();

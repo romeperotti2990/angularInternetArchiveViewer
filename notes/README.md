@@ -57,9 +57,9 @@ IDEAS: (things that could be done but nessicarily need to be)
     UX/UI:
     if an archive is taking a while to be peeked, it should tell you and say "this is taking a while, maybe should cancel it" or something like that
     A description of every filetype that you can view in the media page, so you know what you are actually looking at. It could also have tips on how to use it
-    I am only using the pixel font in 2 places but it looks REALLY GOOD so i am thinking I should add a pixel athstetic to the whole site but i'm not sure how to do that
     if you could drag and rearrange the favorites on the home screen that would be cool
     if your search ends up with something you already have favorited it should end up at the top
+    have a pixel art icon for the favorite star?
 
 
     CODE:

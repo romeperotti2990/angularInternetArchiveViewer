@@ -1,22 +1,74 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { UserDataService } from '../../services/user-data.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './profile.html',
 })
 export class ProfilePage {
+  newName: string = '';
+  newEmail: string = '';
+  newPassword: string = '';
+  newPhotoURL: string = '';
+
   constructor(
     public auth: AuthService,
     private userData: UserDataService,
     private router: Router,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    this.auth.user$.subscribe(user => {
+      if (user) {
+        this.newName = user.displayName || '';
+        this.newEmail = user.email || '';
+        this.newPhotoURL = user.photoURL || '';
+      }
+    });
+  }
+
+  async updateProfile() {
+    try {
+      if (this.newName) await this.auth.updateProfileName(this.newName);
+      if (this.newPhotoURL) await this.auth.updateProfileImage(this.newPhotoURL);
+      alert("Profile updated successfully!");
+    } catch (e: any) {
+      alert("Failed to update profile: " + e.message);
+    }
+  }
+
+  async updateEmail() {
+    try {
+      await this.auth.updateEmailAddress(this.newEmail);
+      alert("Email updated successfully!");
+    } catch (e: any) {
+      if (e.code === 'auth/requires-recent-login') {
+        alert("Please sign out and sign back in to change your email.");
+      } else {
+        alert("Failed to update email: " + e.message);
+      }
+    }
+  }
+
+  async updatePassword() {
+    if (!this.newPassword) return;
+    try {
+      await this.auth.updateUserPassword(this.newPassword);
+      alert("Password updated successfully!");
+      this.newPassword = '';
+    } catch (e: any) {
+      if (e.code === 'auth/requires-recent-login') {
+        alert("Please sign out and sign back in to change your password.");
+      } else {
+        alert("Failed to update password: " + e.message);
+      }
+    }
+  }
 
   async deleteAccount() {
     const user = await new Promise<any>((resolve) => {

@@ -5,10 +5,15 @@
         <!-- Pixel Circle Image Background -->
         <img src="Pixel-circle.webp" class="absolute inset-0 w-full h-full object-contain brightness-0" style="image-rendering: pixelated;" alt="">
         
-        <!-- Initial -->
-        <span class="relative z-10 text-gray-800 text-3xl font-bold pixel-font leading-none flex items-center justify-center -translate-y-0.5">
-          {{ (auth.user$ | async)?.displayName?.[0] || (auth.user$ | async)?.email?.[0] || '?' | uppercase }}
-        </span>
+        <!-- Photo Overrides the initial inside the circle -->
+        <ng-container *ngIf="(auth.user$ | async)?.photoURL; else initial">
+          <img [src]="(auth.user$ | async)?.photoURL" class="relative z-10 w-16 h-16 rounded-full object-cover" alt="Profile">
+        </ng-container>
+        <ng-template #initial>
+          <span class="relative z-10 text-gray-800 text-3xl font-bold pixel-font leading-none flex items-center justify-center -translate-y-0.5">
+            {{ (auth.user$ | async)?.displayName?.[0] || (auth.user$ | async)?.email?.[0] || '?' | uppercase }}
+          </span>
+        </ng-template>
       </div>
       <div>
         <h2 class="text-3xl font-bold text-gray-900 pixel-font tracking-tight uppercase">{{ (auth.user$ | async)?.displayName || 'User' }}</h2>
@@ -17,21 +22,51 @@
     </div>
 
     <div class="space-y-8">
+      <!-- Edit Account Info -->
+      <section class="space-y-4">
+        <h3 class="text-lg font-semibold border-b pb-2">Account Settings</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase text-gray-500">Display Name</label>
+            <input [(ngModel)]="newName" type="text" class="w-full p-2 border rounded" placeholder="Name">
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase text-gray-500">Profile URL</label>
+            <input [(ngModel)]="newPhotoURL" type="text" class="w-full p-2 border rounded" placeholder="Image URL">
+          </div>
+        </div>
+        <button (click)="updateProfile()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Update Profile</button>
+
+        <div class="pt-4 space-y-4">
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase text-gray-500">Email Address</label>
+            <div class="flex gap-2">
+              <input [(ngModel)]="newEmail" type="email" class="w-full p-2 border rounded">
+              <button (click)="updateEmail()" class="bg-gray-800 text-white px-4 py-2 rounded text-sm">Update</button>
+            </div>
+          </div>
+          <div *ngIf="(auth.user$ | async)?.providerData?.[0]?.providerId === 'password'" class="space-y-2">
+            <label class="text-xs font-bold uppercase text-gray-500">New Password</label>
+            <div class="flex gap-2">
+              <input [(ngModel)]="newPassword" type="password" class="w-full p-2 border rounded" placeholder="••••••••">
+              <button (click)="updatePassword()" class="bg-gray-800 text-white px-4 py-2 rounded text-sm">Update</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Data Management -->
       <section>
         <h3 class="text-lg font-semibold mb-4">Data Management</h3>
         <div class="flex flex-wrap gap-4">
-          <button (click)="exportData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
+          <button (click)="exportData()" class="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer px-4 py-2 rounded text-sm transition-colors flex items-center gap-2">
+            <img src="arrow-bar-down.svg" class="invert h-4 w-4" alt="Export">
             Export Data
           </button>
           
           <label class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors cursor-pointer flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-            </svg>
+            <img src="arrow-bar-up.svg" class="invert h-4 w-4" alt="Export">
             Import Data
             <input type="file" (change)="importData($event)" class="hidden" accept=".json">
           </label>
