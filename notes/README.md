@@ -21,8 +21,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     The UI in the items component is small and hard to use
 
     ACCOUNTS:
-    there is no customization
-    the account page does not match the rest of the website
+    you should be able to upload a local image for a profile pic
 
     DOWNLOADING:
     when pressing download on an item in the media page, it does not show you anything until it is done.

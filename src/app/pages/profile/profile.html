@@ -1,13 +1,13 @@
-<div class="mx-auto max-w-4xl px-4 py-8">
-  <div class="bg-white shadow rounded-lg p-6">
-    <div class="flex items-center gap-6 mb-8 border-b pb-8">
-      <div class="relative w-24 h-24 flex items-center justify-center">
+<div class="mx-auto max-w-4xl px-4 py-4 h-full flex flex-col justify-center">
+  <div class="bg-white shadow-xl rounded-xl p-5 border border-gray-100">
+    <div class="flex items-center gap-5 mb-6 border-b pb-6">
+      <div class="relative w-20 h-20 flex items-center justify-center shrink-0">
         <!-- Photo/Initial under the circle (Z-10) -->
         <ng-container *ngIf="(auth.user$ | async)?.photoURL; else initial">
-          <img [src]="(auth.user$ | async)?.photoURL" class="relative z-10 w-22 h-22 rounded-full object-cover" alt="Profile">
+          <img [src]="(auth.user$ | async)?.photoURL" class="relative z-10 w-18 h-18 rounded-full object-cover" alt="Profile">
         </ng-container>
         <ng-template #initial>
-          <span class="relative z-10 text-gray-800 text-3xl font-bold pixel-font leading-none flex items-center justify-center -translate-y-0.5">
+          <span class="relative z-10 text-gray-800 text-2xl font-bold pixel-font leading-none flex items-center justify-center -translate-y-0.5">
             {{ (auth.user$ | async)?.displayName?.[0] || (auth.user$ | async)?.email?.[0] || '?' | uppercase }}
           </span>
         </ng-template>
@@ -15,90 +15,100 @@
         <!-- Pixel Circle Overlay (Z-20) -->
         <img src="Pixel-circle.webp" class="absolute inset-0 w-full h-full object-contain brightness-0 z-20 pointer-events-none" style="image-rendering: pixelated;" alt="">
       </div>
-      <div>
-        <h2 class="text-3xl font-bold text-gray-900 pixel-font tracking-tight uppercase">{{ (auth.user$ | async)?.displayName || 'User' }}</h2>
-        <p class="text-gray-500 font-medium">{{ (auth.user$ | async)?.email }}</p>
+      <div class="min-w-0">
+        <h2 class="text-2xl font-bold text-gray-900 pixel-font tracking-tight uppercase truncate">{{ (auth.user$ | async)?.displayName || 'User' }}</h2>
+        <p class="text-gray-500 font-medium text-sm truncate">{{ (auth.user$ | async)?.email }}</p>
+      </div>
+      <div class="ml-auto flex gap-2">
+        <button (click)="signOut()" class="text-gray-500 hover:text-red-600 px-3 py-1.5 rounded-lg text-sm transition-all hover:bg-red-50 active:scale-95 font-medium border border-transparent hover:border-red-100">Sign out</button>
+        <a routerLink="/" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-sm transition-all active:scale-95 flex items-center gap-2 shadow-sm">
+          <span>Home</span>
+        </a>
       </div>
     </div>
 
-    <div class="space-y-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       <!-- Edit Account Info -->
-      <section class="space-y-4">
-        <h3 class="text-lg font-semibold border-b pb-2">Account Settings</h3>
+      <section class="lg:col-span-7 space-y-4">
+        <div class="flex items-center gap-2 border-b pb-2 mb-2">
+          <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Account Settings</h3>
+        </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="text-xs font-bold uppercase text-gray-500">Display Name</label>
-            <input [(ngModel)]="newName" type="text" class="w-full p-2 border rounded" placeholder="Name">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 items-end">
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase text-gray-400 ml-1">Display Name</label>
+            <input [(ngModel)]="newName" type="text" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-sm shadow-sm" placeholder="Name">
           </div>
-          <div class="space-y-2">
-            <label class="text-xs font-bold uppercase text-gray-500">Profile URL</label>
-            <input [(ngModel)]="newPhotoURL" type="text" class="w-full p-2 border rounded" placeholder="Image URL">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2 group relative">
+              <label class="text-[10px] font-bold uppercase text-gray-400 ml-1">Profile Image URL</label>
+              <span class="cursor-help text-gray-300 hover:text-gray-500 flex items-center justify-center border border-gray-200 rounded-full w-3 h-3 text-[7px] font-bold">?</span>
+              <span class="absolute bottom-full left-0 mb-2 hidden group-hover:block transition-all duration-200 bg-gray-900 text-white text-[10px] py-1 px-2 rounded whitespace-nowrap z-50 shadow-xl">
+                Change this to have a custom profile picture!
+              </span>
+            </div>
+            <input [(ngModel)]="newPhotoURL" type="text" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-sm shadow-sm" placeholder="URL">
           </div>
         </div>
-        <button (click)="updateProfile()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Update Profile</button>
+        
+        <button (click)="updateProfile()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg active:scale-95 active:shadow-inner">
+          Save Settings
+        </button>
 
-        <div class="pt-4 space-y-4">
-          <div class="space-y-2">
-            <label class="text-xs font-bold uppercase text-gray-500">Email Address</label>
+        <div class="pt-2 flex flex-col gap-3">
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase text-gray-400 ml-1">Email Address</label>
             <div class="flex gap-2">
-              <input [(ngModel)]="newEmail" type="email" class="w-full p-2 border rounded">
-              <button (click)="updateEmail()" class="bg-gray-800 text-white px-4 py-2 rounded text-sm">Update</button>
+              <input [(ngModel)]="newEmail" type="email" class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none text-sm focus:border-blue-500 shadow-sm">
+              <button (click)="updateEmail()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 border border-blue-100">Update Email</button>
             </div>
           </div>
-          <div *ngIf="(auth.user$ | async)?.providerData?.[0]?.providerId === 'password'" class="space-y-2">
-            <label class="text-xs font-bold uppercase text-gray-500">New Password</label>
+          <div *ngIf="(auth.user$ | async)?.providerData?.[0]?.providerId === 'password'" class="space-y-1">
+            <label class="text-[10px] font-bold uppercase text-gray-400 ml-1">New Password</label>
             <div class="flex gap-2">
-              <input [(ngModel)]="newPassword" type="password" class="w-full p-2 border rounded" placeholder="••••••••">
-              <button (click)="updatePassword()" class="bg-gray-800 text-white px-4 py-2 rounded text-sm">Update</button>
+              <input [(ngModel)]="newPassword" type="password" class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none text-sm focus:border-blue-500 shadow-sm" placeholder="••••••••">
+              <button (click)="updatePassword()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 border border-blue-100">Update Password</button>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Data Management -->
-      <section>
-        <h3 class="text-lg font-semibold mb-4">Data Management</h3>
-        <div class="flex flex-wrap gap-4">
-          <button (click)="exportData()" class="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer px-4 py-2 rounded text-sm transition-colors flex items-center gap-2">
-            <img src="arrow-bar-down.svg" class="invert h-4 w-4" alt="Export">
-            Export Data
-          </button>
-          
-          <label class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors cursor-pointer flex items-center gap-2">
-            <img src="arrow-bar-up.svg" class="invert h-4 w-4" alt="Export">
-            Import Data
-            <input type="file" (change)="importData($event)" class="hidden" accept=".json">
-          </label>
-        </div>
-        <p class="text-[10px] text-gray-500 mt-2">Export your favorites and history to a JSON file, or import a previous backup. (Warning: Importing will overwrite current data)</p>
-      </section>
+      <div class="lg:col-span-5 space-y-6">
+        <!-- Data Management -->
+        <section>
+          <div class="flex items-center gap-2 border-b pb-2 mb-3">
+            <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Data Sync</h3>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button (click)="exportData()" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium px-3 py-2.5 rounded-lg text-xs transition-all active:scale-95 flex items-center justify-center gap-2 shadow-sm hover:border-gray-300">
+              <img src="arrow-bar-down.svg" class="h-3.5 w-3.5 opacity-60" alt="Export">
+              Backup
+            </button>
+            
+            <label class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium px-3 py-2.5 rounded-lg text-xs transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:border-gray-300">
+              <img src="arrow-bar-up.svg" class="h-3.5 w-3.5 opacity-60" alt="Import">
+              Restore
+              <input type="file" (change)="importData($event)" class="hidden" accept=".json">
+            </label>
+          </div>
+          <p class="text-[9px] text-gray-400 mt-2 leading-tight italic px-1">Tip: Restoring data will overwrite your current favorites.</p>
+        </section>
 
-      <!-- Preferences/Customization placeholder -->
-      <section>
-        <h3 class="text-lg font-semibold mb-3">Preferences</h3>
-        <p class="text-sm text-gray-500 italic">More customization options coming soon...</p>
-      </section>
-
-      <!-- Account Actions -->
-      <section class="pt-6 border-t font-pixel relative">
-        <h3 class="text-lg font-semibold text-red-800 mb-4">Danger Zone</h3>
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p class="text-sm text-red-600 mb-4">
-            Deleting your account is permanent. All your favorites and history stored on our servers will be wiped.
+        <!-- Danger Zone -->
+        <section class="p-4 bg-red-50/30 border border-red-100 rounded-xl">
+          <h3 class="text-xs font-bold text-red-800 uppercase tracking-widest mb-1.5">
+            Account Actions
+          </h3>
+          <p class="text-[10px] text-gray-500 mb-3 leading-snug">
+            Permanently remove your account and all associated data.
           </p>
           <button 
             (click)="deleteAccount()" 
-            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition-colors"
+            class="w-full bg-white hover:bg-red-50 text-red-600 px-4 py-2 rounded-lg text-[10px] font-bold transition-all active:scale-95 border border-red-200 hover:border-red-300 uppercase tracking-wide"
           >
-            Permanently Delete Account
+            Delete Account
           </button>
-        </div>
-      </section>
-
-      <div class="pt-6 flex justify-end gap-3">
-        <button (click)="signOut()" class="text-gray-600 hover:text-gray-900 px-4 py-2">Sign out</button>
-        <a routerLink="/" class="bg-gray-900 text-white px-6 py-2 rounded font-pixel transition-colors hover:bg-gray-800">Back to Home</a>
+        </section>
       </div>
     </div>
   </div>
