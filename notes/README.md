@@ -8,8 +8,7 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     GENERAL:
     there are a lot a lot of things wrong with the cbz reader but like it works at all so idc
     when selecting files from the same collection in the media page they all count as different items in the history so the top bar gets filled up with the same name several times
-    sometimes the favorites function in the files acts oddly until you reload the page
-    the peek canncelling feature probably does not work, I just really have not gotten the chance to test it, its not needed often
+    when pressing download on an item in the media page or the files component, it does not show you anything until it is done.
 
     UI/UX:
     When you favorite and unfavorite things in the home page its a little snappy
@@ -18,10 +17,6 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
 
     SHOW FILES:
     The UI in the items component is small and hard to use
-
-    DOWNLOADING:
-    when pressing download on an item in the media page, it does not show you anything until it is done.
-    when pressing download on a file in a collection using the show files button, it just opens it using the server on that tab.(this does give you an option to download it, but it redirected you away from the website, and the user would have to figure that out) there is also a download button on many filetypes within the player anyway
 
 
 FEATURES NEEDED: (things that need to be done that dont break anything, but would greatly add to the app)
@@ -55,6 +50,7 @@ IDEAS: (things that could be done but nessicarily need to be)
     if you could drag and rearrange the favorites on the home screen that would be cool
     if your search ends up with something you already have favorited it should end up at the top
     have a pixel art icon for the favorite star?
+    on the history page if I keep the little icons when you hover over each one for a little bit they could expand to show the full item details
 
 
     CODE:
@@ -72,7 +68,7 @@ ASSIGNMENT REQIREMENTS:
     FEEDBACK:
     1. corbin went to the website on his phone so he just complained that it was not mobile optimized and that the emulator didnt work(PLUHHHHHH)
     2. thomas said the blue button in the homepage does not work and mentioned the spa deployment issue(both of which I fixed)
-    3. graydon back button in the login page, add google logo, add feedback to the buttons, minification(which I did), make search better(I did), get rid of the tab(I think I did?), 'make it look cool'(fair)
+    3. graydon back button in the login page, add google logo, add feedback to the buttons, minification(which I did), make search better(I did), get rid of the tab(I think I did?), 'make it look cool'(fair, i tried)
     4. callin said "the icons at the top a little crowded on mobile" and was confused about the purpose
     5. Korman said "Instead of no results it should say start searching or something close to that"(did it)
 

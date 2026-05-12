@@ -148,8 +148,6 @@
       <div *ngIf="isLoading" class="media-spinner">Loading…</div>
     </div>
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
-    <p class="text-sm mt-1"><a [href]="mediaRawUrl" download>Download</a></p>
+    <p class="text-sm mt-1"><a href="#" (click)="$event.preventDefault(); downloadMedia()">Download</a></p>
   </div>
-
-  
 </div>

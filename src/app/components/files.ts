@@ -60,8 +60,8 @@ import { Router } from '@angular/router';
               </button>
               
               <a
-                [href]="archive.getFileUrl(identifier, file.name)"
-                download
+                href="#"
+                (click)="$event.preventDefault(); downloadFile(file.name)"
                 class="text-blue-600 hover:underline"
               >
                 Download
@@ -266,6 +266,37 @@ export class FilesComponent {
   onOpenInEmulator(filename: string) {
     this.archive.openFile(this.identifier, filename, this.collectionTitle, this.collectionDescription);
     this.emulatorOpened.emit({ filename });
+  }
+
+  async downloadFile(filename: string) {
+    const url = this.archive.getFileUrl(this.identifier, filename);
+    
+    try {
+      // Fetch the file to ensure we can force a download dialog via blob
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+    } catch (err) {
+      // Fallback if fetch fails (e.g. CORS on a direct IA link)
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
   }
 
   toggleFavorite(file: any) {

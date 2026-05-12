@@ -319,31 +319,37 @@ export class Media implements OnInit {
       return;
     }
 
+    // derive filename
+    let filename = this.deriveLabel() || 'download';
     try {
-      // If it's already a blob URL, just trigger download
-      if (url.startsWith && url.startsWith('blob:')) {
+      const parsed = new URL(url as string, window.location.href);
+      const seg = (parsed.pathname || '').split('/').filter(Boolean).pop();
+      if (seg) filename = decodeURIComponent(seg);
+    } catch (e) {}
+
+    try {
+      // If it's already a blob URL (e.g. from an extracted zip or local file), 
+      // trigger it via simple <a> tag click.
+      if (typeof url === 'string' && url.startsWith('blob:')) {
         const a = document.createElement('a');
         a.href = url;
-        a.download = this.deriveLabel() || 'download';
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         a.remove();
         return;
       }
 
-      // Attempt to fetch the resource (may fail due to CORS)
+      // For normal URLs, we FETCH first and then trigger a blob download.
+      // This is the ONLY way to guarantee Chrome doesn't just navigate to the proxy URL
+      // when it encounters a filetype it thinks it can just "display" (like an MP4 or PDF).
+      // Since it's a large file, the browser will show the fetch progress if we use native streams,
+      // but providing a single blob at the end is the most reliable "Save As" trigger.
       const resp = await fetch(url as string);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      
       const blob = await resp.blob();
       const blobUrl = URL.createObjectURL(blob);
-
-      // derive filename from URL path or fallback to label
-      let filename = this.deriveLabel() || 'download';
-      try {
-        const parsed = new URL(url as string, window.location.href);
-        const seg = (parsed.pathname || '').split('/').filter(Boolean).pop();
-        if (seg) filename = decodeURIComponent(seg);
-      } catch (e) {}
 
       const a = document.createElement('a');
       a.href = blobUrl;
@@ -351,12 +357,14 @@ export class Media implements OnInit {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      setTimeout(() => { try { URL.revokeObjectURL(blobUrl); } catch (e) {} }, 5000);
+      
+      // Clean up the URL after a short delay
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
     } catch (err: any) {
-      // Fallback: open raw resource in new tab
-      try { window.open(url as string, '_blank'); } catch (e) {}
-      this.error = `Download failed; opened raw. ${err?.message ?? ''}`;
-    } finally {
+      console.error('[Media] Download failed:', err);
+      // Absolute last resort: open in new tab
+      window.open(url as string, '_blank');
+      this.error = `Download failed; opening raw link.`;
       try { this.cdr.detectChanges(); } catch (e) {}
     }
   }
