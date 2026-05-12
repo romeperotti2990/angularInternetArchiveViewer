@@ -111,9 +111,52 @@
   <div *ngIf="mode === 'image' && mediaRawUrl">
     <h3 class="text-lg font-semibold mb-2">Image</h3>
     <div class="border border-gray-300 p-2" style="max-height:80vh; overflow:auto; position:relative;">
-      <img [src]="mediaRawUrl" alt="Image" style="width:100%; height:auto; object-fit:contain" (load)="onMediaLoaded()" />
+      <img 
+        [src]="mediaRawUrl" 
+        alt="Image" 
+        style="width:100%; height:auto; object-fit:contain" 
+        (load)="onMediaLoaded()" 
+        (click)="toggleFullscreen()"
+        class="cursor-pointer hover:opacity-90 transition-opacity"
+      />
       <div *ngIf="isLoading" class="media-spinner">Loading…</div>
+      <button 
+        (click)="toggleFullscreen()" 
+        class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+        title="Toggle Fullscreen"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+      </button>
     </div>
+
+    <!-- Fullscreen Overlay -->
+    <div 
+      *ngIf="isFullscreen" 
+      class="fixed inset-0 z-9999 bg-black/95 flex items-center justify-center p-4 cursor-pointer"
+      (click)="toggleFullscreen()"
+    >
+      <button 
+        (click)="toggleFullscreen(); $event.stopPropagation()" 
+        class="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <img 
+        [src]="mediaRawUrl" 
+        alt="Fullscreen Image" 
+        class="max-w-full max-h-full object-contain shadow-2xl "
+        [style.width]="'100%'"
+      />
+    </div>
+
     <p class="text-sm mt-2"><a [href]="mediaRawUrl" target="_blank" rel="noopener noreferrer">Open raw</a></p>
     <p class="text-sm mt-1"><a href="#" (click)="$event.preventDefault(); downloadMedia()">Download</a></p>
   </div>

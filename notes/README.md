@@ -27,10 +27,8 @@ FEATURES NEEDED: (things that need to be done that dont break anything, but woul
     search by filetype (we will have to look inside of zips, so it will have to search until it gets the amount of results as the pagination, then stop. this will still fetch a lot from internet archive and take a while, as it will have to use libarchive to peek into every one and extract it)
     you should be able to open the internet archive link normally (as in on internet archive itself) as well to see the source (idk why this is so hard to do)
 
-
     UX/UI:
     gennerally the site looks bad because i did none of it myself (besides the pixel font)
-    Fullscreen view for images and whatnot
     A next button for the media page that will go to and show the next file
 
 
@@ -51,7 +49,6 @@ IDEAS: (things that could be done but nessicarily need to be)
     if your search ends up with something you already have favorited it should end up at the top
     have a pixel art icon for the favorite star?
     on the history page if I keep the little icons when you hover over each one for a little bit they could expand to show the full item details
-
 
     CODE:
     I could have several files for using media, instead of one big one

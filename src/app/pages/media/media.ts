@@ -30,6 +30,7 @@ export class Media implements OnInit {
   collectionTitle: string | null = null;
   collectionDescription: string | null = null;
   showFullDescription = false;
+  isFullscreen = false;
   
   itemFiles: any[] = [];
   fileLoading = false;
@@ -297,6 +298,16 @@ export class Media implements OnInit {
     if (this.archiveAbortControllers[key]) {
       this.archiveAbortControllers[key].abort();
     }
+  }
+
+  toggleFullscreen() {
+    this.isFullscreen = !this.isFullscreen;
+    if (this.isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    try { this.cdr.detectChanges(); } catch (e) {}
   }
 
   // called from template when media finishes loading
