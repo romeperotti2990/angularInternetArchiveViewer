@@ -19,9 +19,6 @@ BUGS/ PROBLEMS: (things that are active issues with the app)
     SHOW FILES:
     The UI in the items component is small and hard to use
 
-    ACCOUNTS:
-    you should be able to upload a local image for a profile pic
-
     DOWNLOADING:
     when pressing download on an item in the media page, it does not show you anything until it is done.
     when pressing download on a file in a collection using the show files button, it just opens it using the server on that tab.(this does give you an option to download it, but it redirected you away from the website, and the user would have to figure that out) there is also a download button on many filetypes within the player anyway

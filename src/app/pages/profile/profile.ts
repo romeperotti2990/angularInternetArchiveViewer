@@ -16,6 +16,7 @@ export class ProfilePage {
   newEmail: string = '';
   newPassword: string = '';
   newPhotoURL: string = '';
+  isUploading: boolean = false;
 
   constructor(
     public auth: AuthService,
@@ -40,6 +41,41 @@ export class ProfilePage {
     } catch (e: any) {
       alert("Failed to update profile: " + e.message);
     }
+  }
+
+  async onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Check file size (limit to 1MB for safety, though base64 will increase it)
+    if (file.size > 1024 * 1024) {
+      alert("File is too large! Please choose an image under 1MB.");
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      alert("Please select an image file.");
+      return;
+    }
+
+    const reader = new FileReader();
+    this.isUploading = true;
+    reader.onload = async (e: any) => {
+      try {
+        const base64String = e.target.result;
+        // Firebase Auth allows photoURL up to ~2KB usually, but some providers/implementations 
+        // vary. Actually, Firebase Auth photoURL has a limit. 
+        // For larger strings, we might need to compress or warn.
+        // Let's try setting it directly first.
+        this.newPhotoURL = base64String;
+        this.isUploading = false;
+        this.cdr.detectChanges();
+      } catch (err) {
+        alert("Error processing image.");
+        this.isUploading = false;
+      }
+    };
+    reader.readAsDataURL(file);
   }
 
   async updateEmail() {
