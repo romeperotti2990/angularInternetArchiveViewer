@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  backendOrigin: 'https://angularinternetarchiveviewerserver.onrender.com'
+  backendOrigin: 'http://localhost:3001'
 };
